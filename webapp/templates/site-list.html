@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1>List of field sites</h1>
+
+<p>Click any site's code.</p>
+
+    <ul>
+    {% for pair in pairs %}
+        <li><a href="{{ url_for( 'detail', id=pair[0] ) }}">{{ pair[0] }}</a> :: {{ pair[1] }}</li>
+    {% endfor %}
+    </ul>
+
+{% endblock %}

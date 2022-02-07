@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+<html>
+    <head>
+        <title>Login Page</title>
+    </head>
+    <body>
+        <form action="" method="post">
+          {{ form.email.label }}: {{ form.email(placeholder='yourname@email.com') }}
+           <br>
+           {{ form.password.label }}: {{ form.password }}
+           <br>
+           {{ form.csrf_token }}
+        </form>
+    </body>
+</html>

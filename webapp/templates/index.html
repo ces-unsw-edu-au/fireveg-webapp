@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1>FireVeg Database</h1>
+
+<p>Overview of the Fire response database</p>
+
+<!-- pairs is a list that must be sent here by a route function
+     The list will contain 45 pairs: a presidency number, and a
+     president's name -->
+
+    <ul>
+        <li><a href="{{ url_for( 'sites') }}">List of sites</a> </li>
+        <li><a href="{{ url_for( 'sites') }}">List of species</a> </li>
+        <li><a href="{{ url_for( 'sites') }}">List of fire events</a> </li>
+        <li><a href="{{ url_for( 'sites') }}">...</a> </li>
+    </ul>
+
+{% endblock %}
