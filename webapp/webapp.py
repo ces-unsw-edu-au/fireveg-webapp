@@ -31,9 +31,7 @@ def index():
     return render_template('index.html', the_title="Home / index")
 
 # other routes
-@app.route('/about')
-def about():
-    return render_template('about.html', the_title="Home / About")
+
 
 # sites
 

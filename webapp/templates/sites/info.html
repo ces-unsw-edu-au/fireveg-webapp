@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1>{{ info[0] }}</h1>
+
+<h3>Location description:</h3>
+<p>
+	{% if info[1] == None %}
+		Description not available.
+	{% else %}
+		{{ info[1] }}.
+	{% endif %}
+ </p>
+
+<h4>Elevation:</h4>
+<p>
+	{% if info[2] == None %}
+    No elevation data available.
+	{% else %}
+    {{ info[2] }} m.
+	{% endif %}
+</p>
+
+<h4>Coordinates:</h4>
+
+<p>
+	{% if info[3] == None %}
+    No coordinates data available.
+	{% else %}
+    ({{ info[3] }} {{ info[4] }}) SRID: {{ info[5] }} .
+	{% endif %}
+</p>
+
+<!-- NOTE the way to link to a route: Use the function name -->
+<p><a href="{{ url_for('sites.sites_list') }}">Return to the list</a> to select a different site.</p>
+
+{% endblock %}

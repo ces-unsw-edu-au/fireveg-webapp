@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1>List of field sites</h1>
+
+<p>Click any site's code.</p>
+
+    <table>
+        <tr><th>Site Label</th><th>Location description</th></tr>
+    {% for pair in pairs %}
+        <tr><td><a href="{{ url_for( 'sites.site_info', id=pair[0] ) }}">{{ pair[0] }}</a></td><td>{{ pair[1] }}</td></tr>
+    {% endfor %}
+    </table>
+
+{% endblock %}
