@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>
+    Fire related traits for <i>{% block title %}{{ info[0] }}{% endblock %}</i>  </h1>
+    <span>
+      <strong>Code:</strong>
+    	{% if info[1] == None %}
+    		<span class='empty'>no code</span>
+    	{% else %}
+    		{{ info[1] }}
+    	{% endif %}
+     </span>
+
+
+{% endblock %}
+
+{% block content %}
+
+
+<table>
+<tr>
+  <th>Resprouting</th>
+  {% if info[2] == None %}
+	<td class='empty'>No value recorded.</td>
+	{% else %}
+  <td>{{ info[2] }}</td>
+	{% endif %}
+</tr>
+
+<tr>
+  <th>Regenerative organ</th>
+  {% if info[3] == None %}
+	<td class='empty'>No value recorded.</td>
+	{% else %}
+  <td>{{ info[3] }}</td>
+	{% endif %}
+</tr>
+
+<tr>
+  <th>Seedbank type</th>
+  {% if info[4] == None %}
+	<td class='empty'>No value recorded.</td>
+	{% else %}
+  <td>{{ info[4] }}</td>
+	{% endif %}
+</tr>
+<tr>
+  <th>Post fire seedling recruitment:</th>
+  {% if info[5] == None %}
+	<td class='empty'>No value recorded.</td>
+	{% else %}
+  <td>{{ info[5] }}</td>
+	{% endif %}
+</tr>
+
+<table>
+
+<!-- NOTE the way to link to a route: Use the function name -->
+<p><a href="{{ url_for('species.fam_list') }}">Return to the list</a> to select a different family/species.</p>
+
+{% endblock %}

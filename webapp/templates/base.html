@@ -1,5 +1,5 @@
 <!doctype html>
-<title>{% block title %}{% endblock %} - Flaskr</title>
+<title>{% block title %}{% endblock %} - Fireveg DB</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 <nav>
   <h1 class='title'>FireVeg Database</h1>
@@ -18,7 +18,8 @@
   <b>Navigate &gt; &gt; </b>
   <ul>
     <li><span><a href='{{ url_for('index') }}'>Database summary</a></span>
-      <li><span><a href='{{ url_for('sites.sites_list') }}'>All sites</a></span>
+    <li><span><a href='{{ url_for('sites.sites_list') }}'>All sites</a></span>
+    <li><span><a href='{{ url_for('species.fam_list') }}'>All species</a></span>
     <li><span><a href='#'>Documentation</a></span>
     <li><span><a href='{{ url_for('about') }}'>About</a></span>
   </ul>

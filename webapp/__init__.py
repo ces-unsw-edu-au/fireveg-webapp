@@ -48,5 +48,7 @@ def create_app(test_config=None):
 
     from . import sites
     app.register_blueprint(sites.bp)
+    from . import species
+    app.register_blueprint(species.bp)
 
     return app

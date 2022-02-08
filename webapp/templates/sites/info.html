@@ -1,13 +1,14 @@
 {% extends 'base.html' %}
 
+{% block header %}
+  <h1>Site information for ''{% block title %}{{ info[0] }}{% endblock %}''</h1>
+{% endblock %}
+
 {% block content %}
-
-<h1>{{ info[0] }}</h1>
-
 <h3>Location description:</h3>
 <p>
 	{% if info[1] == None %}
-		Description not available.
+		<span class='empty'>Description not available.</span>
 	{% else %}
 		{{ info[1] }}.
 	{% endif %}
@@ -16,7 +17,7 @@
 <h4>Elevation:</h4>
 <p>
 	{% if info[2] == None %}
-    No elevation data available.
+	<span class='empty'>No elevation data available.</span>
 	{% else %}
     {{ info[2] }} m.
 	{% endif %}
@@ -26,7 +27,8 @@
 
 <p>
 	{% if info[3] == None %}
-    No coordinates data available.
+	<span class='empty'>No coordinates data available.</span>
+
 	{% else %}
     ({{ info[3] }} {{ info[4] }}) SRID: {{ info[5] }} .
 	{% endif %}
