@@ -77,12 +77,23 @@
         <tr><th>Fire name</th><th>Fire date</th><th>How inferred</th><th>Cause of ignition</th></tr>
     {% for pair in fire %}
         <tr>
-          <td>{{ pair[0] }}</td>
+          {% if pair[0] == None %}
+            <td class='empty'>No fire name recorded.</td>
+          {% else %}
+            <td>{{ pair[0] }}</td>
+          {% endif %}
 
             <td>{{ pair[1] }} :: {{ pair[1] + pair[2] }} </td>
-          <td>{{ pair[3] }}</td>
-          <td>{{ pair[4] }}</td>
-
+            {% if pair[3] == None %}
+              <td class='empty'>No data recorded.</td>
+            {% else %}
+              <td>{{ pair[3] }}</td>
+            {% endif %}
+            {% if pair[4] == None %}
+              <td class='empty'>No data recorded.</td>
+            {% else %}
+              <td>{{ pair[4] }}</td>
+            {% endif %}
         </tr>
     {% endfor %}
   </table>
