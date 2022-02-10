@@ -4,6 +4,13 @@
   <h1>
     Fire related traits for <i>{% block title %}{{ info[0] }}{% endblock %}</i>  </h1>
     <span>
+      <strong>Family:</strong>
+      {% if info[2] == None %}
+    		<span class='empty'>uncertain?</span>
+    	{% else %}
+    		{{ info[2] }}
+    	{% endif %}
+
       <strong>Code:</strong>
     	{% if info[1] == None %}
     		<span class='empty'>no code</span>
@@ -21,15 +28,6 @@
 <table>
 <tr>
   <th>Resprouting</th>
-  {% if info[2] == None %}
-	<td class='empty'>No value recorded.</td>
-	{% else %}
-  <td>{{ info[2] }}</td>
-	{% endif %}
-</tr>
-
-<tr>
-  <th>Regenerative organ</th>
   {% if info[3] == None %}
 	<td class='empty'>No value recorded.</td>
 	{% else %}
@@ -38,25 +36,34 @@
 </tr>
 
 <tr>
-  <th>Seedbank type</th>
+  <th>Regenerative organ</th>
   {% if info[4] == None %}
 	<td class='empty'>No value recorded.</td>
 	{% else %}
   <td>{{ info[4] }}</td>
 	{% endif %}
 </tr>
+
 <tr>
-  <th>Post fire seedling recruitment:</th>
+  <th>Seedbank type</th>
   {% if info[5] == None %}
 	<td class='empty'>No value recorded.</td>
 	{% else %}
   <td>{{ info[5] }}</td>
 	{% endif %}
 </tr>
+<tr>
+  <th>Post fire seedling recruitment:</th>
+  {% if info[6] == None %}
+	<td class='empty'>No value recorded.</td>
+	{% else %}
+  <td>{{ info[6] }}</td>
+	{% endif %}
+</tr>
 
 <table>
 
 <!-- NOTE the way to link to a route: Use the function name -->
-<p><a href="{{ url_for('species.fam_list') }}">Return to the list</a> to select a different family/species.</p>
+<p>Return to <a href="{{ url_for('species.sp_list', id =info[2]) }}">{{ info[2]}}</a> / <a href="{{ url_for('species.fam_list') }}">all families</a> to select a different taxon.</p>
 
 {% endblock %}

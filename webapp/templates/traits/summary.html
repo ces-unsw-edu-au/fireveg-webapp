@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>Summary of fire-related traits</h1>
+{% endblock %}
+
+{% block content %}
+<p>
+  Species included in database:	{{ info[0] }}.
+</p>
+
+<p>
+  Species with information on resprouting:	{{ info[1] }}.
+</p>
+
+<p>
+  Species with information on regenerative organ:	{{ info[2] }}.
+</p>
+
+<p>
+  Species with information on seedbank type:	{{ info[3] }}.
+</p>
+
+<p>
+  Species with information on postfire seedling recruitment:	{{ info[4] }}.
+</p>
+
+
+{% endblock %}

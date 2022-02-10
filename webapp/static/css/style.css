@@ -2,6 +2,9 @@ html { font-family: sans-serif; background: #BACEC1; padding: 1rem; }
 body { max-width: 960px; margin: 0 auto; background: #F6F4E8; }
 h1 { font-family: serif; color: #1D3124; margin: 1rem 0; }
 h1.title { color: #BACEC1; }
+th {background: #1D3124; color: #F6F4E8;  }
+td {background: #BACEC1; color: #1D3124; }
+td.empty {background: lightgrey; color: darkgrey; }
 a { color: #E59560; }
 hr { border: none; border-top: 1px solid #BACEC1; }
 nav { background: #1D3124; color: #F6F4E8;   display: flex; align-items: center; padding: 0 0.5rem; }
@@ -25,4 +28,4 @@ nav ul li a, nav ul li span, header .action { display: block; padding: 0.5rem; }
 .content textarea { min-height: 12em; resize: vertical; }
 input.danger { color: #cc2f2e; }
 input[type=submit] { align-self: start; min-width: 10em; }
-.empty {color: lightgray;}
+span.empty {color: lightgray;}

@@ -7,7 +7,7 @@
 <p>Sites are identified by a site label. One site can be visited multiple times. Click any site's label to see more information about site description and coordinates.</p>
 
     <table>
-        <tr><th>Site Label</th><th>Location description</th></tr>
+        <tr><th>Site Label</th><th>Location description</th><th>Elevation</th><th>Coordinates (Lat Long WGS84)</th></tr>
     {% for pair in pairs %}
         <tr>
           <td><a href="{{ url_for( 'sites.site_info', id=pair[0] ) }}">{{ pair[0] }}</a></td>
@@ -18,6 +18,18 @@
               <td>{{ pair[1]|truncate(30) }}  </td>
             {% else %}
               <td>{{ pair[1] }}.  </td>
+            {% endif %}
+
+            {% if pair[2] == None %}
+              <td class='empty'>No elevation data available.</td>
+            {% else %}
+              <td>{{ pair[2] }} m</td>
+            {% endif %}
+
+            {% if pair[3] == None %}
+              <td class='empty'>No spatial coordinates available.</td>
+            {% else %}
+              <td>{{ '%0.5f'|format(pair[3]|float) }} {{ '%0.5f'|format(pair[4]|float) }}</td>
             {% endif %}
         </tr>
     {% endfor %}

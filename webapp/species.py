@@ -35,7 +35,7 @@ def sp_list(id):
 def sp_info(id):
     pg = get_pg_connection()
     cur = pg.cursor()
-    cur.execute("SELECT species, species_code, resprouting, regenerative_organ, seedbank_type, postfire_seedling_recruitment FROM litrev.traits WHERE species_code='%s';" % id)
+    cur.execute("SELECT species, species_code, \"FamilyName\", resprouting, regenerative_organ, seedbank_type, postfire_seedling_recruitment FROM litrev.traits LEFT JOIN \"Species_list\" sp ON \"SpeciesCode\"=species_code  WHERE species_code='%s';" % id)
     try:
         site_qry = cur.fetchone()
     except:

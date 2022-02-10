@@ -33,6 +33,9 @@ def create_app(test_config=None):
     @app.route('/about')
     def about():
         return render_template('about.html', the_title="Home / About")
+    @app.route('/index')
+    def index():
+        return render_template('index.html', the_title="Home ")
 
     from . import db
     db.init_app(app)
@@ -42,13 +45,15 @@ def create_app(test_config=None):
     from . import auth
     app.register_blueprint(auth.bp)
 
-    from . import blog
-    app.register_blueprint(blog.bp)
-    app.add_url_rule('/', endpoint='index')
+    #from . import blog
+    #app.register_blueprint(blog.bp)
+    #app.add_url_rule('/', endpoint='index')
 
     from . import sites
     app.register_blueprint(sites.bp)
     from . import species
     app.register_blueprint(species.bp)
+    from . import traits
+    app.register_blueprint(traits.bp)
 
     return app
