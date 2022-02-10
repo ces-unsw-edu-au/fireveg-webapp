@@ -1,8 +1,63 @@
 {% extends 'base.html' %}
 
 {% block header %}
-{{site}} - {{visit}}
+<h1>{% block title %}Site {{site}} - Visited on {{visit}}{% endblock %}</h1>
 {% endblock %}
 
 {% block content %}
+
+<div>
+  <h4>Site</h4>
+<strong>Location description:</strong>
+	{% if siteinfo[1] == None %}
+		<span class='empty'>Description not available.</span>
+	{% else %}
+		{{ siteinfo[1] }}.
+	{% endif %}
+<br/>
+<strong>Elevation:</strong>
+{% if siteinfo[2] == None %}
+	<span class='empty'>No elevation data available.</span>
+	{% else %}
+    {{ siteinfo[2] }} m.
+	{% endif %}
+<br/>
+<strong>Coordinates:</strong>
+	{% if siteinfo[3] == None %}
+	<span class='empty'>No coordinates data available.</span>
+
+	{% else %}
+    ({{ siteinfo[3] }} {{ siteinfo[4] }}) SRID: {{ siteinfo[5] }} .
+	{% endif %}
+
+</div>
+
+<div>
+  <h4>Visit</h4>
+<strong>Visit description:</strong>
+	{% if visitinfo[1] == None %}
+		<span class='empty'>Description not available.</span>
+	{% else %}
+		{{ visitinfo[1] }}.
+	{% endif %}
+<br/>
+<strong>Main Observer:</strong>
+{% if visitinfo[2] == None %}
+	<span class='empty'>No data available.</span>
+	{% else %}
+    {{ visitinfo[2] }}:
+      {{ visitinfo[3] }}
+        {{ visitinfo[4] }} .
+	{% endif %}
+<br/>
+<strong>Survey:</strong>
+	{% if visitinfo[6] == None %}
+	<span class='empty'>No coordinates data available.</span>
+
+	{% else %}
+    {{ visitinfo[6] }}.
+	{% endif %}
+
+</div>
+
 {% endblock %}

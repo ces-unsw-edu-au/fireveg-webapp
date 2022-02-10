@@ -61,4 +61,19 @@ def site_info(id):
 
 @bp.route('/visit/<id>/<dt>')
 def visit_info(id,dt):
-    return render_template('sites/visit.html', site=id,visit=dt)
+    qry1 = "SELECT site_label,location_description,elevation,st_x(geom),st_y(geom),st_srid(geom) FROM form.field_site WHERE site_label='%s';"
+    qry2 = "SELECT visit_date,visit_description,userkey,givennames,surname,otherobserver,survey_name FROM form.field_visit LEFT JOIN form.observerid ON mainobserver=userkey WHERE visit_id='%s' AND visit_date='%s' ORDER BY visit_date ASC;"
+    pg = get_pg_connection()
+    cur = pg.cursor()
+    cur.execute(qry1 % id)
+    try:
+        site_res = cur.fetchone()
+    except:
+        return f"<h1>Invalid site label: {id}</h1>"
+    cur.execute(qry2 % (id,dt))
+    try:
+        visit_res = cur.fetchone()
+    except:
+        return f"<h1>Invalid site label: {id}</h1>"
+    cur.close()
+    return render_template('sites/visit.html', site=id,visit=dt,siteinfo=site_res,visitinfo=visit_res)
