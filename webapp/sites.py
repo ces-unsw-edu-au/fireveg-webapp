@@ -10,14 +10,29 @@ from datetime import datetime, timedelta
 
 bp = Blueprint('sites', __name__, url_prefix='/sites')
 
-@bp.route('/list')
-def sites_list():
+
+@bp.route('/survey')
+def survey_list():
     pg = get_pg_connection()
     cur = pg.cursor()
-    cur.execute('SELECT site_label, location_description, elevation, ST_X(ST_Transform(geom,4326)) , ST_Y(ST_Transform(geom,4326)) FROM form.field_site ORDER BY site_label;')
+    cur.execute('SELECT survey_name,count(distinct visit_id), count(*),min(visit_date),max(visit_date) FROM form.field_visit GROUP BY survey_name;')
+    survey_list = cur.fetchall()
+    cur.close()
+    return render_template('sites/survey_list.html', pairs=survey_list, the_title="List of surveys")
+
+@bp.route('/list', defaults={'survey': None})
+@bp.route('/list/<survey>')
+def sites_list(survey):
+    pg = get_pg_connection()
+    cur = pg.cursor()
+    if survey == None:
+        qry='SELECT site_label, location_description, elevation, ST_X(ST_Transform(geom,4326)) , ST_Y(ST_Transform(geom,4326)) FROM form.field_site ORDER BY site_label;'
+    else:
+        qry='SELECT DISTINCT site_label, location_description, elevation, ST_X(ST_Transform(geom,4326)) , ST_Y(ST_Transform(geom,4326)) FROM form.field_visit LEFT JOIN form.field_site on visit_id=site_label WHERE survey_name=\'%s\' ORDER BY site_label;' % survey
+    cur.execute(qry)
     site_list = cur.fetchall()
     cur.close()
-    return render_template('sites/list.html', pairs=site_list, the_title="Field Work locations")
+    return render_template('sites/list.html', pairs=site_list, survey=survey)
 
 @bp.route('/info/<id>')
 def site_info(id):

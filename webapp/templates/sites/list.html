@@ -1,7 +1,13 @@
 {% extends 'base.html' %}
 
 {% block header %}
-  <h1>{% block title %}List of field sites{% endblock %}</h1>
+  <h1>{% block title %}
+    {% if survey == None %}
+    List of field sites
+    {% else %}
+    Field sites in {{survey}} survey
+    {% endif %}
+    {% endblock %}</h1>
 {% endblock %}
 {% block content %}
 <p>Sites are identified by a site label. One site can be visited multiple times. Click any site's label to see more information about site description and coordinates.</p>

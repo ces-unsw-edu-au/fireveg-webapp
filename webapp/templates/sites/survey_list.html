@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}List of field surveys{% endblock %}</h1>
+{% endblock %}
+{% block content %}
+<p></p>
+
+    <table>
+        <tr><th>Survey name</th><th>Nr. of distinct sites</th><th>Nr. of distinct visits</th><th>Dates</th></tr>
+    {% for pair in pairs %}
+        <tr>
+
+              {% if pair[0] == 'TO BE CLASSIFIED' %}
+                <td class='empty'>Not assigned to survey</td>
+              {% else %}
+                <td><a href='{{ url_for( 'sites.sites_list', survey=pair[0] ) }}'>{{ pair[0] }}</a>  </td>
+              {% endif %}
+
+          <td>{{ pair[1] }}</td>
+          <td>{{ pair[2] }}</td>
+          <td>{{ pair[3] }} - {{ pair[4] }}</td>
+        </tr>
+    {% endfor %}
+    </table>
+
+{% endblock %}

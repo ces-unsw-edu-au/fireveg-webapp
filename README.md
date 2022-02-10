@@ -53,6 +53,14 @@ export FLASK_ENV=development
 flask init-db
 ```
 
+### Running with gunicorn
+
+```sh
+pip install gunicorn
+cd ~/proyectos/fireveg/fireveg-webapp
+gunicorn -w 4 --reload --bind 0.0.0.0:5000 "webapp:create_app()"
+```
+
 ### Other on-line resources
 
 https://python-adv-web-apps.readthedocs.io/en/latest/flask.html
