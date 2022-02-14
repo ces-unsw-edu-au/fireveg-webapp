@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>Fire related traits / {{group}} / {{var}}</h1>
+{% endblock %}
+
+{% block content %}
+<table>
+    <tr><th>Species code</th><th>Species name</th><th>{{var}}</th></tr>
+{% for pair in spps %}
+    <tr>
+      <td>{{pair[0]}}</td>
+      <td><a href="{{url_for('species.sp_info', id=pair[2] )}}"><i>{{pair[1]}}</i></a></td>
+      <td>{{pair[3]}}</td>
+    </tr>
+      {% endfor %}
+      </table>
+
+
+{% endblock %}

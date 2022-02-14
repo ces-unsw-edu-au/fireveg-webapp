@@ -2,7 +2,7 @@
 
 {% block header %}
   <h1>
-    Fire related traits for <i>{% block title %}{{ info[0] }}{% endblock %}</i>  </h1>
+    <i>{% block title %}{{ info[0] }}{% endblock %}</i>  </h1>
     <span>
       <strong>Family:</strong>
       {% if info[2] == None %}
@@ -11,7 +11,7 @@
     		{{ info[2] }}
     	{% endif %}
 
-      <strong>Code:</strong>
+      <strong>Species ID:</strong>
     	{% if info[1] == None %}
     		<span class='empty'>no code</span>
     	{% else %}
@@ -24,44 +24,101 @@
 
 {% block content %}
 
+  <h2>Species information</h2>
+  <table>
+    <tr>
+      <th>Taxonomic rank</th>
+      <td>{{info[3]}}</td>
+    </tr>
+    <tr>
+      <th>Scientific name</th>
+      <td><i>{{info[0]}}</i> {{info[6]}}</td>
+    </tr>
+    <tr>
+      <th>Vernacular name</th>
+    {% if info[7] == None %}
+  	<td class='empty'>No value recorded.</td>
+  	{% else %}
+    <td>{{ info[7] }}</td>
+  	{% endif %}
+  </tr>
+  <tr>
+    <th>Establishment means</th>
+  {% if info[8] == None %}
+  <td class='empty'>No value recorded.</td>
+  {% else %}
+  <td>{{ info[8] }}</td>
+  {% endif %}
+    </tr>
 
+    <tr>
+      <th>Growth Form Groups</th>
+    {% if info[9] == None and info[10] == None %}
+    <td class='empty'>No value recorded.</td>
+    {% else %}
+    <td>{{ info[9] }}
+      {% if info[10] != None %}
+         / [ {{ info[10] }} ]
+         {% endif %}
+            </td>
+    {% endif %}
+      </tr>
+</table>
+
+  <h2>Fire related traits</h2>
+  {% if survs|length == 0 %}
+  <h3 class='empty'>No survival traits recorded for this taxon</h3>
+  {% else %}
+    <h3>Survival traits</h3>
+{% for surv in survs %}
 <table>
+  <tr><th colspan=2><i>{{surv[0]}}</i> / species code {{surv[1]}}</th></tr>
 <tr>
   <th>Resprouting</th>
-  {% if info[3] == None %}
+  {% if surv[2] == None %}
 	<td class='empty'>No value recorded.</td>
 	{% else %}
-  <td>{{ info[3] }}</td>
+  <td>{{ surv[2] }}</td>
 	{% endif %}
 </tr>
 
 <tr>
   <th>Regenerative organ</th>
-  {% if info[4] == None %}
+  {% if surv[3] == None %}
 	<td class='empty'>No value recorded.</td>
 	{% else %}
-  <td>{{ info[4] }}</td>
+  <td>{{ surv[3] }}</td>
 	{% endif %}
 </tr>
 
 <tr>
-  <th>Seedbank type</th>
-  {% if info[5] == None %}
+  <th>Standing Plant Longevity</th>
+  {% if surv[4] == None %}
 	<td class='empty'>No value recorded.</td>
 	{% else %}
-  <td>{{ info[5] }}</td>
+  <td>{{ surv[4] }}</td>
 	{% endif %}
 </tr>
 <tr>
-  <th>Post fire seedling recruitment:</th>
-  {% if info[6] == None %}
+  <th>Seedank halflife</th>
+  {% if surv[5] == None %}
 	<td class='empty'>No value recorded.</td>
 	{% else %}
-  <td>{{ info[6] }}</td>
+  <td>{{ surv[5] }}</td>
+	{% endif %}
+</tr>
+<tr>
+  <th>Seed longevity</th>
+  {% if surv[6] == None %}
+	<td class='empty'>No value recorded.</td>
+	{% else %}
+  <td>{{ surv[6] }}</td>
 	{% endif %}
 </tr>
 
 <table>
+{% endfor %}
+{% endif %}
 
 <!-- NOTE the way to link to a route: Use the function name -->
 <p>Return to <a href="{{ url_for('species.sp_list', id =info[2]) }}">{{ info[2]}}</a> / <a href="{{ url_for('species.fam_list') }}">all families</a> to select a different taxon.</p>

@@ -5,24 +5,25 @@
 {% endblock %}
 
 {% block content %}
+<h2>Survival traits</h2>
 <p>
-  Species included in database:	{{ info[0] }}.
+  Species/taxa with survival traits:	{{ surv_info[0] }}.
 </p>
 
 <p>
-  Species with information on resprouting:	{{ info[1] }}.
+  Species with information on resprouting:	<a href="{{ url_for( 'traits.trait_list', group='survival',var='resprouting' ) }}">{{ surv_info[1] }}</a>.
 </p>
 
 <p>
-  Species with information on regenerative organ:	{{ info[2] }}.
+  Species with information on regenerative organ:	<a href="{{ url_for( 'traits.trait_list', group='survival',var='regenerative_organ' ) }}">{{ surv_info[2] }}</a>.
 </p>
 
 <p>
-  Species with information on seedbank type:	{{ info[3] }}.
+  Species with information on standing plant longevity:	<a href="{{ url_for( 'traits.trait_list', group='survival',var='standing_plant_longevity' ) }}">{{ surv_info[3] }}</a>.
 </p>
 
 <p>
-  Species with information on postfire seedling recruitment:	{{ info[4] }}.
+  Species with information on seedbank halflife:	{{ surv_info[4] }}.
 </p>
 
 

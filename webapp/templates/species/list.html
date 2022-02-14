@@ -6,10 +6,7 @@
 {% block content %}
 <p>Species with recorded fire related traits. Click any species's name to see more information about fire related traits.</p>
 
-    <table>
-        <tr><th>Species code</th><th>Species name</th></tr>
-    {% for pair in pairs %}
-        <tr>
+
             {% if pair[0] == None %}
               <td class='empty'>no code</td>
           {% else %}
@@ -18,11 +15,16 @@
 
           <td><i>{{ pair[1] }}</i></td>
 
-            {% if pair[2] == None %}
-              <td class='empty'>No common name</td>
-            {% else %}
-              <td>{{ pair[2] }}</td>
-            {% endif %}
+          {% if pair[2] == None %}
+            <td class='empty'>No common name</td>
+          {% else %}
+            <td>{{ pair[2] }}</td>
+          {% endif %}
+          {% if pair[3] == 0 %}
+            <td class='empty'>None recorded</td>
+          {% else %}
+            <td>{{ pair[3] }}</td>
+          {% endif %}
         </tr>
     {% endfor %}
     </table>

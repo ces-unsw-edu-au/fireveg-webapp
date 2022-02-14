@@ -13,7 +13,7 @@ bp = Blueprint('species', __name__, url_prefix='/species')
 def fam_list():
     pg = get_pg_connection()
     cur = pg.cursor()
-    cur.execute('SELECT "FamilyName" AS fam,count(*) FROM litrev.traits LEFT JOIN "Species_list" sp ON "SpeciesCode"=species_code GROUP BY fam;')
+    cur.execute('SELECT family AS fam,count(distinct "speciesID"),count(distinct s.species_code) FROM species.caps LEFT JOIN litrev.survival_traits s ON "speciesCode_Synonym"=species_code::text GROUP BY fam;')
     fam_list = cur.fetchall()
     cur.close()
     return render_template('species/fam-list.html', pairs=fam_list, the_title="Species per family")
@@ -22,7 +22,7 @@ def fam_list():
 def sp_list(id):
     pg = get_pg_connection()
     cur = pg.cursor()
-    cur.execute('SELECT "SpeciesCode"::int, "ScientificName", "CommonName" FROM litrev.traits LEFT JOIN "Species_list" sp ON "SpeciesCode"=species_code  WHERE "FamilyName"=\'%s\' ORDER BY "SortOrder"' % id)
+    cur.execute('SELECT "speciesID"::int AS id, "scientificName" AS name, "vernacularName" as vname,count(distinct s.species_code) FROM species.caps LEFT JOIN litrev.survival_traits s ON "speciesCode_Synonym"=species_code::text WHERE "family"=\'%s\' GROUP BY id,name,vname,"sortOrder" ORDER BY "sortOrder"' % id)
     try:
         spp_qry = cur.fetchall()
     except:
@@ -35,10 +35,20 @@ def sp_list(id):
 def sp_info(id):
     pg = get_pg_connection()
     cur = pg.cursor()
-    cur.execute("SELECT species, species_code, \"FamilyName\", resprouting, regenerative_organ, seedbank_type, postfire_seedling_recruitment FROM litrev.traits LEFT JOIN \"Species_list\" sp ON \"SpeciesCode\"=species_code  WHERE species_code='%s';" % id)
+
+    qryspp="SELECT \"scientificName\", \"speciesID\"::int, family, \"taxonRank\", family, \"speciesCode_Synonym\", \"scientificNameAuthorship\", \"vernacularName\", \"establishmentMeans\", \"primaryGrowthFormGroup\", \"secondaryGrowthFormGroups\", \"stateConservation\", \"protectedInNSW\", \"countryConservation\" from species.caps WHERE \"speciesID\"=%s;"
+    cur.execute(qryspp % (id))
     try:
-        site_qry = cur.fetchone()
+        spp_info = cur.fetchone()
     except:
-        return f"<h1>Invalid site label: {id}</h1>"
+        return f"<h1>Invalid species code: {id}</h1>"
+
+    qrysurv="SELECT species, species_code, resprouting, regenerative_organ, standing_plant_longevity, seedbank_halflife, seed_longevity FROM litrev.survival_traits WHERE species_code=%s;"
+    cur.execute(qrysurv % spp_info[5])
+    try:
+        surv_trts = cur.fetchall()
+    except:
+        return f"<h1>Invalid species code: {id}</h1>"
+
     cur.close()
-    return render_template('species/info.html', info=site_qry)
+    return render_template('species/info.html', info=spp_info,survs=surv_trts)
