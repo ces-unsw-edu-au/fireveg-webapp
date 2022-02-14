@@ -6,6 +6,9 @@
 {% block content %}
 <p>Species with recorded fire related traits. Click any species's name to see more information about fire related traits.</p>
 
+<table>
+    <tr><th colspan=2>Species</th><th>Vernacular name</th><th>Survival traits</th></tr>
+{% for pair in pairs %}
 
             {% if pair[0] == None %}
               <td class='empty'>no code</td>
