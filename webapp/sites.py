@@ -63,6 +63,12 @@ def site_info(id):
 def visit_info(id,dt):
     qry1 = "SELECT site_label,location_description,elevation,st_x(geom),st_y(geom),st_srid(geom) FROM form.field_site WHERE site_label='%s';"
     qry2 = "SELECT visit_date,visit_description,userkey,givennames,surname,otherobserver,survey_name FROM form.field_visit LEFT JOIN form.observerid ON mainobserver=userkey WHERE visit_id='%s' AND visit_date='%s' ORDER BY visit_date ASC;"
+
+    qry3 = "SELECT measured_var,units,best,lower,upper FROM form.field_visit_vegetation_estimates WHERE visit_id='%s' AND visit_date='%s' ORDER BY measured_var ASC;"
+
+
+    qry4 = "SELECT vegtype,vegcategoryid,confidenceid,threatenedecologicalcommunity FROM form.field_visit_vegetation WHERE visit_id='%s' AND visit_date='%s';"
+
     pg = get_pg_connection()
     cur = pg.cursor()
     cur.execute(qry1 % id)
@@ -75,5 +81,16 @@ def visit_info(id,dt):
         visit_res = cur.fetchone()
     except:
         return f"<h1>Invalid site label: {id}</h1>"
+    cur.execute(qry3 % (id,dt))
+    try:
+        vars_res = cur.fetchall()
+    except:
+        return f"<h1>Invalid site label: {id}</h1>"
+    cur.execute(qry4 % (id,dt))
+    try:
+        veg_res = cur.fetchone()
+    except:
+        return f"<h1>Invalid site label: {id}</h1>"
+
     cur.close()
-    return render_template('sites/visit.html', site=id,visit=dt,siteinfo=site_res,visitinfo=visit_res)
+    return render_template('sites/visit.html', site=id,visit=dt,siteinfo=site_res,visitinfo=visit_res,estvars=vars_res,veginfo=veg_res)

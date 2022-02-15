@@ -36,11 +36,13 @@
   Species with information on standing plant longevity:	<a href="{{ url_for( 'traits.trait_list', group='survival',var='standing_plant_longevity' ) }}">{{ surv_info[3] }}</a>.
 </p>
 
+<p>Value: years [integer]. Description:  Age at which 50% of individuals in a cohort (excluding outliers) have died from senescence.</p>
+
 <h3>Seedbank halflife</h3>
 
 <p>
   Species with information on seedbank halflife:	{{ surv_info[4] }}.
 </p>
 
-
+<p>Value: years [integer]. Description:  Age at which 50% of a seed cohort in an in situ seedbank have decayed or become inviable.</p>
 {% endblock %}

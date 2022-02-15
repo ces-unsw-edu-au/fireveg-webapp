@@ -58,6 +58,54 @@
     {{ visitinfo[6] }}.
 	{% endif %}
 
+<p>
+  <strong>Vegetation type:</strong>
+  	{% if veginfo[0] == None %}
+  		<span class='empty'>Description not available.</span>
+  	{% else %}
+  		{{ veginfo[0] }}.
+  	{% endif %}
+  <br/>
+  <strong>Vegetation Category ID:</strong>
+  {% if veginfo[1] == None %}
+  	<span class='empty'>No data available.</span>
+  	{% else %}
+      {{ veginfo[1] }} (confidence
+        {{ veginfo[2] }}).
+  	{% endif %}
+  <br/>
+  <strong>Threatened ecological community:</strong>
+  	{% if veginfo[3] == None %}
+  	<span class='empty'>No data available.</span>
+
+  	{% else %}
+      {{ veginfo[3] }}.
+  	{% endif %}
+</p>
+
+
+  <table>
+    <caption>Estimated/Measured variables</caption>
+      <tr><th>Variable</th><th>units</th><th>Best</th><th>Lower - Upper bounds</th></tr>
+  {% for pair in estvars %}
+    <tr>
+
+      <td>{{ pair[0] }}</td>
+      <td>{{ pair[1] }}</td>
+      {% if pair[2] == None %}
+        <td class='empty'>None given</td>
+      {% else %}
+        <td>{{ pair[2] }}</td>
+      {% endif %}
+      {% if pair[3] == None and pair[4] == None%}
+        <td class='empty'>None given</td>
+      {% else %}
+        <td>{{ pair[3] }} &ndash;  {{ pair[4] }}</td>
+      {% endif %}
+    </tr>
+  {% endfor %}
+  </table>
+
 </div>
 
 {% endblock %}
