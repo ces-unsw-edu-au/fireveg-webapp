@@ -114,4 +114,62 @@ No information on vegetation structure recorded.
   {% endif %}
 </div>
 
+<div>
+
+  <p>
+    {% if smpinfo == None %}
+    No information on field samples recorded.
+    {%else%}
+    <strong>Sample method:</strong>
+    	{% if smpinfo[0] == None %}
+    		<span class='empty'>Method not described.</span>
+    	{% else %}
+    		{{ smpinfo[0] }}.
+    	{% endif %}
+    <br/>
+    <strong>Nr. of sample units:</strong>
+        {{ smpinfo[1] }}
+    {% endif %}
+  </p>
+
+
+  {% if spplist|length == 0 %}
+  No information on vegetation structure recorded.
+  {%else%}
+    <table>
+      <caption>List of species in samples</caption>
+        <tr><th>Family</th><th>Species code</th><th>Species</th><th>Notes</th></tr>
+    {% for pair in spplist %}
+      <tr>
+
+        {% if pair[0] == None %}
+          <td class='empty'>Information missing</td>
+        {% else %}
+          <td>
+          <a href="{{ url_for( 'species.sp_list', id=pair[0] ) }}">{{ pair[0] }}</a></td>
+        {% endif %}
+
+        {% if pair[2] == pair[3]%}
+          <td><i><a href="{{ url_for( 'species.sp_info', id=pair[4] ) }}">{{ pair[1] }}</a></i></td>
+        {% else %}
+          <td><i>{{ pair[1] }}</i></td>
+        {% endif %}
+        <td><i>{{ pair[2] }}</i></td>
+
+
+        {% if pair[2] != pair[3] and pair[3] != None %}
+
+          <td>
+            refering to: <i><a href="{{ url_for( 'species.sp_info', id=pair[4] ) }}">{{ pair[3] }}</a></i>
+          </td>
+        {% else %}
+          <td class='empty'></td>
+        {% endif %}
+
+      </tr>
+    {% endfor %}
+    </table>
+    {% endif %}
+  </div>
+
 {% endblock %}

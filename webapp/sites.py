@@ -69,6 +69,10 @@ def visit_info(id,dt):
 
     qry4 = "SELECT vegtype,vegcategoryid,confidenceid,threatenedecologicalcommunity FROM form.field_visit_vegetation WHERE visit_id='%s' AND visit_date='%s';"
 
+    qry5 = "select sample_method,count(DISTINCT sample_nr) FROM form.field_samples WHERE visit_id='%s' AND visit_date='%s' GROUP BY sample_method;"
+
+    qry6 = "SELECT DISTINCT family, species_code, species, \"scientificName\", \"speciesID\"::int, \"sortOrder\" FROM form.quadrat_samples LEFT JOIN species.caps ON \"speciesCode_Synonym\" = species_code::text WHERE visit_id='%s' AND visit_date='%s' ORDER BY \"sortOrder\";"
+
     pg = get_pg_connection()
     cur = pg.cursor()
     cur.execute(qry1 % id)
@@ -92,5 +96,17 @@ def visit_info(id,dt):
     except:
         return f"<h1>Invalid site label: {id}</h1>"
 
+    cur.execute(qry5 % (id,dt))
+    try:
+        smp_res = cur.fetchone()
+    except:
+        return f"<h1>Invalid site label: {id}</h1>"
+
+    cur.execute(qry6 % (id,dt))
+    try:
+        spp_res = cur.fetchall()
+    except:
+        return f"<h1>Invalid site label: {id}</h1>"
+
     cur.close()
-    return render_template('sites/visit.html', site=id,visit=dt,siteinfo=site_res,visitinfo=visit_res,estvars=vars_res,veginfo=veg_res)
+    return render_template('sites/visit.html', site=id,visit=dt, siteinfo=site_res, visitinfo=visit_res, estvars=vars_res, veginfo=veg_res, smpinfo=smp_res, spplist=spp_res)
