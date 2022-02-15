@@ -17,9 +17,9 @@
   <table class='definitions'>
     <caption class='definitions'>Definitions</caption>
     <tr><th>None</th><td>&lt;5% individuals in a population resprout after 100% canopy scorch.</td></tr>
-      <tr><th>Few</th><td>5-30% individuals in a population resprout after 100% canopy scorch.</td></tr>
-        <tr><th>Half</th><td>30-70% individuals in a population resprout after 100% canopy scorch.</td></tr>
-          <tr><th>Most</th><td>70-90% individuals in a population resprout after 100% canopy scorch.</td></tr>
+      <tr><th>Few</th><td>5 &ndash; 30% individuals in a population resprout after 100% canopy scorch.</td></tr>
+        <tr><th>Half</th><td>30 &ndash; 70% individuals in a population resprout after 100% canopy scorch.</td></tr>
+          <tr><th>Most</th><td>70 &ndash; 90% individuals in a population resprout after 100% canopy scorch.</td></tr>
             <tr><th>All</th><td>&gt;90% individuals in a population resprout after 100% canopy scorch.</td></tr>
               <tr><th>Unknown</th><td>No data</td></tr>
               </table>
@@ -36,7 +36,10 @@
   Species with information on standing plant longevity:	<a href="{{ url_for( 'traits.trait_list', group='survival',var='standing_plant_longevity' ) }}">{{ surv_info[3] }}</a>.
 </p>
 
-<p>Value: years [integer]. Description:  Age at which 50% of individuals in a cohort (excluding outliers) have died from senescence.</p>
+<table class='definitions'>
+  <caption class='definitions'>Definitions</caption>
+  <tr><th>years [integer]</th><td>Age at which 50% of individuals in a cohort (excluding outliers) have died from senescence.</td></tr>
+  </table>
 
 <h3>Seedbank halflife</h3>
 
@@ -44,5 +47,9 @@
   Species with information on seedbank halflife:	{{ surv_info[4] }}.
 </p>
 
-<p>Value: years [integer]. Description:  Age at which 50% of a seed cohort in an in situ seedbank have decayed or become inviable.</p>
+<table class='definitions'>
+  <caption class='definitions'>Definitions</caption>
+  <tr><th>years [integer]</th><td>Age at which 50% of a seed cohort in an in situ seedbank have decayed or become inviable.</td></tr>
+  </table>
+
 {% endblock %}
