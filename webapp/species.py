@@ -43,10 +43,10 @@ def sp_info(id):
     except:
         return f"<h1>Invalid species code: {id}</h1>"
 
-    qrysurv="SELECT species, species_code, resprouting, regenerative_organ, standing_plant_longevity, seedbank_halflife, seed_longevity FROM litrev.survival_traits WHERE species_code=%s;"
-    cur.execute(qrysurv % spp_info[5])
+    qrysmp="SELECT visit_id,visit_date,count(distinct sample_nr), species, species_code, seedbank, resprout_organ FROM form.quadrat_samples WHERE species_code=%s GROUP BY visit_id, visit_date, species, species_code, seedbank, resprout_organ ORDER BY visit_id,visit_date;"
+    cur.execute(qrysmp % spp_info[5])
     try:
-        surv_trts = cur.fetchall()
+        samples = cur.fetchall()
     except:
         return f"<h1>Invalid species code: {id}</h1>"
 
@@ -58,4 +58,4 @@ def sp_info(id):
         return f"<h1>Invalid species code: {id}</h1>"
 
     cur.close()
-    return render_template('species/info.html', info=spp_info,survs=surv_trts)
+    return render_template('species/info.html', info=spp_info, survs=surv_trts, fsamp=samples)
