@@ -7,7 +7,7 @@
 <p>Species with recorded fire related traits. Click any species's name to see more information about fire related traits.</p>
 
 <table>
-    <tr><th colspan=2>Species</th><th>Vernacular name</th><th>Survival traits</th></tr>
+    <tr><th colspan=2>Species</th><th>Vernacular name</th><th>Literature traits</th><th>Field samples</th></tr>
 {% for pair in pairs %}
   <tr>
             {% if pair[0] == None %}
@@ -26,7 +26,12 @@
           {% if pair[3] == 0 %}
             <td class='empty'>None recorded</td>
           {% else %}
-            <td>{{ pair[3] }}</td>
+            <td>Survival</td>
+          {% endif %}
+          {% if pair[4] == 0 %}
+            <td class='empty'>None recorded</td>
+          {% else %}
+            <td>Recorded in {{ pair[5] }} sites</td>
           {% endif %}
         </tr>
     {% endfor %}

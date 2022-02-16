@@ -13,7 +13,7 @@ bp = Blueprint('species', __name__, url_prefix='/species')
 def fam_list():
     pg = get_pg_connection()
     cur = pg.cursor()
-    cur.execute('SELECT family AS fam,count(distinct "speciesID"),count(distinct s.species_code) FROM species.caps LEFT JOIN litrev.survival_traits s ON "speciesCode_Synonym"=species_code::text GROUP BY fam;')
+    cur.execute('SELECT family AS fam,count(distinct "speciesID"), count(distinct s.species_code), count(distinct q.species_code) FROM species.caps LEFT JOIN litrev.survival_traits s ON "speciesCode_Synonym"=s.species_code::text LEFT JOIN form.quadrat_samples q ON "speciesCode_Synonym"=q.species_code::text  GROUP BY fam;')
     fam_list = cur.fetchall()
     cur.close()
     return render_template('species/fam-list.html', pairs=fam_list, the_title="Species per family")
@@ -22,7 +22,7 @@ def fam_list():
 def sp_list(id):
     pg = get_pg_connection()
     cur = pg.cursor()
-    cur.execute('SELECT "speciesID"::int AS id, "scientificName" AS name, "vernacularName" as vname,count(distinct s.species_code) FROM species.caps LEFT JOIN litrev.survival_traits s ON "speciesCode_Synonym"=species_code::text WHERE "family"=\'%s\' GROUP BY id,name,vname,"sortOrder" ORDER BY "sortOrder"' % id)
+    cur.execute('SELECT "speciesID"::int AS id, "scientificName" AS name, "vernacularName" as vname,count(distinct s.species_code), count(distinct q.species_code), count(distinct q.visit_id) FROM species.caps LEFT JOIN litrev.survival_traits s ON "speciesCode_Synonym"=s.species_code::text LEFT JOIN form.quadrat_samples q ON "speciesCode_Synonym"=q.species_code::text WHERE "family"=\'%s\' GROUP BY id,name,vname,"sortOrder" ORDER BY "sortOrder"' % id)
     try:
         spp_qry = cur.fetchall()
     except:

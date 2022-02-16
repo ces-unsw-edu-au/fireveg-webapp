@@ -33,6 +33,9 @@ def create_app(test_config=None):
     @app.route('/about')
     def about():
         return render_template('about.html', the_title="Home / About")
+    @app.route('/documentation')
+    def documentation():
+        return render_template('documentation.html', the_title="Home / Documentation")
     @app.route('/index')
     def index():
         return render_template('index.html', the_title="Home ")
