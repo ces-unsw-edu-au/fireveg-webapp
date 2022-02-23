@@ -59,5 +59,7 @@ def create_app(test_config=None):
     app.register_blueprint(species.bp)
     from . import traits
     app.register_blueprint(traits.bp)
+    from . import biblio
+    app.register_blueprint(biblio.bp)
 
     return app

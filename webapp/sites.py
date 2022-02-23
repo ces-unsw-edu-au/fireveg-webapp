@@ -7,6 +7,8 @@ from webapp.auth import login_required
 from webapp.db import get_db
 from webapp.pg import get_pg_connection
 from datetime import datetime, timedelta
+import folium
+from folium.plugins import MarkerCluster
 
 bp = Blueprint('sites', __name__, url_prefix='/sites')
 
@@ -33,6 +35,24 @@ def sites_list(survey):
     site_list = cur.fetchall()
     cur.close()
     return render_template('sites/list.html', pairs=site_list, survey=survey)
+
+@bp.route('/map')
+def sites_map():
+    pg = get_pg_connection()
+    cur = pg.cursor()
+    qry='SELECT DISTINCT site_label, location_description, elevation, ST_X(ST_Transform(geom,4326)) , ST_Y(ST_Transform(geom,4326)) FROM form.field_visit LEFT JOIN form.field_site on visit_id=site_label ORDER BY site_label;'
+    cur.execute(qry)
+    site_list = cur.fetchall()
+    cur.close()
+    start_coords=(-30.9540700, 144.7360300)
+    folium_map = folium.Map(location=start_coords, zoom_start=5, tiles='cartodb positron')
+    marker_cluster = MarkerCluster().add_to(folium_map)
+
+    for point in site_list:
+        folium.Marker([point[4],point[3]], popup=point[0]).add_to(marker_cluster)
+    #return folium_map._repr_html_()
+    return render_template('sites/map.html', map=folium_map._repr_html_())
+
 
 @bp.route('/info/<id>')
 def site_info(id):

@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}{{the_title}}{% endblock %}</h1>
+{% endblock %}
+{% block content %}
+{% for ref in refs %}
+<ul>
+<dt>{{ ref['ref_code'] }} ( {{ref.alt_code}} )</dt>
+    <dd>{{ ref.ref_cite }}</dd>
+
+  </ul>
+{% endfor %}
+
+{% endblock %}

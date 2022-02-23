@@ -8,7 +8,7 @@
       {% if info[2] == None %}
     		<span class='empty'>uncertain?</span>
     	{% else %}
-    		{{ info[2] }}
+      <a href="{{ url_for('species.sp_list', id =info[2]) }}">{{ info[2]}}</a>
     	{% endif %}
 
       <strong>Species ID:</strong>
@@ -23,7 +23,7 @@
 {% endblock %}
 
 {% block content %}
-
+<div>
   <h2>Species information</h2>
   <table>
     <tr>
@@ -65,6 +65,11 @@
       </tr>
 </table>
 
+<div class="occ_map">
+<img src="https://biocache.ala.org.au/ws/density/map?q={{info[0]}}" style="width:330px;" alt="Density of occurrences for {{info[0]}}"/>
+<div class="occ_legend" >Occurrences in <a href='https://bie.ala.org.au/search?q={{info[0]}}' target='_blank'>Atlas of Living Australia</a></div>
+  </div>
+</div>
 <h2>Field samples</h2>
 
 {% if fsamp|length == 0 %}
@@ -155,11 +160,69 @@
 	{% endif %}
 </tr>
 
-<table>
+</table>
 {% endfor %}
 {% endif %}
 
-<!-- NOTE the way to link to a route: Use the function name -->
-<p>Return to <a href="{{ url_for('species.sp_list', id =info[2]) }}">{{ info[2]}}</a> / <a href="{{ url_for('species.fam_list') }}">all families</a> to select a different taxon.</p>
+{% if resp|length == 0 %}
+<h4 class='empty'>No resprouting traits recorded for this taxon</h4>
+{% else %}
+  <h4>Resprouting</h4>
+  {% set vars = {'spcode': False} %}
+  <table>
+
+{% for surv in resp %}
+  {% if vars.spcode != surv[1] %}
+  <tr><th colspan=4><i>{{surv[0]}}</i> / species code {{surv[1]}}</th></tr>
+  <tr>
+  <th>Resprouting</th>
+  <th>Raw values in main reference</th>
+  <th>Main reference</th>
+  <th>Cited references</th>
+  </tr>
+
+    {{ vars.update({'spcode':surv[1]}) }}
+  {% endif %}
+
+<tr>
+{% if surv['norm_value'] == None %}
+<td class='empty'>No value recorded.</td>
+{% else %}
+<td>{{ surv['norm_value'] }}</td>
+{% endif %}
+{% if surv['raw_value'] == None %}
+<td class='empty'>No value recorded.</td>
+{% else %}
+<td>{{ surv['raw_value']  }}</td>
+{% endif %}
+{% if surv['main_source'] == None %}
+<td class='empty'>No value recorded.</td>
+{% else %}
+<td>{{ surv['main_source']  }}</td>
+{% endif %}
+{% if surv[4] == None %}
+<td class='empty'>No value recorded.</td>
+{% else %}
+<td>
+  {% for entry in surv[4] %}
+  {{ (refs | selectattr("alt_code","equalto",entry) | map(attribute="ref_code") | list)[0] }} //
+  {% endfor %}
+</td>
+{% endif %}
+</tr>
+{% endfor %}
+
+</table>
+{% endif %}
+
+<h2>References</h2>
+{% for ref in refs %}
+<ul>
+<dt>{{ ref['ref_code'] }} ( {{ref.alt_code}} )</dt>
+    <dd>{{ ref.ref_cite }}</dd>
+
+  </ul>
+{% endfor %}
+
 
 {% endblock %}

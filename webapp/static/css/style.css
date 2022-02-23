@@ -29,3 +29,19 @@ nav ul li a, nav ul li span, header .action { display: block; padding: 0.5rem; }
 input.danger { color: #cc2f2e; }
 input[type=submit] { align-self: start; min-width: 10em; }
 span.empty {color: lightgray;}
+
+/* Container holding the image and the text */
+.occ_map {
+  position: relative;
+  text-align: center;
+  color: white;
+  width: 330px;
+}
+
+/* Bottom left text */
+.occ_legend {
+  color: orange;
+  position: absolute;
+  bottom: 8px;
+  left: 16px;
+}
