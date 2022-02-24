@@ -12,6 +12,7 @@ from psycopg2.extras import DictCursor
 bp = Blueprint('species', __name__, url_prefix='/species')
 
 @bp.route('/fam_list')
+@login_required
 def fam_list():
     pg = get_pg_connection()
     cur = pg.cursor()
@@ -21,6 +22,7 @@ def fam_list():
     return render_template('species/fam-list.html', pairs=fam_list, the_title="Species per family")
 
 @bp.route('/threat_list')
+@login_required
 def threat_list():
     pg = get_pg_connection()
     cur = pg.cursor()
@@ -30,6 +32,7 @@ def threat_list():
     return render_template('species/threat-list.html', pairs=fam_list, the_title="Species per family")
 
 @bp.route('/family/<id>')
+@login_required
 def sp_list(id):
     pg = get_pg_connection()
     cur = pg.cursor()
@@ -42,6 +45,7 @@ def sp_list(id):
     return render_template('species/list.html', pairs=spp_qry, the_title=id)
 
 @bp.route('/category/<id>')
+@login_required
 def cat_list(id):
     pg = get_pg_connection()
     cur = pg.cursor()
@@ -54,6 +58,7 @@ def cat_list(id):
     return render_template('species/list.html', pairs=spp_qry, the_title=id)
 
 @bp.route('/sp/<int:id>')
+@login_required
 def sp_info(id):
     pg = get_pg_connection()
     cur = pg.cursor(cursor_factory=DictCursor)

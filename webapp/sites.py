@@ -14,6 +14,7 @@ bp = Blueprint('sites', __name__, url_prefix='/sites')
 
 
 @bp.route('/survey')
+@login_required
 def survey_list():
     pg = get_pg_connection()
     cur = pg.cursor()
@@ -24,6 +25,7 @@ def survey_list():
 
 @bp.route('/list', defaults={'survey': None})
 @bp.route('/list/<survey>')
+@login_required
 def sites_list(survey):
     pg = get_pg_connection()
     cur = pg.cursor()
@@ -37,6 +39,7 @@ def sites_list(survey):
     return render_template('sites/list.html', pairs=site_list, survey=survey)
 
 @bp.route('/map')
+@login_required
 def sites_map():
     pg = get_pg_connection()
     cur = pg.cursor()
@@ -55,6 +58,7 @@ def sites_map():
 
 
 @bp.route('/info/<id>')
+@login_required
 def site_info(id):
     qry1 = "SELECT site_label,location_description,elevation,st_x(geom),st_y(geom),st_srid(geom) FROM form.field_site WHERE site_label='%s';"
     qry2 = "SELECT visit_date,visit_description,userkey,givennames,surname,otherobserver,survey_name FROM form.field_visit LEFT JOIN form.observerid ON mainobserver=userkey WHERE visit_id='%s' ORDER BY visit_date ASC;"
@@ -80,6 +84,7 @@ def site_info(id):
     return render_template('sites/info.html', info=site_res, visit=visit_res , fire=fire_res, the_title=id)
 
 @bp.route('/visit/<id>/<dt>')
+@login_required
 def visit_info(id,dt):
     qry1 = "SELECT site_label,location_description,elevation,st_x(geom),st_y(geom),st_srid(geom) FROM form.field_site WHERE site_label='%s';"
     qry2 = "SELECT visit_date,visit_description,userkey,givennames,surname,otherobserver,survey_name FROM form.field_visit LEFT JOIN form.observerid ON mainobserver=userkey WHERE visit_id='%s' AND visit_date='%s' ORDER BY visit_date ASC;"

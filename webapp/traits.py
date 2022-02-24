@@ -10,6 +10,7 @@ from webapp.pg import get_pg_connection
 bp = Blueprint('traits', __name__, url_prefix='/traits')
 
 @bp.route('/summary')
+@login_required
 def trait_sum():
     pg = get_pg_connection()
     cur = pg.cursor()
@@ -20,6 +21,7 @@ def trait_sum():
 
 
 @bp.route('/<group>/<var>')
+@login_required
 def trait_list(group,var):
     pg = get_pg_connection()
     cur = pg.cursor()

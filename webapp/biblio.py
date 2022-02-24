@@ -13,6 +13,7 @@ bp = Blueprint('biblio', __name__, url_prefix='/references')
 
 
 @bp.route('/ref_list')
+@login_required
 def ref_list():
     pg = get_pg_connection()
     cur = pg.cursor(cursor_factory=DictCursor)
