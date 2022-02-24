@@ -52,6 +52,24 @@
     </tr>
 
     <tr>
+      <th>Conservation status (NSW)</th>
+    {% if info[11] == None %}
+    <td class='empty'>No value recorded.</td>
+    {% else %}
+    <td>{{ info[11] }}</td>
+    {% endif %}
+  </tr>
+
+  <tr>
+    <th>Conservation status (Australia)</th>
+  {% if info[13] == None %}
+  <td class='empty'>No value recorded.</td>
+  {% else %}
+  <td>{{ info[13] }}</td>
+  {% endif %}
+</tr>
+
+    <tr>
       <th>Growth Form Groups</th>
     {% if info[9] == None and info[10] == None %}
     <td class='empty'>No value recorded.</td>
