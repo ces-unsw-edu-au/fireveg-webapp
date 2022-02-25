@@ -5,51 +5,39 @@
 {% endblock %}
 
 {% block content %}
-<h2>Survival traits</h2>
-<p>
-  Species/taxa with survival traits:	{{ surv_info[0] }}.
-</p>
+  <h3>Priority traits</h3>
+<table>
+        <thead>
+          <tr>
+            {% for col in column_names[0:4] %}
+            <th>
+              {{col}}
+            </th>
+            {% endfor %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in row_data %}
+          <tr>
+            <th>{{row[0]}}</th>
+            <td>{{row[1]}}</td>
+            <td>{{row[2]}}</td>
+            <td>{{row[3]}}</td>
+            {% if row[5] == 0 %}
+            <td colspan='2' class='empty'></td>
+            {% else %}
+            <td><a href="{{ url_for( 'traits.trait_info', group=row[5], var=row[6]) }}">Info</a></td>
+            <td><a href="{{ url_for( 'traits.trait_list', group=row[5], var=row[6]) }}">Values</a></td>
+            {% endif%}
+          </tr>
+          {% endfor %}
+      </tbody>
+      </table>
 
-<h3>Resprouting - full canopy scorch</h3>
-<p>
-  Species with information on resprouting:	<a href="{{ url_for( 'traits.trait_list', group='survival',var='resprouting' ) }}">{{ surv_info[1] }}</a>.
-</p>
-  <table class='definitions'>
-    <caption class='definitions'>Definitions</caption>
-    <tr><th>None</th><td>&lt;5% individuals in a population resprout after 100% canopy scorch.</td></tr>
-      <tr><th>Few</th><td>5 &ndash; 30% individuals in a population resprout after 100% canopy scorch.</td></tr>
-        <tr><th>Half</th><td>30 &ndash; 70% individuals in a population resprout after 100% canopy scorch.</td></tr>
-          <tr><th>Most</th><td>70 &ndash; 90% individuals in a population resprout after 100% canopy scorch.</td></tr>
-            <tr><th>All</th><td>&gt;90% individuals in a population resprout after 100% canopy scorch.</td></tr>
-              <tr><th>Unknown</th><td>No data</td></tr>
-              </table>
-
-<h3>Regenerative organ</h3>
-
-<p>
-  Species with information on regenerative organ:	<a href="{{ url_for( 'traits.trait_list', group='survival',var='regenerative_organ' ) }}">{{ surv_info[2] }}</a>.
-</p>
-
-<h3>Standing plant longevity</h3>
-
-<p>
-  Species with information on standing plant longevity:	<a href="{{ url_for( 'traits.trait_list', group='survival',var='standing_plant_longevity' ) }}">{{ surv_info[3] }}</a>.
-</p>
-
-<table class='definitions'>
-  <caption class='definitions'>Definitions</caption>
-  <tr><th>years [integer]</th><td>Age at which 50% of individuals in a cohort (excluding outliers) have died from senescence.</td></tr>
-  </table>
-
-<h3>Seedbank halflife</h3>
-
-<p>
-  Species with information on seedbank halflife:	{{ surv_info[4] }}.
-</p>
-
-<table class='definitions'>
-  <caption class='definitions'>Definitions</caption>
-  <tr><th>years [integer]</th><td>Age at which 50% of a seed cohort in an in situ seedbank have decayed or become inviable.</td></tr>
-  </table>
-
+<div class=page>
+  {% for table in tables %}
+    <h3>{{titles[loop.index]}}</h3>
+    {{ table|safe }}
+  {% endfor %}
+</div>
 {% endblock %}

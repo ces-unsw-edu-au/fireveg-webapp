@@ -22,6 +22,8 @@ Update and install modules
 pip3 install Flask
 pip install psycopg2-binary
 pip install flask-wtf
+pip install folium
+pip install pandas
 ```
 
 Create and initialise directory

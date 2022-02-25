@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>Summary of fire-related traits</h1>
+{% endblock %}
+
+{% block content %}
+<h2>Survival traits</h2>
+
+<h3>Resprouting - full canopy scorch</h3>
+<p>
+  Species with information on resprouting:
+
+  <table>
+      <tr><th>Value</th><th>Nr. of taxa</th><th>(with sp. code)</th><th>(valid BioNet taxa)</th><th>Sources (direct)</th><th>Sources (indirect)</th></tr>
+  {% for pair in spps %}
+      <tr>
+        <td>{{pair[0]}}</td>
+        <td>{{pair[1]}}</td>
+        <td>{{pair[2]}}</td>
+        <td>{{pair[3]}}</td>
+        <td>{{pair[4]}}</td>
+        <td>{{(refs| selectattr(var,"equalto",pair[0]) | map(attribute="count") | list)[0]}}</td>
+      </tr>
+        {% endfor %}
+        </table>
+
+
+</p>
+  <table class='definitions'>
+    <caption class='definitions'>Definitions</caption>
+    <tr><th>None</th><td>&lt;5% individuals in a population resprout after 100% canopy scorch.</td></tr>
+      <tr><th>Few</th><td>5 &ndash; 30% individuals in a population resprout after 100% canopy scorch.</td></tr>
+        <tr><th>Half</th><td>30 &ndash; 70% individuals in a population resprout after 100% canopy scorch.</td></tr>
+          <tr><th>Most</th><td>70 &ndash; 90% individuals in a population resprout after 100% canopy scorch.</td></tr>
+            <tr><th>All</th><td>&gt;90% individuals in a population resprout after 100% canopy scorch.</td></tr>
+              <tr><th>Unknown</th><td>No data</td></tr>
+              </table>
+
+
+{% endblock %}

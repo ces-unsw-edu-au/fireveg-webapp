@@ -10,7 +10,11 @@
 {% for pair in spps %}
     <tr>
       <td>{{pair[0]}}</td>
+      {% if pair[2] == None %}
+      <td>{{pair[1]}}</td>
+      {% else %}
       <td><a href="{{url_for('species.sp_info', id=pair[2] )}}"><i>{{pair[1]}}</i></a></td>
+      {% endif %}
       <td>{{pair[3]}}</td>
     </tr>
       {% endfor %}
