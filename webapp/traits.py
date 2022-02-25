@@ -51,6 +51,15 @@ def trait_info(group,var):
     cur.execute(qry)
     spp_list = cur.fetchall()
     cur.close()
-    return render_template('traits/trait-info.html', spps=spp_list, refs=oref_list, group=group,var=var)
+
+    fname='webapp/static/metadata/trait-description.csv'
+    data = pd.read_csv(fname)
+    traitdata = data.loc[data.db_table == group]
+
+    fname='webapp/static/metadata/trait-value-description.csv'
+    data = pd.read_csv(fname)
+    slcdata = data.loc[data.db_table == group][['value','description']]
+
+    return render_template('traits/trait-info.html', spps=spp_list, refs=oref_list, group=group, var=var, trait=traitdata.values.tolist(), desc=list(slcdata.values.tolist()))
 
 #select regenerative_organ,count(*) from litrev.traits where regenerative_organ is not NULL group by regenerative_organ order by regenerative_organ;

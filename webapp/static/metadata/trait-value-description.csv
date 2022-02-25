@@ -1,0 +1,7 @@
+﻿db_table,value,description
+litrev.resprouting,None,< 5 % individuals in a population resprout after 100% canopy scorch
+litrev.resprouting,Few,5 – 30 % individuals in a population resprout after 100% canopy scorch
+litrev.resprouting,Half,30 – 70 % individuals in a population resprout after 100% canopy scorch
+litrev.resprouting,Most,70 – 90 % individuals in a population resprout after 100% canopy scorch
+litrev.resprouting,All,> 90 % individuals in a population resprout after 100% canopy scorch
+litrev.resprouting,Unknown,No data
