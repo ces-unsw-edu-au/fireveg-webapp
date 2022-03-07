@@ -77,24 +77,26 @@ def sp_info(id):
     except:
         return f"<h1>Invalid species code: {id}</h1>"
 
-    qrysurv="SELECT species, species_code, resprouting, regenerative_organ, standing_plant_longevity, seedbank_halflife, seed_longevity FROM litrev.survival_traits WHERE species_code=%s;"
-    cur.execute(qrysurv % spp_info[5])
-    try:
-        surv_trts = cur.fetchall()
-    except:
-        return f"<h1>Invalid species code: {id}</h1>"
-
-
-    qryresp="SELECT species, species_code, norm_value, main_source, original_sources, raw_value FROM litrev.resprouting WHERE species_code='%s';"
+    qryresp="SELECT record_id, species, species_code, norm_value, main_source FROM litrev.resprouting WHERE species_code='%s';"
     cur.execute(qryresp % spp_info[5])
     try:
-        resp_trts = cur.fetchall()
+        trait_surv1 = cur.fetchall()
     except:
         return f"<h1>Invalid species code: {id}</h1>"
 
-    qrylit = "SELECT * from litrev.ref_list where ref_code IN (SELECT distinct main_source FROM litrev.resprouting WHERE species_code='%s') OR alt_code IN (SELECT DISTINCT unnest(original_sources) FROM litrev.resprouting WHERE species_code='%s');"
-    cur.execute(qrylit % (spp_info[5],spp_info[5]))
+    qryresp="SELECT record_id, species, species_code, observed_at, best, lower, upper, main_source FROM litrev.firstflower WHERE species_code='%s';"
+    cur.execute(qryresp % spp_info[5])
+    try:
+        trait_repr3 = cur.fetchall()
+    except:
+        return f"<h1>Invalid species code: {id}</h1>"
+
+    qrylit1 = "SELECT * from litrev.ref_list where ref_code IN (SELECT distinct main_source FROM litrev.resprouting WHERE species_code='{spcode}') OR ref_code IN (SELECT distinct main_source FROM litrev.firstflower WHERE species_code='{spcode}')"
+    qrylit2 = "SELECT * from litrev.ref_list where ref_code IN (SELECT distinct unnest(original_sources) FROM litrev.firstflower WHERE species_code='{spcode}') OR ref_code IN (SELECT DISTINCT unnest(original_sources) FROM litrev.resprouting WHERE species_code='{spcode}');"
+    cur.execute(qrylit1.format(spcode=spp_info[5]))
     ref_list = cur.fetchall()
+    cur.execute(qrylit2.format(spcode=spp_info[5]))
+    add_list = cur.fetchall()
 
     cur.close()
-    return render_template('species/info.html', info=spp_info, survs=surv_trts, fsamp=samples, resp=resp_trts, refs=ref_list)
+    return render_template('species/info.html', info=spp_info, fsamp=samples, repr3=trait_repr3, surv1=trait_surv1, mainrefs=ref_list, addrefs=add_list)

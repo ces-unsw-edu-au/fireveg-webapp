@@ -7,7 +7,7 @@
 {% for ref in refs %}
 <ul>
 <dt>{{ ref['ref_code'] }} ( {{ref.alt_code}} )</dt>
-    <dd>{{ ref.ref_cite }}</dd>
+    <dd>{{ ref.ref_cite }} [<a href="{{ url_for('biblio.ref_info', id =ref.ref_code) }}">Info</a>] </dd>
 
   </ul>
 {% endfor %}

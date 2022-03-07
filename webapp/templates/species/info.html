@@ -103,22 +103,22 @@
   <th>Seedbank</th>
   <th>Regenerative organ</th>
 </tr>
-{% for surv in fsamp %}
+{% for entry in fsamp %}
 
-<tr><td><i>{{surv[3]}}</i> / species code {{surv[4]}}</td>
+<tr><td><i>{{entry[3]}}</i> / species code {{entry[4]}}</td>
   <td>
-  <a href="{{ url_for('sites.site_info', id =surv[0]) }}">{{ surv[0]}}</a></td>
-  <td>  <a href="{{ url_for('sites.visit_info', id =surv[0], dt=surv[1]) }}">{{ surv[1]}}</a></td>
-  <td>{{ surv[2] }}</td>
-  {% if surv[5] == None %}
+  <a href="{{ url_for('sites.site_info', id =entry[0]) }}">{{ entry[0]}}</a></td>
+  <td>  <a href="{{ url_for('sites.visit_info', id =entry[0], dt=entry[1]) }}">{{ entry[1]}}</a></td>
+  <td>{{ entry[2] }}</td>
+  {% if entry[5] == None %}
   <td class='empty'>No value recorded.</td>
   {% else %}
-  <td>{{ surv[5] }}</td>
+  <td>{{ entry[5] }}</td>
   {% endif %}
-  {% if surv[6] == None %}
+  {% if entry[6] == None %}
   <td class='empty'>No value recorded.</td>
   {% else %}
-  <td>{{ surv[6] }}</td>
+  <td>{{ entry[6] }}</td>
   {% endif %}
 </tr>
 
@@ -128,104 +128,94 @@
 
 
   <h2>Fire related traits (from literature)</h2>
-  {% if survs|length == 0 %}
-  <h3 class='empty'>No survival traits recorded for this taxon</h3>
-  {% else %}
-    <h3>Survival traits</h3>
-{% for surv in survs %}
-<table>
-  <tr><th colspan=2><i>{{surv[0]}}</i> / species code {{surv[1]}}</th></tr>
-<tr>
-  <th>Resprouting</th>
-  {% if surv[2] == None %}
-	<td class='empty'>No value recorded.</td>
-	{% else %}
-  <td>{{ surv[2] }}</td>
-	{% endif %}
-</tr>
 
-<tr>
-  <th>Regenerative organ</th>
-  {% if surv[3] == None %}
-	<td class='empty'>No value recorded.</td>
-	{% else %}
-  <td>{{ surv[3] }}</td>
-	{% endif %}
-</tr>
 
-<tr>
-  <th>Standing Plant Longevity</th>
-  {% if surv[4] == None %}
-	<td class='empty'>No value recorded.</td>
-	{% else %}
-  <td>{{ surv[4] }}</td>
-	{% endif %}
-</tr>
-<tr>
-  <th>Seedank halflife</th>
-  {% if surv[5] == None %}
-	<td class='empty'>No value recorded.</td>
-	{% else %}
-  <td>{{ surv[5] }}</td>
-	{% endif %}
-</tr>
-<tr>
-  <th>Seed longevity</th>
-  {% if surv[6] == None %}
-	<td class='empty'>No value recorded.</td>
-	{% else %}
-  <td>{{ surv[6] }}</td>
-	{% endif %}
-</tr>
-
-</table>
-{% endfor %}
-{% endif %}
-
-{% if resp|length == 0 %}
-<h4 class='empty'>No resprouting traits recorded for this taxon</h4>
+{% if surv1|length == 0 %}
+<span class='empty'>No resprouting traits recorded for this taxon</span>
 {% else %}
   <h4>Resprouting</h4>
+  {% set vars = {'spcode': False} -%}
+  <table>
+    {% for entry in surv1 %}
+      <tr>
+      <th>Species</th>
+      <th>Resprouting</th>
+      <th>Main reference</th>
+      </tr>
+
+      <tr>
+        {% if vars.spcode != entry['species'] %}
+        {% set vars = {'spcode': entry['species']} -%}
+        <td><i>{{entry['species']}}</i> / species code {{entry['species_code']}}</td>
+        {% else %}
+        <td></td>
+        {% endif %}
+      {% if entry['norm_value'] == None %}
+        <td class='empty'>No value recorded.</td>
+      {% else %}
+      <td><a href="{{url_for('traits.spp', trait='surv1', code=entry.species_code)}}">{{ entry['norm_value'] }}</a></td>
+    {% endif %}
+      {% if entry['main_source'] == None %}
+        <td class='empty'>No value recorded.</td>
+      {% else %}
+        <td><a href="#{{entry['main_source']}}">{{ entry['main_source']  }}</a></td>
+      {% endif %}
+      </tr>
+    {% endfor %}
+
+</table>
+{% endif %}
+
+
+{% if repr3|length == 0 %}
+<h4 class='empty'>No first flowering traits recorded for this taxon</h4>
+{% else %}
+  <h4>First flowering</h4>
   {% set vars = {'spcode': False} %}
   <table>
-
-{% for surv in resp %}
-  {% if vars.spcode != surv[1] %}
-  <tr><th colspan=4><i>{{surv[0]}}</i> / species code {{surv[1]}}</th></tr>
-  <tr>
-  <th>Resprouting</th>
-  <th>Raw values in main reference</th>
-  <th>Main reference</th>
-  <th>Cited references</th>
-  </tr>
-
-    {{ vars.update({'spcode':surv[1]}) }}
+    <tr>
+    <th>Species</th>
+    <th>Time to first flower [years]</th>
+    <th>Main reference</th>
+    </tr>
+{% for entry in repr3 %}
+  {% if vars.spcode != entry[1] %}
+  {% set vars = {'spcode': entry[1]} -%}
   {% endif %}
 
 <tr>
-{% if surv['norm_value'] == None %}
+  <td><i>{{entry.species}}</i> / species code {{entry.species_code}}</td>
+
+<td><a href="{{url_for('traits.spp', trait='repr3', code=entry.species_code)}}">
+  {% if entry['best'] == None %}
+    {% if entry['lower'] == None and entry['upper'] != None %}
+      &lt; {{ entry['upper'] }}
+    {% elif entry['lower'] != None and entry['upper'] == None %}
+      &gt; {{ entry['lower'] }}
+    {% elif entry['lower'] != None and entry['upper'] != None %}
+      ({{ entry['lower'] }} &ndash; {{ entry['upper'] }})
+    {% else %}
+    <span class='empty'>No value recorded.</span>
+    {% endif %}
+  {% else %}
+    {% if entry['lower'] == None and entry['upper'] != None %}
+      {{ entry['best'] }} (&lt; {{ entry['upper'] }})
+    {% elif entry['lower'] != None and entry['upper'] == None %}
+      {{ entry['best'] }} (&gt; {{ entry['lower'] }})
+    {% elif entry['lower'] != None and entry['upper'] != None %}
+      {{ entry['best'] }} ({{ entry['lower'] }} &ndash; {{ entry['upper'] }})
+    {% else %}
+      {{ entry['best'] }}
+    {% endif %}
+  {% endif %}
+</a></td>
+
+
+{% if entry['main_source'] == None %}
 <td class='empty'>No value recorded.</td>
 {% else %}
-<td>{{ surv['norm_value'] }}</td>
-{% endif %}
-{% if surv['raw_value'] == None %}
-<td class='empty'>No value recorded.</td>
-{% else %}
-<td>{{ surv['raw_value']  }}</td>
-{% endif %}
-{% if surv['main_source'] == None %}
-<td class='empty'>No value recorded.</td>
-{% else %}
-<td>{{ surv['main_source']  }}</td>
-{% endif %}
-{% if surv[4] == None %}
-<td class='empty'>No value recorded.</td>
-{% else %}
-<td>
-  {% for entry in surv[4] %}
-  {{ (refs | selectattr("alt_code","equalto",entry) | map(attribute="ref_code") | list)[0] }} //
-  {% endfor %}
-</td>
+<td><a href="#{{entry['main_source']}}">{{ entry['main_source']  }}</a></td>
+
 {% endif %}
 </tr>
 {% endfor %}
@@ -234,13 +224,27 @@
 {% endif %}
 
 <h2>References</h2>
-{% for ref in refs %}
 <ul>
-<dt>{{ ref['ref_code'] }} ( {{ref.alt_code}} )</dt>
-    <dd>{{ ref.ref_cite }}</dd>
-
-  </ul>
-{% endfor %}
-
+<h3>Main references</h3>
+  <ul>
+    {% for ref in mainrefs %}
+    <dt id="{{ ref['ref_code'] }}"><a href="{{ url_for('biblio.ref_info', id =ref.ref_code) }}">{{ ref['ref_code'] }}</a>
+      {% if ref['alt_code'] != None %}
+        ( {{ref.alt_code}} )
+      {% endif %}</dt>
+        <dd>{{ ref.ref_cite }}</dd>
+    {% endfor %}
+ </ul>
+<h3>Additional references</h3>
+ <ul>
+   {% for ref in addrefs %}
+   <dt id="{{ ref['ref_code'] }}"><a href="{{ url_for('biblio.ref_info', id =ref.ref_code) }}">{{ ref['ref_code'] }}</a>
+     {% if ref['alt_code'] != None %}
+       ( {{ref.alt_code}} )
+     {% endif %}</dt>
+       <dd>{{ ref.ref_cite }}</dd>
+   {% endfor %}
+ </ul>
+</ul>
 
 {% endblock %}

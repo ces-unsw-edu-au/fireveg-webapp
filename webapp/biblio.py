@@ -23,4 +23,22 @@ def ref_list():
     return render_template('biblio/ref-list.html', refs=ref_list, the_title="All References")
 
 
+@bp.route('/ref_info/<id>')
+@login_required
+def ref_info(id):
+    qry1 = "SELECT ref_code, ref_cite, alt_code FROM litrev.ref_list WHERE ref_code='%s'"
+    qry2 = "SELECT record_id, species, species_code,\"speciesID\"::int as species_id FROM litrev.firstflower LEFT JOIN species.caps ON species_code=\"speciesCode_Synonym\" WHERE main_source='{ref}' OR '{ref}'=ANY(original_sources) ORDER BY random()"
+    qry3 = "SELECT record_id, species, species_code,\"speciesID\"::int as species_id FROM litrev.resprouting LEFT JOIN species.caps ON species_code=\"speciesCode_Synonym\" WHERE main_source='{ref}' OR '{ref}'=ANY(original_sources) ORDER BY random()"
+    pg = get_pg_connection()
+    cur = pg.cursor(cursor_factory=DictCursor)
+    cur.execute(qry1 % id)
+    ref_info = cur.fetchone()
+    cur.execute(qry2.format(ref=id))
+    trait_repr3 = cur.fetchmany(10)
+    cur.execute(qry3.format(ref=id))
+    trait_surv1 = cur.fetchmany(10)
+    cur.close()
+    return render_template('biblio/ref-info.html', repr3=trait_repr3, surv1=trait_surv1, ref=ref_info)
+
+
 #select distinct species_code,species from litrev.resprouting where main_source='Department of Natural Resources & Environment (Vic' OR 'Department of Natural Resources & Environment (Vic'=any(original_sources);

@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}{{the_title}}{% endblock %}</h1>
+{% endblock %}
+{% block content %}
+
+<ul>
+<dt>{{ ref['ref_code'] }} ( {{ref.alt_code}} )</dt>
+    <dd>{{ ref.ref_cite }}</dd>
+
+  </ul>
+
+
+  {% if repr3|length == 0 %}
+  <h3 class='empty'>This references does not provide information about Age at first flower production.</h3>
+  {% else %}
+  <h3>This references provides data for Age at first flower production for ... species</h3>
+  <p>{{repr3|length}} examples below</p>
+    <table>
+    <tr>
+      <th>Species name used</th>
+    </tr>
+    {% for entry in repr3 %}
+    <tr><td><a href="{{url_for('species.sp_info',id=entry.species_id)}}">{{entry.species}} ({{entry.species_code}}) [{{entry.species_id}}]</a></td>
+    </tr>
+    {% endfor %}
+    <table>
+  {% endif %}
+
+  {% if surv1|length == 0 %}
+  <h3 class='empty'>This references does not provide information about Resprouting - full canopy scorch.</h3>
+  {% else %}
+  <h3>This references provides data for Resprouting for ... species</h3>
+  <p>{{surv1|length}} examples below</p>
+    <table>
+    <tr>
+      <th>Species name used</th>
+    </tr>
+    {% for entry in surv1 %}
+    <tr><td><a href="{{url_for('species.sp_info',id=entry.species_id)}}">{{entry.species}} ({{entry.species_code}}) [{{entry.species_id}}]</a></td>
+    </tr>
+    {% endfor %}
+    <table>
+  {% endif %}
+
+
+{% endblock %}

@@ -43,13 +43,19 @@ def trait_list(group,var):
 def trait_info(group,var):
     pg = get_pg_connection()
     cur = pg.cursor(cursor_factory=DictCursor)
-    qry = 'WITH A AS (select {var},unnest(original_sources) as oref from {grp}) SELECT {var}, COUNT(DISTINCT oref) FROM A GROUP BY {var}'.format(var=var,grp=group)
-    cur.execute(qry)
-    oref_list = cur.fetchall()
 
-    qry = 'SELECT {var},count(DISTINCT species), count(DISTINCT species_code),count(DISTINCT \"speciesID\"), count(DISTINCT main_source) FROM {grp} LEFT JOIN species.caps ON species_code::text="speciesCode_Synonym" WHERE {var} IS NOT NULL GROUP BY {var}'.format(var=var,grp=group)
+    qry = 'SELECT {var},count(DISTINCT species), count(DISTINCT \"speciesID\") FROM {grp} LEFT JOIN species.caps ON species_code::text="speciesCode_Synonym" WHERE {var} IS NOT NULL GROUP BY {var}'.format(var=var,grp=group)
     cur.execute(qry)
     spp_list = cur.fetchall()
+
+    qry = 'SELECT DISTINCT main_source, ref_cite, ref_code, alt_code FROM {grp} LEFT JOIN litrev.ref_list ON main_source=ref_code WHERE {var} IS NOT NULL '.format(var=var,grp=group)
+    cur.execute(qry)
+    ref_list = cur.fetchall()
+
+    qry = 'SELECT ref_cite, ref_code, alt_code FROM litrev.ref_list WHERE ref_code IN (SELECT DISTINCT unnest(original_sources) as oref FROM {grp} WHERE {var} IS NOT NULL)  '.format(var=var,grp=group)
+    cur.execute(qry)
+    add_list = cur.fetchall()
+
     cur.close()
 
     fname='webapp/static/metadata/trait-description.csv'
@@ -60,6 +66,23 @@ def trait_info(group,var):
     data = pd.read_csv(fname)
     slcdata = data.loc[data.db_table == group][['value','description']]
 
-    return render_template('traits/trait-info.html', spps=spp_list, refs=oref_list, group=group, var=var, trait=traitdata.values.tolist(), desc=list(slcdata.values.tolist()))
+    return render_template('traits/trait-info.html', spps=spp_list, mainrefs=ref_list, addrefs=add_list, group=group, var=var, trait=traitdata.values.tolist(), desc=list(slcdata.values.tolist()))
 
-#select regenerative_organ,count(*) from litrev.traits where regenerative_organ is not NULL group by regenerative_organ order by regenerative_organ;
+@bp.route('/<trait>/<code>')
+@login_required
+def spp(trait,code):
+    pg = get_pg_connection()
+    cur = pg.cursor(cursor_factory=DictCursor)
+
+    if trait=='surv1':
+        qry="SELECT * from litrev.resprouting where species_code='%s'"
+        cur.execute(qry % code)
+        rs = cur.fetchall()
+    elif trait=='repr3':
+        qry="SELECT * from litrev.firstflower where species_code='%s'"
+        cur.execute(qry % code)
+        rs = cur.fetchall()
+    else:
+        rs = None
+    cur.close()
+    return render_template('traits/spp.html', records=rs, species=code, trait=trait)

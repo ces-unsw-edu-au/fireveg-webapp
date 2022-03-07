@@ -47,12 +47,13 @@ def sites_map():
     cur.execute(qry)
     site_list = cur.fetchall()
     cur.close()
-    start_coords=(-30.9540700, 144.7360300)
-    folium_map = folium.Map(location=start_coords, zoom_start=5, tiles='cartodb positron')
+    start_coords=(-30.9540700, 150.7360300)
+    folium_map = folium.Map(location=start_coords, zoom_start=6, tiles='cartodb positron')
     marker_cluster = MarkerCluster().add_to(folium_map)
 
     for point in site_list:
-        folium.Marker([point[4],point[3]], popup=point[0]).add_to(marker_cluster)
+        if point[4] is not None:
+            folium.Marker([point[4],point[3]], popup=point[0]).add_to(marker_cluster)
     #return folium_map._repr_html_()
     return render_template('sites/map.html', map=folium_map._repr_html_())
 

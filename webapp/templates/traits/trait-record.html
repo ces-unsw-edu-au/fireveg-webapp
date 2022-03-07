@@ -1,0 +1,10 @@
+
+{% if entry[4] == None %}
+  <td class='empty'>No value recorded.</td>
+{% else %}
+  <td>
+    {% for entry in entry[4] %}
+    {{ (refs | selectattr("alt_code","equalto",entry) | map(attribute="ref_code") | list)[0] }} //
+    {% endfor %}
+  </td>
+{% endif %}

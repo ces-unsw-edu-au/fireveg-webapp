@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>Fire related traits / {{trait}} / {{species}}</h1>
+{% endblock %}
+
+{% block content %}
+
+{% if records|length == 0 %}
+<span class='empty'>No traits recorded for this taxon</span>
+{% else %}
+  <h3>{{records|length}} records of resprouting for this taxon</h3>
+  {% set vars = {'spcode': False} -%}
+  <table>
+    {% for entry in records %}
+      {% for k in entry.keys() %}
+      <tr>
+        <th>{{k}}</th>
+        {% if entry[k] == None %}
+        <td class='empty'>No value recorded</td>
+        {% else%}
+          <td>
+          {% if k == 'original_sources' %}
+            {% for v in entry[k] %}
+            <a href="{{url_for('biblio.ref_info',id=v)}}">{{v}}</a>
+            {% endfor%}
+          {% elif k == 'main_source' %}
+          <a href="{{url_for('biblio.ref_info',id=entry[k])}}">{{entry[k]}}</a>
+          {% elif k in ('original_notes', 'additional_notes', 'raw_value')%}
+            {% for v in entry[k] %}
+            <span class='item'>{{v}}</span><br/>
+            {% endfor%}
+          {% else %}
+          {{entry[k]}}
+          {% endif %}
+          </td>
+      {% endif %}
+      </tr>
+      {% endfor %}
+    {% endfor %}
+
+</table>
+{% endif %}
+
+{% endblock %}

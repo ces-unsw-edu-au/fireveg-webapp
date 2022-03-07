@@ -8,13 +8,25 @@
 
 <div>
   <ul>
-    <li><a href="{{ url_for('sites.survey_list') }}">List of surveys</a>
-    <li><a href="{{ url_for('sites.sites_list') }}">List of sites (all surveys)</a>
-    <li><a href="{{ url_for('sites.sites_map') }}">Map of sites (all surveys)</a>
-      <li><a href="{{ url_for('species.fam_list') }}">List of species per family</a>
-        <li><a href="{{ url_for('species.threat_list') }}">List of species per category of threat</a>
-        <li><a href="{{ url_for('traits.trait_sum') }}">Traits from literature records</a>
-        <li><a href="{{ url_for('biblio.ref_list') }}">All references</a>
+    <li> Surveys and sites</li>
+    <ul>
+      <li><a href="{{ url_for('sites.survey_list') }}">List of surveys</a></li>
+      <li><a href="{{ url_for('sites.sites_list') }}">List of sites (all surveys)</a></li>
+      <li><a href="{{ url_for('sites.sites_map') }}">Map of sites (all surveys)</a></li>
+    </ul>
+
+    <li> Species traits reported in the literature</li>
+    <ul>
+      <li><a href="{{ url_for('traits.trait_sum') }}">All traits</a></li>
+      <li><a href="{{ url_for('biblio.ref_list') }}">All references</a></li>
+    </ul>
+
+    <li> Browse taxonomy</li>
+      <ul>
+        <li><a href="{{ url_for('species.fam_list') }}">List of species per family</a></li>
+        <li><a href="{{ url_for('species.threat_list') }}">List of species per category of threat</a></li>
+        <li><a href="{{ url_for('traits.trait_sum') }}">Traits from literature records</a></li>
+      </ul>
   </ul>
 </div>
 {% endblock %}
