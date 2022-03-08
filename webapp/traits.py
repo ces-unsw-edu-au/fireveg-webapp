@@ -44,15 +44,15 @@ def trait_info(group,var):
     pg = get_pg_connection()
     cur = pg.cursor(cursor_factory=DictCursor)
 
-    qry = 'SELECT {var},count(DISTINCT species), count(DISTINCT \"speciesID\") FROM {grp} LEFT JOIN species.caps ON species_code::text="speciesCode_Synonym" WHERE {var} IS NOT NULL GROUP BY {var}'.format(var=var,grp=group)
+    qry = 'SELECT {var},count(DISTINCT species), count(DISTINCT \"speciesID\") FROM {grp} LEFT JOIN species.caps ON species_code::text="speciesCode_Synonym" GROUP BY {var}'.format(var=var,grp=group)
     cur.execute(qry)
     spp_list = cur.fetchall()
 
-    qry = 'SELECT DISTINCT main_source, ref_cite, ref_code, alt_code FROM {grp} LEFT JOIN litrev.ref_list ON main_source=ref_code WHERE {var} IS NOT NULL '.format(var=var,grp=group)
+    qry = 'SELECT DISTINCT main_source, ref_cite, ref_code, alt_code FROM {grp} LEFT JOIN litrev.ref_list ON main_source=ref_code  '.format(grp=group)
     cur.execute(qry)
     ref_list = cur.fetchall()
 
-    qry = 'SELECT ref_cite, ref_code, alt_code FROM litrev.ref_list WHERE ref_code IN (SELECT DISTINCT unnest(original_sources) as oref FROM {grp} WHERE {var} IS NOT NULL)  '.format(var=var,grp=group)
+    qry = 'SELECT ref_cite, ref_code, alt_code FROM litrev.ref_list WHERE ref_code IN (SELECT DISTINCT unnest(original_sources) as oref FROM {grp})'.format(grp=group)
     cur.execute(qry)
     add_list = cur.fetchall()
 

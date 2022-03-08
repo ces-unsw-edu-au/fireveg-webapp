@@ -12,7 +12,7 @@ Grow2a,Maximum growth stage,Standing plant,Growth,,,,,
 Grow3,Maximum bark thickness,Standing plant,Growth,,,,,
 Grow4,Maximum plant height,Standing plant,Growth,,,,,
 Repr1,Flowering time,Standing plant,Reproduction,,,,,
-Repr2,Post-fire flowering response,Standing plant,Reproduction,2nd tranche,,,,
+Repr2,Post-fire flowering response,Standing plant,Reproduction,2nd tranche,litrev.postfireflowering,norm_value,test,python script
 Repr3,Age at first flower production,Standing plant,Reproduction,1st tranche,litrev.firstflower,observed_at,test,python script
 Repr3a,Time to first postfire reproduction (from resprouts),Standing plant,Reproduction,,litrev.firstflower,years,test,python script
 Repr4,Maturation age,Standing plant,Reproduction,1st tranche,litrev.maturationage,years,test,python script

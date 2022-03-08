@@ -8,18 +8,55 @@
 
 {% if records|length == 0 %}
 <span class='empty'>No traits recorded for this taxon</span>
+{% elif records|length == 1%}
+<h3>One record of this trait for this taxon</h3>
+{% set vars = {'spcode': False} -%}
+<table>
+  {% for entry in records %}
+    {% for k in entry.keys() %}
+    <tr>
+      <th>{{k}}</th>
+      {% if entry[k] == None %}
+      <td class='empty'>No value recorded</td>
+      {% else%}
+        <td>
+        {% if k == 'original_sources' %}
+          {% for v in entry[k] %}
+          <a href="{{url_for('biblio.ref_info',id=v)}}">{{v}}</a>
+          {% endfor%}
+        {% elif k == 'main_source' %}
+        <a href="{{url_for('biblio.ref_info',id=entry[k])}}">{{entry[k]}}</a>
+        {% elif k in ('original_notes', 'additional_notes', 'raw_value')%}
+          {% for v in entry[k] %}
+          <span class='item'>{{v}}</span><br/>
+          {% endfor%}
+        {% else %}
+        {{entry[k]}}
+        {% endif %}
+        </td>
+    {% endif %}
+    </tr>
+    {% endfor %}
+  {% endfor %}
+
+</table>
+
 {% else %}
-  <h3>{{records|length}} records of resprouting for this taxon</h3>
+  <h3>{{records|length}} records of {{trait}} for this taxon</h3>
   {% set vars = {'spcode': False} -%}
-  <table>
+  <table >
+    <tr style='display: block; float: left;'>
+    {% for k in records[0].keys() %}
+      <th style='display: block;'>{{k}}</th>
+    {% endfor %}
+    </tr>
     {% for entry in records %}
+      <tr style='display: block; float: left; border:3px double;'>
       {% for k in entry.keys() %}
-      <tr>
-        <th>{{k}}</th>
         {% if entry[k] == None %}
-        <td class='empty'>No value recorded</td>
+        <td class='empty' style='display: block;'>No value recorded</td>
         {% else%}
-          <td>
+          <td style='display: block;'>
           {% if k == 'original_sources' %}
             {% for v in entry[k] %}
             <a href="{{url_for('biblio.ref_info',id=v)}}">{{v}}</a>
@@ -35,10 +72,9 @@
           {% endif %}
           </td>
       {% endif %}
-      </tr>
       {% endfor %}
+    </tr>
     {% endfor %}
-
 </table>
 {% endif %}
 

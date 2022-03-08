@@ -5,6 +5,10 @@ litrev.resprouting,norm_value,half,30 – 70 % individuals in a population respr
 litrev.resprouting,norm_value,most,70 – 90 % individuals in a population resprout after 100% canopy scorch
 litrev.resprouting,norm_value,all,> 90 % individuals in a population resprout after 100% canopy scorch
 litrev.resprouting,norm_value,unknown,No data
-litrev.firstflower,observed_at,Recruits,"The time taken for first individual in a recruitment cohort to produce their first reproductive organs (e.g. flowers, sporophylls)"
-litrev.firstflower,observed_at,Resprouters,"The time taken after fire for first reproductive organs (e.g. flowers, sporophylls) to be produced in a population of resprouting individuals"
-litrev.maturationage,observed_at,Recruits,The time taken for 50% of individuals in a cohort [even aged recruits] to produce their first viable seed
+litrev.firstflower,observed_at,Recruit,"The time taken for first individual in a recruitment cohort to produce their first reproductive organs (e.g. flowers, sporophylls)"
+litrev.firstflower,observed_at,Resprout,"The time taken after fire for first reproductive organs (e.g. flowers, sporophylls) to be produced in a population of resprouting individuals"
+litrev.maturationage,observed_at,Recruit,The time taken for 50% of individuals in a cohort [even aged recruits] to produce their first viable seed
+litrev.postfireflowering,norm_value,Exclusive,"Flowering occurs exclusively in the first 5 years after fire (excluding outliers, e.g roadsides)"
+litrev.postfireflowering,norm_value,Facultative,Flowering occurs most prolifically in the first 5 years after fire
+litrev.postfireflowering,norm_value,Negligible,Flowering similar or variable throughout the fire cycle
+litrev.postfireflowering,norm_value,unknown,No data
