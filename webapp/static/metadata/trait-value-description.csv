@@ -18,4 +18,18 @@ litrev.rect2,norm_value,Tolerant,"The temporal pattern of seedling or clonal est
 litrev.rect2,norm_value,Tolerant-Requiring,"The temporal pattern of seedling or clonal establishment through the fire cycle: T/R- tolerant or requiring of conditions in established communities, uncertain or variable. See Noble & Slatyer (1980, Vegetatio)"
 litrev.rect2,norm_value,Requiring,"The temporal pattern of seedling or clonal establishment through the fire cycle: R- requiring of of conditions in established communities (i.e. new recruits only observed at sites unburnt for some years). See Noble & Slatyer (1980, Vegetatio)"
 litrev.rect2,norm_value,Unknown,No data
-litrev.grow1,best,years,
+litrev.grow1,best,years,Age for development of regenerative/resistance organs
+litrev.surv4,norm_value,Epicormic,Resprouting from epicormic meristematic tissues or buds beneath bark on woody aerial stems
+litrev.surv4,norm_value,Apical,Resprouting from active shoots protected by crowded leaf bases on woody stems
+litrev.surv4,norm_value,Lignotuber,Resprouting from meristematic tissues or buds on lignotubers (swollen woody organ) at or just below the soil surface
+litrev.surv4,norm_value,Basal,Resprouting from meristematic tissues or buds at the base of woody stems at or just below the soil surface
+litrev.surv4,norm_value,Tuber,"Resprouting from non-woody nodular subsoil organs (bulbs, corms, tubers, taproots) with active shoots or dormant buds"
+litrev.surv4,norm_value,Tussock,Shoots protected and resprouting within tightly clustered tillers and resprouting  without significant lateral spread
+litrev.surv4,norm_value,Long rhizome or root sucker,"Resprouting from buried woody or non-woody horizontal organs capable of lateral spread, typically >0.5m. Includes root suckers. "
+litrev.surv4,norm_value,Short rhizome,"Resprouting from buried woody or non-woody horizontal organs, but not capable of significant lateral spread, typically <0.5m. "
+litrev.surv4,norm_value,Stolon,Resprouting from non-woody horizontal organs on or just below the soil surface
+litrev.surv4,norm_value,None,No vegetative recovery - killed by fire
+litrev.germ1,norm_value,Canopy,Seeds withheld for >1yr within woody fruits in the plant canopy that release seeds when scorched
+litrev.germ1,norm_value,Soil-persistent,Seeds released at maturity with a fraction (min 10%) remaining viable in the soil for >1yr
+litrev.germ1,norm_value,Transient,Seeds released from woody or fleshy fruits at maturity with a negligible fraction (max 1%) remaining viable in the soil for >1yr
+litrev.germ1,norm_value,Non-canopy,Seedbanks uncertain but not canopy type (either Soil-persistent or Transient seedbank type)
