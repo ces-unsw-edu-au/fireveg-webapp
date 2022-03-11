@@ -40,7 +40,7 @@
           {% endfor%}
         {% elif k == 'main_source' %}
         <a href="{{url_for('biblio.ref_info',id=entry[k])}}">{{entry[k]}}</a>
-        {% elif k in ('original_notes', 'additional_notes', 'raw_value')%}
+        {% elif k in ('original_notes', 'additional_notes', 'raw_value', 'weight_notes')%}
           {% for v in entry[k] %}
           <span class='item'>{{v}}</span><br/>
           {% endfor%}

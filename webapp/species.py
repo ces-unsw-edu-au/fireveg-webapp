@@ -11,13 +11,16 @@ from psycopg2.extras import DictCursor
 import pandas as pd
 
 bp = Blueprint('species', __name__, url_prefix='/species')
+create_spp_trait_table="CREATE TEMP TABLE species_traits (species_code,trait_codes) AS (WITH A AS (SELECT 'germ1' AS table_name, species_code FROM litrev.germ1 UNION SELECT 'repr4' AS table_name, species_code FROM litrev.repr4 UNION SELECT 'grow1' AS table_name, species_code FROM litrev.grow1 UNION SELECT 'rect2' AS table_name, species_code FROM litrev.rect2 UNION SELECT 'repr3a' AS table_name, species_code FROM litrev.repr3a UNION SELECT 'repr2' AS table_name, species_code FROM litrev.repr2 UNION SELECT 'surv1' AS table_name, species_code FROM litrev.surv1 UNION SELECT 'repr3' AS table_name, species_code FROM litrev.repr3) SELECT species_code,array_agg(table_name) FROM A GROUP BY species_code)"
 
 @bp.route('/fam_list')
 @login_required
 def fam_list():
     pg = get_pg_connection()
     cur = pg.cursor()
-    cur.execute('SELECT family AS fam,count(distinct "speciesID"), count(distinct s.species_code), count(distinct q.species_code) FROM species.caps LEFT JOIN litrev.surv1 s ON "speciesCode_Synonym"=s.species_code::text LEFT JOIN form.quadrat_samples q ON "speciesCode_Synonym"=q.species_code::text  GROUP BY fam;')
+    cur.execute(create_spp_trait_table)
+
+    cur.execute('SELECT family AS fam,count(distinct "speciesID"), count(distinct s.species_code), count(distinct q.species_code) FROM species.caps LEFT JOIN species_traits s ON "speciesCode_Synonym"=s.species_code::text LEFT JOIN form.quadrat_samples q ON "speciesCode_Synonym"=q.species_code::text  GROUP BY fam;')
     fam_list = cur.fetchall()
     cur.close()
     return render_template('species/fam-list.html', pairs=fam_list, the_title="Species per family")
@@ -27,7 +30,8 @@ def fam_list():
 def threat_list():
     pg = get_pg_connection()
     cur = pg.cursor()
-    cur.execute('SELECT \"stateConservation\" AS fam,count(distinct "speciesID"), count(distinct s.species_code), count(distinct q.species_code) FROM species.caps LEFT JOIN litrev.surv1 s ON "speciesCode_Synonym"=s.species_code::text LEFT JOIN form.quadrat_samples q ON "speciesCode_Synonym"=q.species_code::text  GROUP BY fam;')
+    cur.execute(create_spp_trait_table)
+    cur.execute('SELECT \"stateConservation\" AS fam,count(distinct "speciesID"), count(distinct s.species_code), count(distinct q.species_code) FROM species.caps LEFT JOIN species_traits s ON "speciesCode_Synonym"=s.species_code::text LEFT JOIN form.quadrat_samples q ON "speciesCode_Synonym"=q.species_code::text  GROUP BY fam;')
     fam_list = cur.fetchall()
     cur.close()
     return render_template('species/threat-list.html', pairs=fam_list, the_title="Species per family")
@@ -37,7 +41,8 @@ def threat_list():
 def sp_list(id):
     pg = get_pg_connection()
     cur = pg.cursor()
-    cur.execute('SELECT "speciesID"::int AS id, "scientificName" AS name, "vernacularName" as vname,count(distinct s.species_code), count(distinct q.species_code), count(distinct q.visit_id) FROM species.caps LEFT JOIN litrev.surv1 s ON "speciesCode_Synonym"=s.species_code::text LEFT JOIN form.quadrat_samples q ON "speciesCode_Synonym"=q.species_code::text WHERE "family"=\'%s\' GROUP BY id,name,vname,"sortOrder" ORDER BY "sortOrder"' % id)
+    cur.execute(create_spp_trait_table)
+    cur.execute('SELECT "speciesID"::int AS id, "scientificName" AS name, "vernacularName" as vname,count(distinct s.species_code), count(distinct q.species_code), count(distinct q.visit_id),trait_codes FROM species.caps LEFT JOIN species_traits s ON "speciesCode_Synonym"=s.species_code::text LEFT JOIN form.quadrat_samples q ON "speciesCode_Synonym"=q.species_code::text WHERE "family"=\'%s\' GROUP BY id,name,vname,"sortOrder",trait_codes ORDER BY "sortOrder"' % id)
     try:
         spp_qry = cur.fetchall()
     except:
@@ -50,7 +55,8 @@ def sp_list(id):
 def cat_list(id):
     pg = get_pg_connection()
     cur = pg.cursor()
-    cur.execute('SELECT "speciesID"::int AS id, "scientificName" AS name, "vernacularName" as vname,count(distinct s.species_code), count(distinct q.species_code), count(distinct q.visit_id) FROM species.caps LEFT JOIN litrev.surv1 s ON "speciesCode_Synonym"=s.species_code::text LEFT JOIN form.quadrat_samples q ON "speciesCode_Synonym"=q.species_code::text WHERE "stateConservation"=\'%s\' GROUP BY id,name,vname,"sortOrder" ORDER BY "sortOrder"' % id)
+    cur.execute(create_spp_trait_table)
+    cur.execute('SELECT "speciesID"::int AS id, "scientificName" AS name, "vernacularName" as vname,count(distinct s.species_code), count(distinct q.species_code), count(distinct q.visit_id),trait_codes FROM species.caps LEFT JOIN species_traits s ON "speciesCode_Synonym"=s.species_code::text LEFT JOIN form.quadrat_samples q ON "speciesCode_Synonym"=q.species_code::text WHERE "stateConservation"=\'%s\' GROUP BY id,name,vname,"sortOrder",trait_codes ORDER BY "sortOrder"' % id)
     try:
         spp_qry = cur.fetchall()
     except:

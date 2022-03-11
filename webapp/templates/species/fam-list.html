@@ -7,12 +7,10 @@
 <p>Species with recorded fire related traits. Click any species's name to see more information about fire related traits.</p>
 
     <table>
-        <tr><th rowspan='3'>Family</th>
+        <tr><th rowspan='2'>Family</th>
           <th colspan=3>Nr. of species</th></tr>
-          <tr><th rowspan=2>In CAPS</th><th>Literature traits</th><th rowspan=2>in Field samples</th></tr>
-          <tr>
-            <th>Survival traits</th>
-          </tr>
+          <tr><th >In CAPS</th><th>Literature traits</th><th>in Field samples</th></tr>
+
     {% for pair in pairs %}
         <tr>
           <td><a href="{{ url_for( 'species.sp_list', id=pair[0] ) }}">{{ pair[0] }}</a></td>

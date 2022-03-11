@@ -26,7 +26,10 @@
           {% if pair[3] == 0 %}
             <td class='empty'>None recorded</td>
           {% else %}
-            <td>Survival</td>
+            <td>
+              {% for item in pair[6] %}
+                <span class='item'>{{item}}</span>
+              {% endfor %}</td>
           {% endif %}
           {% if pair[4] == 0 %}
             <td class='empty'>None recorded</td>
