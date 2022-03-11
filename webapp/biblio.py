@@ -8,6 +8,7 @@ from webapp.db import get_db
 from webapp.pg import get_pg_connection
 
 from psycopg2.extras import DictCursor
+import pandas as pd
 
 bp = Blueprint('biblio', __name__, url_prefix='/references')
 
@@ -17,7 +18,7 @@ bp = Blueprint('biblio', __name__, url_prefix='/references')
 def ref_list():
     pg = get_pg_connection()
     cur = pg.cursor(cursor_factory=DictCursor)
-    cur.execute('WITH a AS (select unnest(original_sources) as oref, COUNT(DISTINCT species_code) as nspp from litrev.resprouting group by oref), b AS (SELECT main_source as mref, COUNT(DISTINCT species_code) as nspp FROM litrev.resprouting GROUP BY mref) SELECT ref_code, ref_cite, alt_code, a.nspp as nspp, b.nspp as ispp FROM litrev.ref_list LEFT JOIN a ON a.oref=alt_code LEFT JOIN b ON b.mref=ref_code ORDER BY ref_code;')
+    cur.execute('WITH a AS (select unnest(original_sources) as oref, COUNT(DISTINCT species_code) as nspp from litrev.surv1 group by oref), b AS (SELECT main_source as mref, COUNT(DISTINCT species_code) as nspp FROM litrev.surv1 GROUP BY mref) SELECT ref_code, ref_cite, alt_code, a.nspp as nspp, b.nspp as ispp FROM litrev.ref_list LEFT JOIN a ON a.oref=alt_code LEFT JOIN b ON b.mref=ref_code ORDER BY ref_code;')
     ref_list = cur.fetchall()
     cur.close()
     return render_template('biblio/ref-list.html', refs=ref_list, the_title="All References")
@@ -26,22 +27,34 @@ def ref_list():
 @bp.route('/ref_info/<id>')
 @login_required
 def ref_info(id):
+
+    fname='webapp/static/metadata/trait-description.csv'
+    traitdata = pd.read_csv(fname)
+
     qry1 = "SELECT ref_code, ref_cite, alt_code FROM litrev.ref_list WHERE ref_code='%s'"
-    qry2 = "SELECT record_id, species, species_code,\"speciesID\"::int as species_id FROM litrev.firstflower LEFT JOIN species.caps ON species_code=\"speciesCode_Synonym\" WHERE main_source='{ref}' OR '{ref}'=ANY(original_sources) ORDER BY random()"
-    qry3 = "SELECT record_id, species, species_code,\"speciesID\"::int as species_id FROM litrev.resprouting LEFT JOIN species.caps ON species_code=\"speciesCode_Synonym\" WHERE main_source='{ref}' OR '{ref}'=ANY(original_sources) ORDER BY random()"
-    ##qry4 = "SELECT count(distinct surv1.species_code), count(distinct repr3.species_code) FROM litrev.resprouting as surv1, litrev.firstflower as repr3 WHERE surv1.main_source='{ref}' OR '{ref}'=ANY(surv1.original_sources)"
+    qry2 = "SELECT species, species_code, \"speciesID\"::int as species_id FROM litrev.{table} LEFT JOIN species.caps ON species_code=\"speciesCode_Synonym\" WHERE main_source='{ref}' OR '{ref}'=ANY(original_sources) GROUP BY species, species_code, species_id ORDER BY random()"
+
     pg = get_pg_connection()
     cur = pg.cursor(cursor_factory=DictCursor)
     cur.execute(qry1 % id)
     ref_info = cur.fetchone()
-    cur.execute(qry2.format(ref=id))
-    trait_repr3 = cur.fetchmany(10)
-    repr3_counts=cur.rowcount
-    cur.execute(qry3.format(ref=id))
-    trait_surv1 = cur.fetchmany(10)
-    surv1_counts=cur.rowcount
-    cur.close()
-    return render_template('biblio/ref-info.html', repr3=trait_repr3, surv1=trait_surv1, ref=ref_info,counts=(repr3_counts,surv1_counts))
+
+    traits = list()
+
+    for target in ('surv1','repr3','repr3a','rect2','repr2'):
+        cur.execute(qry2.format(ref=id,table=target))
+        if cur.rowcount>0:
+            entry = traitdata.loc[traitdata['Trait code'] == target]
+            entry.reset_index(drop=True, inplace=True)
+            traits.append({
+            "trait":target,
+            "count":cur.rowcount,
+            "list":cur.fetchmany(10),
+            "metadata":entry.to_dict()
+            })
 
 
-#select distinct species_code,species from litrev.resprouting where main_source='Department of Natural Resources & Environment (Vic' OR 'Department of Natural Resources & Environment (Vic'=any(original_sources);
+    return render_template('biblio/ref-info.html', ref=ref_info, traits=traits)
+
+
+#select distinct species_code,species from litrev.surv1 where main_source='Department of Natural Resources & Environment (Vic' OR 'Department of Natural Resources & Environment (Vic'=any(original_sources);

@@ -8,6 +8,7 @@ from webapp.db import get_db
 from webapp.pg import get_pg_connection
 
 from psycopg2.extras import DictCursor
+import pandas as pd
 
 bp = Blueprint('species', __name__, url_prefix='/species')
 
@@ -16,7 +17,7 @@ bp = Blueprint('species', __name__, url_prefix='/species')
 def fam_list():
     pg = get_pg_connection()
     cur = pg.cursor()
-    cur.execute('SELECT family AS fam,count(distinct "speciesID"), count(distinct s.species_code), count(distinct q.species_code) FROM species.caps LEFT JOIN litrev.survival_traits s ON "speciesCode_Synonym"=s.species_code::text LEFT JOIN form.quadrat_samples q ON "speciesCode_Synonym"=q.species_code::text  GROUP BY fam;')
+    cur.execute('SELECT family AS fam,count(distinct "speciesID"), count(distinct s.species_code), count(distinct q.species_code) FROM species.caps LEFT JOIN litrev.surv1 s ON "speciesCode_Synonym"=s.species_code::text LEFT JOIN form.quadrat_samples q ON "speciesCode_Synonym"=q.species_code::text  GROUP BY fam;')
     fam_list = cur.fetchall()
     cur.close()
     return render_template('species/fam-list.html', pairs=fam_list, the_title="Species per family")
@@ -26,7 +27,7 @@ def fam_list():
 def threat_list():
     pg = get_pg_connection()
     cur = pg.cursor()
-    cur.execute('SELECT \"stateConservation\" AS fam,count(distinct "speciesID"), count(distinct s.species_code), count(distinct q.species_code) FROM species.caps LEFT JOIN litrev.survival_traits s ON "speciesCode_Synonym"=s.species_code::text LEFT JOIN form.quadrat_samples q ON "speciesCode_Synonym"=q.species_code::text  GROUP BY fam;')
+    cur.execute('SELECT \"stateConservation\" AS fam,count(distinct "speciesID"), count(distinct s.species_code), count(distinct q.species_code) FROM species.caps LEFT JOIN litrev.surv1 s ON "speciesCode_Synonym"=s.species_code::text LEFT JOIN form.quadrat_samples q ON "speciesCode_Synonym"=q.species_code::text  GROUP BY fam;')
     fam_list = cur.fetchall()
     cur.close()
     return render_template('species/threat-list.html', pairs=fam_list, the_title="Species per family")
@@ -36,7 +37,7 @@ def threat_list():
 def sp_list(id):
     pg = get_pg_connection()
     cur = pg.cursor()
-    cur.execute('SELECT "speciesID"::int AS id, "scientificName" AS name, "vernacularName" as vname,count(distinct s.species_code), count(distinct q.species_code), count(distinct q.visit_id) FROM species.caps LEFT JOIN litrev.survival_traits s ON "speciesCode_Synonym"=s.species_code::text LEFT JOIN form.quadrat_samples q ON "speciesCode_Synonym"=q.species_code::text WHERE "family"=\'%s\' GROUP BY id,name,vname,"sortOrder" ORDER BY "sortOrder"' % id)
+    cur.execute('SELECT "speciesID"::int AS id, "scientificName" AS name, "vernacularName" as vname,count(distinct s.species_code), count(distinct q.species_code), count(distinct q.visit_id) FROM species.caps LEFT JOIN litrev.surv1 s ON "speciesCode_Synonym"=s.species_code::text LEFT JOIN form.quadrat_samples q ON "speciesCode_Synonym"=q.species_code::text WHERE "family"=\'%s\' GROUP BY id,name,vname,"sortOrder" ORDER BY "sortOrder"' % id)
     try:
         spp_qry = cur.fetchall()
     except:
@@ -49,7 +50,7 @@ def sp_list(id):
 def cat_list(id):
     pg = get_pg_connection()
     cur = pg.cursor()
-    cur.execute('SELECT "speciesID"::int AS id, "scientificName" AS name, "vernacularName" as vname,count(distinct s.species_code), count(distinct q.species_code), count(distinct q.visit_id) FROM species.caps LEFT JOIN litrev.survival_traits s ON "speciesCode_Synonym"=s.species_code::text LEFT JOIN form.quadrat_samples q ON "speciesCode_Synonym"=q.species_code::text WHERE "stateConservation"=\'%s\' GROUP BY id,name,vname,"sortOrder" ORDER BY "sortOrder"' % id)
+    cur.execute('SELECT "speciesID"::int AS id, "scientificName" AS name, "vernacularName" as vname,count(distinct s.species_code), count(distinct q.species_code), count(distinct q.visit_id) FROM species.caps LEFT JOIN litrev.surv1 s ON "speciesCode_Synonym"=s.species_code::text LEFT JOIN form.quadrat_samples q ON "speciesCode_Synonym"=q.species_code::text WHERE "stateConservation"=\'%s\' GROUP BY id,name,vname,"sortOrder" ORDER BY "sortOrder"' % id)
     try:
         spp_qry = cur.fetchall()
     except:
@@ -60,6 +61,10 @@ def cat_list(id):
 @bp.route('/sp/<int:id>')
 @login_required
 def sp_info(id):
+
+    fname='webapp/static/metadata/trait-description.csv'
+    traitdata = pd.read_csv(fname)
+
     pg = get_pg_connection()
     cur = pg.cursor(cursor_factory=DictCursor)
 
@@ -77,26 +82,40 @@ def sp_info(id):
     except:
         return f"<h1>Invalid species code: {id}</h1>"
 
-    qryresp="SELECT record_id, species, species_code, norm_value, main_source FROM litrev.resprouting WHERE species_code='%s';"
-    cur.execute(qryresp % spp_info[5])
-    try:
-        trait_surv1 = cur.fetchall()
-    except:
-        return f"<h1>Invalid species code: {id}</h1>"
+    traits = list()
 
-    qryresp="SELECT record_id, species, species_code, observed_at, best, lower, upper, main_source FROM litrev.firstflower WHERE species_code='%s';"
-    cur.execute(qryresp % spp_info[5])
-    try:
-        trait_repr3 = cur.fetchall()
-    except:
-        return f"<h1>Invalid species code: {id}</h1>"
+    for target in ('surv1','rect2','repr2'):
+        qryresp="SELECT species, species_code, norm_value, main_source, count(record_id), sum(weight) as weight FROM litrev.{table} WHERE species_code='{code}' GROUP BY species, species_code, norm_value, main_source;"
+        cur.execute(qryresp.format(table=target,code=spp_info[5]))
+        if cur.rowcount>0:
+            entry = traitdata.loc[traitdata['Trait code'] == target]
+            entry.reset_index(drop=True, inplace=True)
+            traits.append({
+            "trait":target,
+            "count":cur.rowcount,
+            "list":cur.fetchall(),
+            "metadata":entry.to_dict()
+            })
 
-    qrylit1 = "SELECT * from litrev.ref_list where ref_code IN (SELECT distinct main_source FROM litrev.resprouting WHERE species_code='{spcode}') OR ref_code IN (SELECT distinct main_source FROM litrev.firstflower WHERE species_code='{spcode}')"
-    qrylit2 = "SELECT * from litrev.ref_list where ref_code IN (SELECT distinct unnest(original_sources) FROM litrev.firstflower WHERE species_code='{spcode}') OR ref_code IN (SELECT DISTINCT unnest(original_sources) FROM litrev.resprouting WHERE species_code='{spcode}');"
+    for target in ('repr3','repr3a'):
+        qryresp="SELECT record_id, species, species_code, best, lower, upper, main_source FROM litrev.{table} WHERE species_code='{code}';"
+        cur.execute(qryresp.format(table=target,code=spp_info[5]))
+        if cur.rowcount>0:
+            entry = traitdata.loc[traitdata['Trait code'] == target]
+            entry.reset_index(drop=True, inplace=True)
+            traits.append({
+            "trait":target,
+            "count":cur.rowcount,
+            "list":cur.fetchall(),
+            "metadata":entry.to_dict()
+            })
+
+    qrylit1 = "SELECT * from litrev.ref_list where ref_code IN (SELECT distinct main_source FROM litrev.surv1 WHERE species_code='{spcode}') OR ref_code IN (SELECT distinct main_source FROM litrev.repr3 WHERE species_code='{spcode}')"
+    qrylit2 = "SELECT * from litrev.ref_list where ref_code IN (SELECT distinct unnest(original_sources) FROM litrev.repr3 WHERE species_code='{spcode}') OR ref_code IN (SELECT DISTINCT unnest(original_sources) FROM litrev.surv1 WHERE species_code='{spcode}');"
     cur.execute(qrylit1.format(spcode=spp_info[5]))
     ref_list = cur.fetchall()
     cur.execute(qrylit2.format(spcode=spp_info[5]))
     add_list = cur.fetchall()
 
     cur.close()
-    return render_template('species/info.html', info=spp_info, fsamp=samples, repr3=trait_repr3, surv1=trait_surv1, mainrefs=ref_list, addrefs=add_list)
+    return render_template('species/info.html', info=spp_info, fsamp=samples, traits=traits, mainrefs=ref_list, addrefs=add_list)

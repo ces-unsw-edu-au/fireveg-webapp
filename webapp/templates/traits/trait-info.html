@@ -10,25 +10,15 @@
 <h3>{{trait[0][0]}} &ndash; {{trait[0][1]}}</h3>
 <p>
   Data on {{trait[0][1]}} from {{mainrefs|length}} main references and {{addrefs|length}} additional references.
-  <table>
-      <tr><th>Value</th><th>Nr. of taxa</th><th>(valid BioNet taxa)</th></tr>
-      {% for pair in spps %}
-        <tr>
-          <td>{{pair[0]}}</td>
-          <td>{{pair[1]}}</td>
-          <td>{{pair[2]}}</td>
-        </tr>
-      {% endfor %}
-  </table>
-
+  
 
 </p>
   <table class='definitions'>
-    <caption class='definitions'>Definitions</caption>
     <thead>
       <tr>
         <th>Value</th>
         <th>Description</th>
+        <th>Nr. of taxa</th><th>(valid BioNet taxa)</th>
       </tr>
       </thead>
       <tbody>
@@ -36,7 +26,9 @@
             <tr>
               <td>{{pair[0]}}</td>
               <td>{{pair[1]}}</td>
-            </tr>
+              <td>{{ spps | selectattr('var','equalto', pair[0]) | map(attribute='nspp') | join(' ')}}</td>
+              <td>{{ spps | selectattr('var','equalto', pair[0]) | map(attribute='ncode') | join(' ')}}</td>
+              </tr>
               {% endfor %}
       </tbody>
   </table>

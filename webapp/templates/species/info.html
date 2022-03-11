@@ -129,99 +129,86 @@
 
   <h2>Fire related traits (from literature)</h2>
 
+ {% set vars = {'spcode': False} %}
+    {% for tt in traits %}
+      {% if tt['count'] > 0 %}
 
-{% if surv1|length == 0 %}
-<span class='empty'>No resprouting traits recorded for this taxon</span>
-{% else %}
-  <h4>Resprouting</h4>
-  {% set vars = {'spcode': False} -%}
-  <table>
-    {% for entry in surv1 %}
-      <tr>
-      <th>Species</th>
-      <th>Resprouting</th>
-      <th>Main reference</th>
-      </tr>
+      <h4>{{tt['metadata']['Trait name'][0]}}</h4>
 
-      <tr>
-        {% if vars.spcode != entry['species'] %}
-        {% set vars = {'spcode': entry['species']} -%}
-        <td><i>{{entry['species']}}</i> / species code {{entry['species_code']}}</td>
+      <p><a href="{{url_for('traits.trait_info',group=tt['metadata']['db_table'][0],var=tt['metadata']['db_column'][0])}}">Information about this trait</a> / <a href="{{url_for('traits.spp', trait=tt['trait'], code=info[5])}}">Review trait values for this species</a></p>
+
+      <table>
+        {% if tt['metadata']['db_column'][0] == 'norm_value' %}
+        <tr> <th>Species</th> <th>Value</th> <th>Nr. of records</th> <th>Weight</th> <th>Main reference</th> </tr>
         {% else %}
-        <td></td>
+        <tr><th>Species</th><th>Years</th><th>Main reference</th></tr>
         {% endif %}
-      {% if entry['norm_value'] == None %}
-        <td class='empty'>No value recorded.</td>
-      {% else %}
-      <td><a href="{{url_for('traits.spp', trait='surv1', code=entry.species_code)}}">{{ entry['norm_value'] }}</a></td>
-    {% endif %}
-      {% if entry['main_source'] == None %}
-        <td class='empty'>No value recorded.</td>
-      {% else %}
-        <td><a href="#{{entry['main_source']}}">{{ entry['main_source']  }}</a></td>
+        {% for entry in tt['list'] %}
+          {% if tt['metadata']['db_column'][0] == 'norm_value' %}
+          <tr>
+               {% if vars.spcode != entry['species'] %}
+               {% set vars = {'spcode': entry['species']} -%}
+               <td><i>{{entry['species']}}</i> / species code {{entry['species_code']}}</td>
+               {% else %}
+               <td></td>
+               {% endif %}
+             {% if entry['norm_value'] == None %}
+               <td class='empty'>No value recorded.</td>
+             {% else %}
+             <td>{{ entry['norm_value'] }}</td>
+             <td>{{entry['count']}}</td>
+             <td>{{entry['weight']}}</td>
+           {% endif %}
+             {% if entry['main_source'] == None %}
+               <td class='empty'>No value recorded.</td>
+             {% else %}
+               <td><a href="#{{entry['main_source']}}">{{ entry['main_source']  }}</a></td>
+             {% endif %}
+             </tr>
+          {% else %}
+            {% if vars.spcode != entry[1] %}
+            {% set vars = {'spcode': entry[1]} -%}
+            {% endif %}
+
+            <tr>
+            <td><i>{{entry.species}}</i> / species code {{entry.species_code}}</td>
+
+            <td>
+            {% if entry['best'] == None %}
+            {% if entry['lower'] == None and entry['upper'] != None %}
+             &lt; {{ entry['upper'] }}
+            {% elif entry['lower'] != None and entry['upper'] == None %}
+             &gt; {{ entry['lower'] }}
+            {% elif entry['lower'] != None and entry['upper'] != None %}
+             ({{ entry['lower'] }} &ndash; {{ entry['upper'] }})
+            {% else %}
+            <span class='empty'>No value recorded.</span>
+            {% endif %}
+            {% else %}
+            {% if entry['lower'] == None and entry['upper'] != None %}
+             {{ entry['best'] }} (&lt; {{ entry['upper'] }})
+            {% elif entry['lower'] != None and entry['upper'] == None %}
+             {{ entry['best'] }} (&gt; {{ entry['lower'] }})
+            {% elif entry['lower'] != None and entry['upper'] != None %}
+             {{ entry['best'] }} ({{ entry['lower'] }} &ndash; {{ entry['upper'] }})
+            {% else %}
+             {{ entry['best'] }}
+            {% endif %}
+            {% endif %}
+            </td>
+            {% if entry['main_source'] == None %}
+            <td class='empty'>No value recorded.</td>
+            {% else %}
+            <td><a href="#{{entry['main_source']}}">{{ entry['main_source']  }}</a></td>
+            {% endif %}
+            </tr>
+          {% endif %}
+        {% endfor %}
+      </table>
+
+
       {% endif %}
-      </tr>
-    {% endfor %}
-
-</table>
-{% endif %}
-
-
-{% if repr3|length == 0 %}
-<h4 class='empty'>No first flowering traits recorded for this taxon</h4>
-{% else %}
-  <h4>First flowering</h4>
-  {% set vars = {'spcode': False} %}
-  <table>
-    <tr>
-    <th>Species</th>
-    <th>Time to first flower [years]</th>
-    <th>Main reference</th>
-    </tr>
-{% for entry in repr3 %}
-  {% if vars.spcode != entry[1] %}
-  {% set vars = {'spcode': entry[1]} -%}
-  {% endif %}
-
-<tr>
-  <td><i>{{entry.species}}</i> / species code {{entry.species_code}}</td>
-
-<td><a href="{{url_for('traits.spp', trait='repr3', code=entry.species_code)}}">
-  {% if entry['best'] == None %}
-    {% if entry['lower'] == None and entry['upper'] != None %}
-      &lt; {{ entry['upper'] }}
-    {% elif entry['lower'] != None and entry['upper'] == None %}
-      &gt; {{ entry['lower'] }}
-    {% elif entry['lower'] != None and entry['upper'] != None %}
-      ({{ entry['lower'] }} &ndash; {{ entry['upper'] }})
-    {% else %}
-    <span class='empty'>No value recorded.</span>
-    {% endif %}
-  {% else %}
-    {% if entry['lower'] == None and entry['upper'] != None %}
-      {{ entry['best'] }} (&lt; {{ entry['upper'] }})
-    {% elif entry['lower'] != None and entry['upper'] == None %}
-      {{ entry['best'] }} (&gt; {{ entry['lower'] }})
-    {% elif entry['lower'] != None and entry['upper'] != None %}
-      {{ entry['best'] }} ({{ entry['lower'] }} &ndash; {{ entry['upper'] }})
-    {% else %}
-      {{ entry['best'] }}
-    {% endif %}
-  {% endif %}
-</a></td>
-
-
-{% if entry['main_source'] == None %}
-<td class='empty'>No value recorded.</td>
-{% else %}
-<td><a href="#{{entry['main_source']}}">{{ entry['main_source']  }}</a></td>
-
-{% endif %}
-</tr>
-{% endfor %}
-
-</table>
-{% endif %}
+      {% endfor %}
 
 <h2>References</h2>
 <ul>

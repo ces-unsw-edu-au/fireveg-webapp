@@ -44,7 +44,11 @@ def trait_info(group,var):
     pg = get_pg_connection()
     cur = pg.cursor(cursor_factory=DictCursor)
 
-    qry = 'SELECT {var},count(DISTINCT species), count(DISTINCT \"speciesID\") FROM {grp} LEFT JOIN species.caps ON species_code::text="speciesCode_Synonym" GROUP BY {var}'.format(var=var,grp=group)
+    if var == 'best':
+        qry = 'SELECT \'years\' as var,count(DISTINCT species) as nspp, count(DISTINCT \"speciesID\") as ncode FROM {grp} LEFT JOIN species.caps ON species_code::text="speciesCode_Synonym" '.format(grp=group)
+    else:
+        qry = 'SELECT {var} as var,count(DISTINCT species) as nspp, count(DISTINCT \"speciesID\") as ncode FROM {grp} LEFT JOIN species.caps ON species_code::text="speciesCode_Synonym" GROUP BY {var}'.format(var=var,grp=group)
+
     cur.execute(qry)
     spp_list = cur.fetchall()
 
@@ -74,15 +78,8 @@ def spp(trait,code):
     pg = get_pg_connection()
     cur = pg.cursor(cursor_factory=DictCursor)
 
-    if trait=='surv1':
-        qry="SELECT * from litrev.resprouting where species_code='%s'"
-        cur.execute(qry % code)
-        rs = cur.fetchall()
-    elif trait=='repr3':
-        qry="SELECT * from litrev.firstflower where species_code='%s'"
-        cur.execute(qry % code)
-        rs = cur.fetchall()
-    else:
-        rs = None
+    qry="SELECT * from litrev.{table} where species_code='{spcode}'"
+    cur.execute(qry.format(table=trait,spcode=code))
+    rs = cur.fetchall()
     cur.close()
     return render_template('traits/spp.html', records=rs, species=code, trait=trait)

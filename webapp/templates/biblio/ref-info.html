@@ -12,37 +12,26 @@
   </ul>
 
 
-  {% if repr3|length == 0 %}
-  <h3 class='empty'>This references does not provide information about Age at first flower production.</h3>
-  {% else %}
-  <h3>This references provides data for Age at first flower production for {{counts[0]}} species </h3>
-  <p>{{repr3|length}} examples below</p>
-    <table>
-    <tr>
-      <th>Species name used</th>
-    </tr>
-    {% for entry in repr3 %}
-    <tr><td><a href="{{url_for('species.sp_info',id=entry.species_id)}}">{{entry.species}} ({{entry.species_code}}) [{{entry.species_id}}]</a></td>
-    </tr>
-    {% endfor %}
-    <table>
-  {% endif %}
+  {% for tt in traits %}
+    {% if tt['count'] > 0 %}
 
-  {% if surv1|length == 0 %}
-  <h3 class='empty'>This references does not provide information about Resprouting - full canopy scorch.</h3>
-  {% else %}
-  <h3>Resprouting - full canopy scorch</h3>
-  <p>This references provides data for {{counts[1]}} species,  {{surv1|length}} examples below:</p>
-    <table>
-    <tr>
-      <th>Species name used</th>
-    </tr>
-    {% for entry in surv1 %}
-    <tr><td><a href="{{url_for('species.sp_info',id=entry.species_id)}}">{{entry.species}} ({{entry.species_code}}) [{{entry.species_id}}]</a></td>
-    </tr>
-    {% endfor %}
-    <table>
-  {% endif %}
+    <p>This references provides data for <b><a href="{{url_for('traits.trait_info',group=tt['metadata']['db_table'][0],var=tt['metadata']['db_column'][0])}}">{{tt['metadata']['Trait name'][0]}}</a></b> for {{tt['count']}} species.  </p>
+      {% if tt['count'] == tt['list']| length %}
+        Species list below:
+        {% else %}
+        Some examples below:
+      {% endif %}
+      <table>
+      <tr>
+        <th>Species name used</th>
+      </tr>
+      {% for entry in tt['list'] %}
+      <tr><td><a href="{{url_for('species.sp_info',id=entry.species_id)}}">{{entry.species}} ({{entry.species_code}}) [{{entry.species_id}}]</a></td>
+      </tr>
+      {% endfor %}
+      <table>
+    {% endif %}
+  {% endfor %}
 
 
 {% endblock %}

@@ -1,14 +1,21 @@
 ﻿db_table,column,value,description
-litrev.resprouting,norm_value,none,< 5 % individuals in a population resprout after 100% canopy scorch
-litrev.resprouting,norm_value,few,5 – 30 % individuals in a population resprout after 100% canopy scorch
-litrev.resprouting,norm_value,half,30 – 70 % individuals in a population resprout after 100% canopy scorch
-litrev.resprouting,norm_value,most,70 – 90 % individuals in a population resprout after 100% canopy scorch
-litrev.resprouting,norm_value,all,> 90 % individuals in a population resprout after 100% canopy scorch
-litrev.resprouting,norm_value,unknown,No data
-litrev.firstflower,observed_at,Recruit,"The time taken for first individual in a recruitment cohort to produce their first reproductive organs (e.g. flowers, sporophylls)"
-litrev.firstflower,observed_at,Resprout,"The time taken after fire for first reproductive organs (e.g. flowers, sporophylls) to be produced in a population of resprouting individuals"
-litrev.maturationage,observed_at,Recruit,The time taken for 50% of individuals in a cohort [even aged recruits] to produce their first viable seed
-litrev.postfireflowering,norm_value,Exclusive,"Flowering occurs exclusively in the first 5 years after fire (excluding outliers, e.g roadsides)"
-litrev.postfireflowering,norm_value,Facultative,Flowering occurs most prolifically in the first 5 years after fire
-litrev.postfireflowering,norm_value,Negligible,Flowering similar or variable throughout the fire cycle
-litrev.postfireflowering,norm_value,unknown,No data
+litrev.surv1,norm_value,None,< 5 % individuals in a population resprout after 100% canopy scorch
+litrev.surv1,norm_value,Few,5 – 30 % individuals in a population resprout after 100% canopy scorch
+litrev.surv1,norm_value,Half,30 – 70 % individuals in a population resprout after 100% canopy scorch
+litrev.surv1,norm_value,Most,70 – 90 % individuals in a population resprout after 100% canopy scorch
+litrev.surv1,norm_value,All,> 90 % individuals in a population resprout after 100% canopy scorch
+litrev.surv1,norm_value,Unknown,No data
+litrev.repr3,best,years,"The time taken for first individual in a recruitment cohort to produce their first reproductive organs (e.g. flowers, sporophylls)"
+litrev.repr3a,best,years,"The time taken after fire for first reproductive organs (e.g. flowers, sporophylls) to be produced in a population of resprouting individuals"
+litrev.repr4,best,years,The time taken for 50% of individuals in a cohort [even aged recruits] to produce their first viable seed
+litrev.repr2,norm_value,Exclusive,"Flowering occurs exclusively in the first 5 years after fire (excluding outliers, e.g roadsides)"
+litrev.repr2,norm_value,Facultative,Flowering occurs most prolifically in the first 5 years after fire
+litrev.repr2,norm_value,Negligible,Flowering similar or variable throughout the fire cycle
+litrev.repr2,norm_value,Unknown,No data
+litrev.rect2,norm_value,Intolerant,"The temporal pattern of seedling or clonal establishment through the fire cycle: I- intolerant of conditions in established communities (i.e. unburnt for some years) and largely restricted to early post-fire years (open conditions, notionally within 5 yrs of previous fire). See Noble & Slatyer (1980, Vegetatio)"
+litrev.rect2,norm_value,Intolerant-Tolerant,"The temporal pattern of seedling or clonal establishment through the fire cycle: I/T- intolerant or tolerant of conditions in established communities (i.e. unburnt for some years) , variable or uncertain. See Noble & Slatyer (1980, Vegetatio)"
+litrev.rect2,norm_value,Tolerant,"The temporal pattern of seedling or clonal establishment through the fire cycle: T- tolerant of conditions through the fire cycle (i.e. new recruits observed in both burnt and unburnt sites). See Noble & Slatyer (1980, Vegetatio)"
+litrev.rect2,norm_value,Tolerant-Requiring,"The temporal pattern of seedling or clonal establishment through the fire cycle: T/R- tolerant or requiring of conditions in established communities, uncertain or variable. See Noble & Slatyer (1980, Vegetatio)"
+litrev.rect2,norm_value,Requiring,"The temporal pattern of seedling or clonal establishment through the fire cycle: R- requiring of of conditions in established communities (i.e. new recruits only observed at sites unburnt for some years). See Noble & Slatyer (1980, Vegetatio)"
+litrev.rect2,norm_value,Unknown,No data
+litrev.grow1,best,years,

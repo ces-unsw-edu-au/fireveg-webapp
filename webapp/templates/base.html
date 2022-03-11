@@ -1,6 +1,11 @@
 <!doctype html>
-<title>{% block title %}{% endblock %} - Fireveg DB</title>
-<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<head>
+  <title>{% block title %}{% endblock %} - Fireveg DB</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <script rel="text/javascript" src="{{ url_for('static', filename='js/target.js') }}"> </script>
+</head>
+<body>
+
 <nav>
   <h1 class='title'>Vegetation response to fire - Database prototype v0.2</h1>
   <ul>
@@ -34,3 +39,4 @@
   {% endfor %}
   {% block content %}{% endblock %}
 </section>
+</body>

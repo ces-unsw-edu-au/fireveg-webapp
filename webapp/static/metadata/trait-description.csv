@@ -1,28 +1,28 @@
 ﻿Trait code,Trait name,Life stage,Life history process,priority,db_table,db_column,status,import
-Surv1,Resprouting - full canopy scorch,Standing plant,Survival,Belinda,litrev.resprouting,norm_value,test,python script
-Surv2,Basal scorch response (canopy <100% scorch),Standing plant,Survival,,,,,
-Surv3,Resprouting -basal scorch,Standing plant,Survival,,,,,
-Surv4,Regenerative Organ,Standing plant,Survival,Belinda,,,,
-Surv5,Standing plant longevity (Max),Standing plant,Survival,Belinda,,,,
-Surv6,Seedbank half-life,Seed,Survival,Belinda,,,,
-Surv7,Seed longevity,Seed,Survival,Belinda,,,,
-Grow1,Age for development of regenerative/resistance organs,Standing plant,Growth,2nd tranche,,,,
-Grow2,Age at maximum growth stage,Standing plant,Growth,,,,,
-Grow2a,Maximum growth stage,Standing plant,Growth,,,,,
-Grow3,Maximum bark thickness,Standing plant,Growth,,,,,
-Grow4,Maximum plant height,Standing plant,Growth,,,,,
+surv1,Resprouting - full canopy scorch,Standing plant,Survival,Belinda,litrev.surv1,norm_value,test,python script
+surv2,Basal scorch response (canopy <100% scorch),Standing plant,Survival,,,,,
+surv3,Resprouting -basal scorch,Standing plant,Survival,,,,,
+surv4,Regenerative Organ,Standing plant,Survival,Belinda,,,,
+surv5,Standing plant longevity (Max),Standing plant,Survival,Belinda,,,,
+surv6,Seedbank half-life,Seed,Survival,Belinda,,,,
+surv7,Seed longevity,Seed,Survival,Belinda,,,,
+grow1,Age for development of regenerative/resistance organs,Standing plant,Growth,2nd tranche,litrev.grow1,best,test,python script
+grow2,Age at maximum growth stage,Standing plant,Growth,,,,,
+grow2a,Maximum growth stage,Standing plant,Growth,,,,,
+grow3,Maximum bark thickness,Standing plant,Growth,,,,,
+grow4,Maximum plant height,Standing plant,Growth,,,,,
 Repr1,Flowering time,Standing plant,Reproduction,,,,,
-Repr2,Post-fire flowering response,Standing plant,Reproduction,2nd tranche,litrev.postfireflowering,norm_value,test,python script
-Repr3,Age at first flower production,Standing plant,Reproduction,1st tranche,litrev.firstflower,observed_at,test,python script
-Repr3a,Time to first postfire reproduction (from resprouts),Standing plant,Reproduction,,litrev.firstflower,years,test,python script
-Repr4,Maturation age,Standing plant,Reproduction,1st tranche,litrev.maturationage,years,test,python script
+repr2,Post-fire flowering response,Standing plant,Reproduction,2nd tranche,litrev.repr2,norm_value,test,python script
+repr3,Age at first flower production,Standing plant,Reproduction,1st tranche,litrev.repr3,best,test,python script
+repr3a,Time to first postfire reproduction (from resprouts),Standing plant,Reproduction,Additional,litrev.repr3a,best,test,python script
+repr4,Maturation age,Standing plant,Reproduction,1st tranche,litrev.repr4,best,test,python script
 Repr5,Age at maximum seed production,Standing plant,Reproduction,,,,,
 Repr6,Age of maximum seed bank size,Standing plant,Reproduction,,,,,
 Repr7a,Resprout flowering response to summer fire,Standing plant,Reproduction,,,,,
 Repr7b,Flowering response to autumn fire,Standing plant,Reproduction,,,,,
 Repr7c,Flowering response to winter fire,Standing plant,Reproduction,,,,,
 Repr7d,Flowering response to spring fire,Standing plant,Reproduction,,,,,
-Germ1,Seedbank Type,Seed,Germination,2nd tranche,,,,
+germ1,Seedbank Type,Seed,Germination,2nd tranche,,,,
 Germ2,Heat-pulse-cued germination,Seed,Germination,,,,,
 Germ3,Smoke-cued germination,Seed,Germination,,,,,
 Germ4,Heat shock-smoke interactive germination cue,Seed,Germination,,,,,
@@ -32,7 +32,7 @@ Germ7,H-lethal,Seed,Germination,,,,,
 Germ8,Seed dormancy type,Seed,Germination,1st tranche,,,,
 Germ9,???,,,,,,,
 Rect1,Postfire seedling recruitment,Seedling,Recruitment,,,,,
-Rect2,Establishment pattern,Seedling,Recruitment,Belinda,,,,
+rect2,Establishment pattern,Seedling,Recruitment,Belinda,litrev.rect2,norm_value,test,python script
 Rect3,Seedling emergence phenology,Seedling,Recruitment,,,,,
 Rect3a,Seedling emergence phenology - rainfall context,Seedling,Recruitment,,,,,
 Disp1,Propagule dispersal mode,Seed,Dispersal,,,,,

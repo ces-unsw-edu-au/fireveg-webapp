@@ -10,9 +10,23 @@
 <span class='empty'>No traits recorded for this taxon</span>
 {% elif records|length == 1%}
 <h3>One record of this trait for this taxon</h3>
-{% set vars = {'spcode': False} -%}
-<table>
+{% else %}
+  <h3>{{records|length}} records of {{trait}} for this taxon</h3>
+  Display records:
   {% for entry in records %}
+  <button onclick="openTab('{{ entry['record_id']}}')">{{ entry['record_id']}}</button>
+  {% endfor %}
+{% endif %}
+
+
+
+{% for entry in records %}
+  {% if loop.index == 1 %}
+    <div class="tabs" id="{{ entry['record_id']}}" style="display:block;">
+  {% else %}
+    <div class="tabs" id="{{ entry['record_id']}}" >
+  {% endif %}
+  <table>
     {% for k in entry.keys() %}
     <tr>
       <th>{{k}}</th>
@@ -37,45 +51,9 @@
     {% endif %}
     </tr>
     {% endfor %}
-  {% endfor %}
+  </table>
+</div>
+{% endfor %}
 
-</table>
-
-{% else %}
-  <h3>{{records|length}} records of {{trait}} for this taxon</h3>
-  {% set vars = {'spcode': False} -%}
-  <table >
-    <tr style='display: block; float: left;'>
-    {% for k in records[0].keys() %}
-      <th style='display: block;'>{{k}}</th>
-    {% endfor %}
-    </tr>
-    {% for entry in records %}
-      <tr style='display: block; float: left; border:3px double;'>
-      {% for k in entry.keys() %}
-        {% if entry[k] == None %}
-        <td class='empty' style='display: block;'>No value recorded</td>
-        {% else%}
-          <td style='display: block;'>
-          {% if k == 'original_sources' %}
-            {% for v in entry[k] %}
-            <a href="{{url_for('biblio.ref_info',id=v)}}">{{v}}</a>
-            {% endfor%}
-          {% elif k == 'main_source' %}
-          <a href="{{url_for('biblio.ref_info',id=entry[k])}}">{{entry[k]}}</a>
-          {% elif k in ('original_notes', 'additional_notes', 'raw_value')%}
-            {% for v in entry[k] %}
-            <span class='item'>{{v}}</span><br/>
-            {% endfor%}
-          {% else %}
-          {{entry[k]}}
-          {% endif %}
-          </td>
-      {% endif %}
-      {% endfor %}
-    </tr>
-    {% endfor %}
-</table>
-{% endif %}
 
 {% endblock %}
