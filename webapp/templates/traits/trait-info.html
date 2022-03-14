@@ -10,7 +10,6 @@
 <h3>{{trait[0][0]}} &ndash; {{trait[0][1]}}</h3>
 <p>
   Data on {{trait[0][1]}} from {{mainrefs|length}} main references and {{addrefs|length}} additional references.
-  
 
 </p>
   <table class='definitions'>
@@ -22,14 +21,35 @@
       </tr>
       </thead>
       <tbody>
-        {% for pair in desc %}
+        {% if var == 'best' %}
+          <tr>
+            <td>{{desc[0][0]}}</td>
+            <td>{{desc[0][1]}}</td>
+            <td>{{ spps | selectattr('var','equalto', True) | map(attribute='nspp') | join(' ')}}</td>
+            <td>{{ spps | selectattr('var','equalto', True) | map(attribute='ncode') | join(' ')}}</td>
+            </tr>
+            <tr>
+              <td class='empty'>Missing value</td>
+              <td>Imported raw values not matching assignment rules</td>
+              <td>{{ spps | selectattr('var','equalto', False) | map(attribute='nspp') | join(' ')}}</td>
+              <td>{{ spps | selectattr('var','equalto', False) | map(attribute='ncode') | join(' ')}}</td>
+              </tr>
+        {% else %}
+          {% for pair in desc %}
             <tr>
               <td>{{pair[0]}}</td>
               <td>{{pair[1]}}</td>
               <td>{{ spps | selectattr('var','equalto', pair[0]) | map(attribute='nspp') | join(' ')}}</td>
               <td>{{ spps | selectattr('var','equalto', pair[0]) | map(attribute='ncode') | join(' ')}}</td>
               </tr>
-              {% endfor %}
+          {% endfor %}
+              <tr>
+                <td class='empty'>Missing value</td>
+                <td>Imported raw values not matching assigment rules</td>
+                <td>{{ spps | selectattr('var','equalto', None) | map(attribute='nspp') | join(' ')}}</td>
+                <td>{{ spps | selectattr('var','equalto', None) | map(attribute='ncode') | join(' ')}}</td>
+                </tr>
+        {% endif %}
       </tbody>
   </table>
 

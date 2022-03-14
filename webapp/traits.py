@@ -45,18 +45,18 @@ def trait_info(group,var):
     cur = pg.cursor(cursor_factory=DictCursor)
 
     if var == 'best':
-        qry = 'SELECT \'years\' as var,count(DISTINCT species) as nspp, count(DISTINCT \"speciesID\") as ncode FROM {grp} LEFT JOIN species.caps ON species_code::text="speciesCode_Synonym" '.format(grp=group)
+        qry = 'SELECT (best is not NULL OR lower IS NOT NULL OR upper IS NOT NULL) as var,count(DISTINCT species) as nspp, count(DISTINCT \"speciesID\") as ncode FROM {grp} LEFT JOIN species.caps ON species_code::text="speciesCode_Synonym"  GROUP BY var '.format(grp=group)
     else:
         qry = 'SELECT {var} as var,count(DISTINCT species) as nspp, count(DISTINCT \"speciesID\") as ncode FROM {grp} LEFT JOIN species.caps ON species_code::text="speciesCode_Synonym" GROUP BY {var}'.format(var=var,grp=group)
 
     cur.execute(qry)
     spp_list = cur.fetchall()
 
-    qry = 'SELECT DISTINCT main_source, ref_cite, ref_code, alt_code FROM {grp} LEFT JOIN litrev.ref_list ON main_source=ref_code  '.format(grp=group)
+    qry = 'SELECT DISTINCT main_source, ref_cite, ref_code, alt_code FROM {grp} LEFT JOIN litrev.ref_list ON main_source=ref_code  WHERE main_source is NOT NULL'.format(grp=group)
     cur.execute(qry)
     ref_list = cur.fetchall()
 
-    qry = 'SELECT ref_cite, ref_code, alt_code FROM litrev.ref_list WHERE ref_code IN (SELECT DISTINCT unnest(original_sources) as oref FROM {grp})'.format(grp=group)
+    qry = 'SELECT ref_cite, ref_code, alt_code FROM litrev.ref_list WHERE ref_code IN (SELECT DISTINCT unnest(original_sources) as oref FROM {grp} WHERE original_sources IS NOT NULL)'.format(grp=group)
     cur.execute(qry)
     add_list = cur.fetchall()
 

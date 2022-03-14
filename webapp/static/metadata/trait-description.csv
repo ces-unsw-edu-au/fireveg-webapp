@@ -29,7 +29,7 @@ germ4,Heat shock-smoke interactive germination cue,Seed,Germination,,,,,
 germ5,H50,Seed,Germination,,,,,
 germ6,H-max,Seed,Germination,,,,,
 germ7,H-lethal,Seed,Germination,,,,,
-germ8,Seed dormancy type,Seed,Germination,1st tranche,,,,
+germ8,Seed dormancy type,Seed,Germination,1st tranche,litrev.germ8,norm_value,test,python script
 germ9,???,,,,,,,
 rect1,Postfire seedling recruitment,Seedling,Recruitment,,,,,
 rect2,Establishment pattern,Seedling,Recruitment,Belinda,litrev.rect2,norm_value,test,python script
