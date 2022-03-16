@@ -74,7 +74,11 @@ def sp_info(id):
     pg = get_pg_connection()
     cur = pg.cursor(cursor_factory=DictCursor)
 
-    qryspp="SELECT \"scientificName\", \"speciesID\"::int, family, \"taxonRank\", family, \"speciesCode_Synonym\", \"scientificNameAuthorship\", \"vernacularName\", \"establishmentMeans\", \"primaryGrowthFormGroup\", \"secondaryGrowthFormGroups\", \"stateConservation\", \"protectedInNSW\", \"countryConservation\" from species.caps WHERE \"speciesID\"=%s;"
+    synonym = request.args.get('synonym', default = 'valid', type = str)
+    if synonym != 'valid':
+        qryspp="SELECT \"scientificName\", \"speciesID\"::int, family, \"taxonRank\", family, \"speciesCode_Synonym\", \"scientificNameAuthorship\", \"vernacularName\", \"establishmentMeans\", \"primaryGrowthFormGroup\", \"secondaryGrowthFormGroups\", \"stateConservation\", \"protectedInNSW\", \"countryConservation\" from species.caps WHERE \"speciesCode_Synonym\"='%s';"
+    else:
+        qryspp="SELECT \"scientificName\", \"speciesID\"::int, family, \"taxonRank\", family, \"speciesCode_Synonym\", \"scientificNameAuthorship\", \"vernacularName\", \"establishmentMeans\", \"primaryGrowthFormGroup\", \"secondaryGrowthFormGroups\", \"stateConservation\", \"protectedInNSW\", \"countryConservation\" from species.caps WHERE \"speciesID\"=%s;"
     cur.execute(qryspp % (id))
     try:
         spp_info = cur.fetchone()
@@ -82,7 +86,10 @@ def sp_info(id):
         return f"<h1>Invalid species code: {id}</h1>"
 
     qrysmp="SELECT visit_id,visit_date,count(distinct sample_nr), species, species_code, seedbank, resprout_organ FROM form.quadrat_samples WHERE species_code=%s GROUP BY visit_id, visit_date, species, species_code, seedbank, resprout_organ ORDER BY visit_id,visit_date;"
-    cur.execute(qrysmp % spp_info[5])
+    if synonym == 'valid':
+        cur.execute(qrysmp % spp_info[5])
+    else:
+        cur.execute(qrysmp % id)
     try:
         samples = cur.fetchall()
     except:
@@ -124,4 +131,4 @@ def sp_info(id):
     add_list = cur.fetchall()
 
     cur.close()
-    return render_template('species/info.html', info=spp_info, fsamp=samples, traits=traits, mainrefs=ref_list, addrefs=add_list)
+    return render_template('species/info.html', info=spp_info, fsamp=samples, traits=traits, mainrefs=ref_list, addrefs=add_list, check=synonym)

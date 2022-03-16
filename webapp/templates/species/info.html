@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 
 {% block header %}
+
   <h1>
     <i>{% block title %}{{ info[0] }}{% endblock %}</i>  </h1>
     <span>
@@ -19,10 +20,10 @@
     	{% endif %}
      </span>
 
-
 {% endblock %}
 
 {% block content %}
+Check: {{check}}
 <div>
   <h2>Species information</h2>
   <table>

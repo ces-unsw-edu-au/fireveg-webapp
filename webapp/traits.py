@@ -56,7 +56,7 @@ def trait_info(group,var):
     cur.execute(qry)
     ref_list = cur.fetchall()
 
-    qry = 'SELECT ref_cite, ref_code, alt_code FROM litrev.ref_list WHERE ref_code IN (SELECT DISTINCT unnest(original_sources) as oref FROM {grp} WHERE original_sources IS NOT NULL)'.format(grp=group)
+    qry = 'SELECT ref_cite, ref_code, alt_code FROM litrev.ref_list WHERE ref_code IN (SELECT DISTINCT unnest(original_sources) as oref FROM {grp} WHERE original_sources IS NOT NULL) ORDER BY ref_cite'.format(grp=group)
     cur.execute(qry)
     add_list = cur.fetchall()
 

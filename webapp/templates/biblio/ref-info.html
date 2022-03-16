@@ -6,7 +6,11 @@
 {% block content %}
 
 <ul>
-<dt>{{ ref['ref_code'] }} ( {{ref.alt_code}} )</dt>
+<dt>{{ ref['ref_code'] }}
+{% if ref.alt_code != None %}
+  ( {{ref.alt_code}} )
+{% endif %}
+</dt>
     <dd>{{ ref.ref_cite }}</dd>
 
   </ul>
@@ -26,8 +30,13 @@
         <th>Species name used</th>
       </tr>
       {% for entry in tt['list'] %}
-      <tr><td><a href="{{url_for('species.sp_info',id=entry.species_id)}}">{{entry.species}} ({{entry.species_code}}) [{{entry.species_id}}]</a></td>
-      </tr>
+        <tr><td>
+      {% if entry.species_id != None %}
+      <a href="{{url_for('species.sp_info',id=entry.species_id)}}">{{entry.species}} ({{entry.species_code}}) [{{entry.species_id}}]</a>
+      {% else %}
+        {{entry.species}} ({{entry.species_code}}) [{{entry.species_id}}]
+      {% endif %}
+        </td></tr>
       {% endfor %}
       <table>
     {% endif %}
