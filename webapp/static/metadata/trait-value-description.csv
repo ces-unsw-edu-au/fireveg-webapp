@@ -5,6 +5,9 @@ litrev.surv1,norm_value,Half,30 – 70 % individuals in a population resprout af
 litrev.surv1,norm_value,Most,70 – 90 % individuals in a population resprout after 100% canopy scorch
 litrev.surv1,norm_value,All,> 90 % individuals in a population resprout after 100% canopy scorch
 litrev.surv1,norm_value,Unknown,No data
+litrev.surv5,best,years,"Age at which 50% of individuals in a cohort (excluding outliers) have died from senescence"
+litrev.surv6,best,years,"Age at which 50% of a seed cohort in an in situ seedbank have decayed or become inviable"
+litrev.surv7,best,years,"Age at which all seeds in a cohort (excluding outliers, e.g. 95th percentile) have decayed or become inviable"
 litrev.repr3,best,years,"The time taken for first individual in a recruitment cohort to produce their first reproductive organs (e.g. flowers, sporophylls)"
 litrev.repr3a,best,years,"The time taken after fire for first reproductive organs (e.g. flowers, sporophylls) to be produced in a population of resprouting individuals"
 litrev.repr4,best,years,The time taken for 50% of individuals in a cohort [even aged recruits] to produce their first viable seed
