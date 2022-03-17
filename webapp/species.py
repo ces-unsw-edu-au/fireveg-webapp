@@ -110,7 +110,7 @@ def sp_info(id):
             "metadata":entry.to_dict()
             })
 
-    for target in ('repr3','repr3a'):
+    for target in ('repr3','repr3a','grow1','surv5','surv7'):
         qryresp="SELECT record_id, species, species_code, best, lower, upper, main_source FROM litrev.{table} WHERE species_code='{code}';"
         cur.execute(qryresp.format(table=target,code=spp_info[5]))
         if cur.rowcount>0:

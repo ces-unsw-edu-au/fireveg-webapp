@@ -41,7 +41,7 @@ def ref_info(id):
 
     traits = list()
 
-    for target in ('surv1','repr3','repr3a','rect2','repr2'):
+    for target in ('surv1','surv4','surv5','surv6','surv7','grow1','germ1','germ8','repr3','repr3a','repr4','rect2','repr2'):
         cur.execute(qry2.format(ref=id,table=target))
         if cur.rowcount>0:
             entry = traitdata.loc[traitdata['Trait code'] == target]
