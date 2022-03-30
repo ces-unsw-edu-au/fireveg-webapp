@@ -62,7 +62,9 @@
           {% if pair[5] == None %}
             <td class='empty'>No additional observers recorded.</td>
           {% else %}
-            <td>{{ pair[5] }}</td>
+            <td>
+              {{ pair[5] | join("; ")}}
+            </td>
           {% endif %}
 
       </tr>

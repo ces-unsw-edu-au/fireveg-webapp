@@ -62,7 +62,7 @@ def sites_map():
 @login_required
 def site_info(id):
     qry1 = "SELECT site_label,location_description,elevation,st_x(geom),st_y(geom),st_srid(geom) FROM form.field_site WHERE site_label='%s';"
-    qry2 = "SELECT visit_date,visit_description,userkey,givennames,surname,otherobserver,survey_name FROM form.field_visit LEFT JOIN form.observerid ON mainobserver=userkey WHERE visit_id='%s' ORDER BY visit_date ASC;"
+    qry2 = "SELECT visit_date, visit_description, userkey, givennames, surname, observerlist, survey_name FROM form.field_visit LEFT JOIN form.observerid ON mainobserver=userkey WHERE visit_id='%s' ORDER BY visit_date ASC;"
     qry3 = "SELECT fire_name, fire_date, fire_date_uncertain, how_inferred, cause_of_ignition FROM form.fire_history WHERE visit_id='%s' ORDER BY fire_date ASC"
     pg = get_pg_connection()
     cur = pg.cursor()
@@ -88,7 +88,7 @@ def site_info(id):
 @login_required
 def visit_info(id,dt):
     qry1 = "SELECT site_label,location_description,elevation,st_x(geom),st_y(geom),st_srid(geom) FROM form.field_site WHERE site_label='%s';"
-    qry2 = "SELECT visit_date,visit_description,userkey,givennames,surname,otherobserver,survey_name FROM form.field_visit LEFT JOIN form.observerid ON mainobserver=userkey WHERE visit_id='%s' AND visit_date='%s' ORDER BY visit_date ASC;"
+    qry2 = "SELECT visit_date,visit_description,userkey,givennames,surname,observerlist,survey_name FROM form.field_visit LEFT JOIN form.observerid ON mainobserver=userkey WHERE visit_id='%s' AND visit_date='%s' ORDER BY visit_date ASC;"
 
     qry3 = "SELECT measured_var,units,best,lower,upper FROM form.field_visit_vegetation_estimates WHERE visit_id='%s' AND visit_date='%s' ORDER BY measured_var ASC;"
 
