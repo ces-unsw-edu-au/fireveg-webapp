@@ -55,6 +55,8 @@ def create_app(test_config=None):
 
     from . import sites
     app.register_blueprint(sites.bp)
+    from . import visits
+    app.register_blueprint(visits.bp)
     from . import species
     app.register_blueprint(species.bp)
     from . import traits

@@ -38,12 +38,16 @@ def sites_list(survey):
     cur.close()
     return render_template('sites/list.html', pairs=site_list, survey=survey)
 
-@bp.route('/map')
+@bp.route('/map', defaults={'survey': None})
+@bp.route('/map/<survey>')
 @login_required
-def sites_map():
+def sites_map(survey):
     pg = get_pg_connection()
     cur = pg.cursor()
-    qry='SELECT DISTINCT site_label, location_description, elevation, ST_X(ST_Transform(geom,4326)) , ST_Y(ST_Transform(geom,4326)) FROM form.field_visit LEFT JOIN form.field_site on visit_id=site_label ORDER BY site_label;'
+    qry='SELECT DISTINCT site_label, location_description, elevation, ST_X(ST_Transform(geom,4326)) , ST_Y(ST_Transform(geom,4326)) FROM form.field_visit LEFT JOIN form.field_site ON visit_id=site_label'
+    if survey is not None:
+        qry = qry + (" WHERE survey_name='%s'" % survey)
+
     cur.execute(qry)
     site_list = cur.fetchall()
     cur.close()
@@ -55,7 +59,7 @@ def sites_map():
         if point[4] is not None:
             folium.Marker([point[4],point[3]], popup=point[0]).add_to(marker_cluster)
     #return folium_map._repr_html_()
-    return render_template('sites/map.html', map=folium_map._repr_html_())
+    return render_template('sites/map.html', map=folium_map._repr_html_(), survey_name=survey)
 
 
 @bp.route('/info/<id>')
@@ -83,56 +87,3 @@ def site_info(id):
         return f"<h1>Invalid site label: {id}</h1>"
     cur.close()
     return render_template('sites/info.html', info=site_res, visit=visit_res , fire=fire_res, the_title=id)
-
-@bp.route('/visit/<id>/<dt>')
-@login_required
-def visit_info(id,dt):
-    qry1 = "SELECT site_label,location_description,elevation,st_x(geom),st_y(geom),st_srid(geom) FROM form.field_site WHERE site_label='%s';"
-    qry2 = "SELECT visit_date,visit_description,userkey,givennames,surname,observerlist,survey_name FROM form.field_visit LEFT JOIN form.observerid ON mainobserver=userkey WHERE visit_id='%s' AND visit_date='%s' ORDER BY visit_date ASC;"
-
-    qry3 = "SELECT measured_var,units,best,lower,upper FROM form.field_visit_vegetation_estimates WHERE visit_id='%s' AND visit_date='%s' ORDER BY measured_var ASC;"
-
-
-    qry4 = "SELECT vegtype,vegcategoryid,confidenceid,threatenedecologicalcommunity FROM form.field_visit_vegetation WHERE visit_id='%s' AND visit_date='%s';"
-
-    qry5 = "select sample_method,count(DISTINCT sample_nr) FROM form.field_samples WHERE visit_id='%s' AND visit_date='%s' GROUP BY sample_method;"
-
-    qry6 = "SELECT DISTINCT family, species_code, species, \"scientificName\", \"speciesID\"::int, \"sortOrder\" FROM form.quadrat_samples LEFT JOIN species.caps ON \"speciesCode_Synonym\" = species_code::text WHERE visit_id='%s' AND visit_date='%s' ORDER BY \"sortOrder\";"
-
-    pg = get_pg_connection()
-    cur = pg.cursor()
-    cur.execute(qry1 % id)
-    try:
-        site_res = cur.fetchone()
-    except:
-        return f"<h1>Invalid site label: {id}</h1>"
-    cur.execute(qry2 % (id,dt))
-    try:
-        visit_res = cur.fetchone()
-    except:
-        return f"<h1>Invalid site label: {id}</h1>"
-    cur.execute(qry3 % (id,dt))
-    try:
-        vars_res = cur.fetchall()
-    except:
-        return f"<h1>Invalid site label: {id}</h1>"
-    cur.execute(qry4 % (id,dt))
-    try:
-        veg_res = cur.fetchone()
-    except:
-        return f"<h1>Invalid site label: {id}</h1>"
-
-    cur.execute(qry5 % (id,dt))
-    try:
-        smp_res = cur.fetchone()
-    except:
-        return f"<h1>Invalid site label: {id}</h1>"
-
-    cur.execute(qry6 % (id,dt))
-    try:
-        spp_res = cur.fetchall()
-    except:
-        return f"<h1>Invalid site label: {id}</h1>"
-
-    cur.close()
-    return render_template('sites/visit.html', site=id,visit=dt, siteinfo=site_res, visitinfo=visit_res, estvars=vars_res, veginfo=veg_res, smpinfo=smp_res, spplist=spp_res)

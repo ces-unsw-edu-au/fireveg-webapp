@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}
+    {% if survey == None %}
+    List of field visits and samples per site
+    {% else %}
+    List of field visits and samples per site in {{survey}} survey
+    {% endif %}
+    {% endblock %}</h1>
+{% endblock %}
+{% block content %}
+<p>Sites are identified by a site label. One site can be visited multiple times. Click any site's label to see more information about site description and coordinates.</p>
+
+    <table>
+        <tr><th>Site Label</th><th>Visit date</th><th>Nr. of samples</th><th>Nr. of taxa</th></tr>
+    {% for pair in visits %}
+        <tr>
+          <td><a href="{{ url_for( 'sites.site_info', id=pair[0] ) }}">{{ pair[0] }}</a></td>
+
+            {% if pair[1] == None %}
+              <td class='empty'>Description not available.</td>
+            {% else %}
+              <td><a href="{{ url_for( 'visits.visit_info', id=pair[0], dt=pair[1] ) }}">{{ pair[1] }} </a> </td>
+            {% endif %}
+
+            {% if pair[2] == None or pair[2] == 0%}
+              <td class='empty'>No data added</td>
+            {% else %}
+              <td>{{ pair[2] }}</td>
+            {% endif %}
+
+            {% if pair[3] == None or pair[3] == 0%}
+              <td class='empty'>No data added</td>
+            {% else %}
+              <td>{{ pair[3] }}</td>
+            {% endif %}
+        </tr>
+    {% endfor %}
+    </table>
+
+{% endblock %}

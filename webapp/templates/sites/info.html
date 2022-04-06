@@ -43,7 +43,7 @@
         {% else %}
           <td>{{ pair[6] }} </td>
         {% endif %}
-        <td><a href="{{ url_for( 'sites.visit_info', id=the_title,dt=pair[0] ) }}">{{ pair[0] }}</a></td>
+        <td><a href="{{ url_for( 'visits.visit_info', id=the_title,dt=pair[0] ) }}">{{ pair[0] }}</a></td>
 
           {% if pair[1] == None %}
             <td class='empty'>Description not available.</td>
