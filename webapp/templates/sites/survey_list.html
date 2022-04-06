@@ -7,7 +7,12 @@
 <p></p>
 
     <table>
-        <tr><th>Survey name</th><th>Nr. of distinct sites</th><th>Nr. of distinct visits</th><th>Dates</th></tr>
+        <tr>
+          <th>Survey name</th>
+          <th colspan=2>Nr. of distinct sites</th>
+          <th colspan=2>Nr. of distinct visits</th>
+          <th>Dates</th>
+        </tr>
     {% for pair in pairs %}
         <tr>
 
@@ -18,7 +23,10 @@
               {% endif %}
 
           <td>{{ pair[1] }}</td>
+          <td><a href='{{ url_for( 'sites.sites_map', survey=pair[0] ) }}'>Map</a> </td>
           <td>{{ pair[2] }}</td>
+          <td><a href='{{ url_for( 'visits.visits_list', survey=pair[0] ) }}'>List</a> </td>
+
           <td>{{ pair[3] }} - {{ pair[4] }}</td>
         </tr>
     {% endfor %}
