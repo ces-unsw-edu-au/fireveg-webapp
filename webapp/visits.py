@@ -20,9 +20,9 @@ def visits_list(survey):
     pg = get_pg_connection()
     cur = pg.cursor()
     if survey == None:
-        qry='SELECT visit_id,visit_date,count(distinct sample_nr),count(distinct species_code) FROM form.field_visit v LEFT JOIN form.field_samples s USING(visit_id,visit_date) LEFT JOIN form.quadrat_samples q USING (visit_id,visit_date,sample_nr) GROUP BY visit_id,visit_date;'
+        qry='SELECT visit_id,visit_date,count(distinct sample_nr),count(distinct species_code),survey_name FROM form.field_visit v LEFT JOIN form.field_samples s USING(visit_id,visit_date) LEFT JOIN form.quadrat_samples q USING (visit_id,visit_date,sample_nr) GROUP BY survey_name,visit_id,visit_date ORDER BY survey_name,visit_id;'
     else:
-        qry='SELECT visit_id,visit_date,count(distinct sample_nr),count(distinct species_code)  FROM form.field_visit v LEFT JOIN form.field_samples s USING(visit_id,visit_date) LEFT JOIN form.quadrat_samples q USING (visit_id,visit_date,sample_nr) WHERE survey_name=\'%s\' GROUP BY visit_id,visit_date;' % survey
+        qry='SELECT visit_id,visit_date,count(distinct sample_nr),count(distinct species_code),survey_name  FROM form.field_visit v LEFT JOIN form.field_samples s USING(visit_id,visit_date) LEFT JOIN form.quadrat_samples q USING (visit_id,visit_date,sample_nr) WHERE survey_name=\'%s\' GROUP BY survey_name,visit_id,visit_date ORDER BY survey_name,visit_id;' % survey
     cur.execute(qry)
     visit_list = cur.fetchall()
     cur.close()
