@@ -57,6 +57,8 @@ def create_app(test_config=None):
     app.register_blueprint(sites.bp)
     from . import visits
     app.register_blueprint(visits.bp)
+    from . import basket
+    app.register_blueprint(basket.bp)
     from . import species
     app.register_blueprint(species.bp)
     from . import traits

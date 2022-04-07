@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Add species to selection{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+<h3>Current request</h3>
+   <p>{{ inherited_message }}</p>
+<h3>Add additional species to the list</h3>
+  <form method="post">
+    <label for="spplist">List of species</label>
+    <textarea name="spplist" id="spplist" required rows="8" cols="80"></textarea>
+    <input type="submit" value="Add">
+  </form>
+{% endblock %}

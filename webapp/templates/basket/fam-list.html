@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}List of selected species{% endblock %}</h1>
+{% endblock %}
+{% block content %}
+<p>Species selected for output of report. </p>
+
+    <table>
+        <tr><th>Family</th>
+          <th >Species</th></tr>
+
+    {% for record in records %}
+        <tr>
+           <td>{{ record[0] }}</td>
+           <td>{{ record[1] }}</td>
+        </tr>
+    {% endfor %}
+    </table>
+
+{% endblock %}
