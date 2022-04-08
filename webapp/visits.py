@@ -7,8 +7,6 @@ from webapp.auth import login_required
 from webapp.db import get_db
 from webapp.pg import get_pg_connection
 from datetime import datetime, timedelta
-import folium
-from folium.plugins import MarkerCluster
 
 bp = Blueprint('visits', __name__, url_prefix='/visits')
 
@@ -20,9 +18,9 @@ def visits_list(survey):
     pg = get_pg_connection()
     cur = pg.cursor()
     if survey == None:
-        qry='SELECT visit_id,visit_date,count(distinct sample_nr),count(distinct species_code),survey_name FROM form.field_visit v LEFT JOIN form.field_samples s USING(visit_id,visit_date) LEFT JOIN form.quadrat_samples q USING (visit_id,visit_date,sample_nr) GROUP BY survey_name,visit_id,visit_date ORDER BY survey_name,visit_id;'
+        qry='SELECT visit_id,visit_date,count(distinct sample_nr),count(distinct species_code),survey_name,CONCAT(givennames,\' \',surname) as main_observer FROM form.field_visit v LEFT JOIN form.field_samples s USING(visit_id,visit_date) LEFT JOIN form.quadrat_samples q USING (visit_id,visit_date,sample_nr) LEFT JOIN form.observerid ON mainobserver=userkey GROUP BY survey_name, visit_id, visit_date, givennames, surname ORDER BY survey_name,visit_id;'
     else:
-        qry='SELECT visit_id,visit_date,count(distinct sample_nr),count(distinct species_code),survey_name  FROM form.field_visit v LEFT JOIN form.field_samples s USING(visit_id,visit_date) LEFT JOIN form.quadrat_samples q USING (visit_id,visit_date,sample_nr) WHERE survey_name=\'%s\' GROUP BY survey_name,visit_id,visit_date ORDER BY survey_name,visit_id;' % survey
+        qry='SELECT visit_id,visit_date,count(distinct sample_nr),count(distinct species_code),survey_name,CONCAT(givennames,\' \',surname) as main_observer  FROM form.field_visit v LEFT JOIN form.field_samples s USING(visit_id,visit_date) LEFT JOIN form.quadrat_samples q USING (visit_id,visit_date,sample_nr) LEFT JOIN form.observerid ON mainobserver=userkey  WHERE survey_name=\'%s\' GROUP BY survey_name,visit_id,visit_date, givennames, surname ORDER BY survey_name,visit_id;' % survey
     cur.execute(qry)
     visit_list = cur.fetchall()
     cur.close()
