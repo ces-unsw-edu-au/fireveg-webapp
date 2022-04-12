@@ -75,6 +75,10 @@
 
   <div>
     <h4>Fire history</h4>
+
+    {%if fire|length == 0 %}
+      Fire history is not available for this site.
+    {%else%}
     <table>
         <tr><th>Fire name</th><th>Fire date</th><th>How inferred</th><th>Cause of ignition</th></tr>
     {% for pair in fire %}
@@ -85,7 +89,7 @@
             <td>{{ pair[0] }}</td>
           {% endif %}
 
-            <td>{{ pair[1] }} :: {{ pair[1] + pair[2] }} </td>
+            <td>{{ pair[1] }} :: {{ pair[2] }} </td>
             {% if pair[3] == None %}
               <td class='empty'>No data recorded.</td>
             {% else %}
@@ -99,6 +103,7 @@
         </tr>
     {% endfor %}
   </table>
+  {% endif %}
 </div>
 
 <!-- NOTE the way to link to a route: Use the function name -->
