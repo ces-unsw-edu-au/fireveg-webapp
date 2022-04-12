@@ -109,7 +109,7 @@ Check: {{check}}
 <tr><td><i>{{entry[3]}}</i> / species code {{entry[4]}}</td>
   <td>
   <a href="{{ url_for('sites.site_info', id =entry[0]) }}">{{ entry[0]}}</a></td>
-  <td>  <a href="{{ url_for('sites.visit_info', id =entry[0], dt=entry[1]) }}">{{ entry[1]}}</a></td>
+  <td>  <a href="{{ url_for('visits.visit_info', id =entry[0], dt=entry[1]) }}">{{ entry[1]}}</a></td>
   <td>{{ entry[2] }}</td>
   {% if entry[5] == None %}
   <td class='empty'>No value recorded.</td>

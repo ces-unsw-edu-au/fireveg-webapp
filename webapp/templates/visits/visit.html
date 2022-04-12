@@ -27,7 +27,9 @@
 	<span class='empty'>No coordinates data available.</span>
 
 	{% else %}
-    ({{ siteinfo[3] }} {{ siteinfo[4] }}) SRID: {{ siteinfo[5] }} .
+  <a href='{{url_for("sites.sites_map",survey=visitinfo[6])}}'>
+    ({{ siteinfo[3] }} {{ siteinfo[4] }}) SRID: {{ siteinfo[5] }}
+    </a>.
 	{% endif %}
 
 </div>
@@ -52,10 +54,12 @@
 <br/>
 <strong>Survey:</strong>
 	{% if visitinfo[6] == None %}
-	<span class='empty'>No coordinates data available.</span>
+	<span class='empty'>Not assigned to any survey.</span>
 
 	{% else %}
-    {{ visitinfo[6] }}.
+  <a href='{{url_for("visits.visits_list",survey=visitinfo[6])}}'>
+    {{ visitinfo[6] }}
+  </a>.
 	{% endif %}
 
 <p>
