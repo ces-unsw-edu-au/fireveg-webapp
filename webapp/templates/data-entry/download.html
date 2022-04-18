@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Download Excel File{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+<h1>File download</h1>
+
+<p>Fill the form with your contact information and click on the button below to download a data entry file (excel .xlsx format):</p>
+<form method=post enctype=multipart/form-data>
+  <label for="Name">Name</label>
+<input type="text" name="Name" value="">
+<label for="Affiliation">Affiliation</label>
+<input type="text" name="Affiliation" value="">
+<label for="Contact">Contact information</label>
+<textarea name="Contact" rows="8" cols="80"></textarea>
+<input type=submit value=Download>
+
+</form>
+
+{% endblock %}

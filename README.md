@@ -24,6 +24,7 @@ pip install psycopg2-binary
 pip install flask-wtf
 pip install folium
 pip install pandas
+pip install openpyxl
 ```
 
 Create and initialise directory
