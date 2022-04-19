@@ -7,7 +7,7 @@
 {% block content %}
 
 <div>
-  <h4>Site</h4>
+  <h4>Location information</h4>
 <strong>Location description:</strong>
 	{% if siteinfo[1] == None %}
 		<span class='empty'>Description not available.</span>
@@ -34,7 +34,7 @@
 
 <div>
   <h4>Visit</h4>
-<strong>Visit description:</strong>
+<strong>Site description:</strong>
 	{% if visitinfo[1] == None %}
 		<span class='empty'>Description not available.</span>
 	{% else %}
@@ -50,7 +50,7 @@
         {{ visitinfo[4] }} .
 	{% endif %}
 <br/>
-<strong>Survey:</strong>
+<strong>Survey name:</strong>
 	{% if visitinfo[6] == None %}
 	<span class='empty'>No coordinates data available.</span>
 
