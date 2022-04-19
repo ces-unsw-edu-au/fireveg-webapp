@@ -12,7 +12,7 @@ from openpyxl.worksheet.datavalidation import DataValidation
 
 
 
-def create_input_xl(contactinfo=None, specieslist=None, referencelist=None, traitlist=None, vocabularies=None):
+def create_input_xl(contactinfo=None, specieslist=None, referencelist=None, traitlist=None, vocabularies=None, methods_vocabularies=None):
     cent_align=Alignment(horizontal='center', vertical='center', wrap_text=False)
     wrap_align=Alignment(horizontal='left', vertical='top', wrap_text=True)
     sheet_colors = {"instructions": "1072BA" , "entry": "10BA72", "default":"505050"}
@@ -33,7 +33,8 @@ def create_input_xl(contactinfo=None, specieslist=None, referencelist=None, trai
     {"title": "Species list", "colWidths":[(("A",),90),], "tabColor":"default"},
     {"title": "References", "colWidths":[("A",30),("B",60)], "tabColor":"default"},
     {"title": "Trait description", "colWidths":[("A",12),("B",30),("C",70)], "tabColor":"default"},
-    {"title": "Vocabularies", "colWidths":[("A",30),("B",60)], "tabColor":"default"}
+    {"title": "Vocabularies", "colWidths":[("A",30),("B",60)], "tabColor":"default"},
+    {"title": "Vocabularies for methods", "colWidths":[("A",30),("B",60)], "tabColor":"default"}
 
     )
     for item in wsheets:
@@ -176,12 +177,32 @@ Add any notes, observations or comments in column "notes". Please avoid using co
             ws.add_table(tab)
             k=k+2
 
+    ## methods Vocabularies
+    if methods_vocabularies is not None:
+        ws = wb["Vocabularies for methods"]
+        k=1
+        for record in methods_vocabularies:
+            ws.cell(row=k,column=1,value="Available methods for trait %s" % record['code'])
+            k=k+1
+            tab_first_row=k
+            ws.cell(row=k,column=1,value="Valid values")
+            ws.cell(row=k,column=2,value="Description")
+            vocab=record['vocab']
+            for key in vocab.keys():
+                k=k+1
+                ws.cell(row=k,column=1,value=key)
+                ws.cell(row=k,column=2,value=vocab[key])
+                ws.cell(row=k,column=2).alignment=wrap_align
+            tab_last_row=k
+            tab = Table(displayName="method_%s" % record['code'], ref="A{}:B{}".format(tab_first_row,tab_last_row))
+            tab.tableStyleInfo = table_style["Vocabularies"]
+            ws.add_table(tab)
+            k=k+2
+
     ## Data Entry
     ws = wb["Data entry"]
     nrows = 20
-    hdr=["Main source", "Original sources", "Original species name", "Species code", "Species name",
-               "Trait code", "Trait name","Trait type","Raw value", "Norm value",
-               "Best", "Lower", "Upper", "Method of estimation","Notes"]
+    hdr=["Main source", "Original sources", "Original species name", "Species code", "Species name", "Trait code", "Trait name","Trait type","Raw value", "Norm value", "Best", "Lower", "Upper", "Method of estimation","Notes"]
     ws.append(hdr)
     dv_ref = DataValidation(type="list",
                         formula1="""=INDIRECT("References[Code]")""",
@@ -196,6 +217,8 @@ Add any notes, observations or comments in column "notes". Please avoid using co
 
     dv_vvalue = DataValidation(type="list",
                         formula1="""=INDIRECT(CONCATENATE("lookup_",$F2,"[Valid values]"))""")
+    dv_mvalue = DataValidation(type="list",
+                    formula1="""=INDIRECT(CONCATENATE("method_",$F2,"[Valid values]"))""")
 
     # custom error message
     dv_ref.error ='Your entry is not in the list'
@@ -209,15 +232,19 @@ Add any notes, observations or comments in column "notes". Please avoid using co
     dv_vvalue.prompt = """For categorical traits, please select trait first and then select one value from the dropdown list, otherwise leave blank.
     For quantitative traits, leave blank and fill Best/Lower/Upper columns."""
     dv_vvalue.promptTitle = 'Accepted values for trait'
+    dv_mvalue.prompt = """Please select a valid method for this trait from the dropdown list. Leave blank if no options available."""
+    dv_mvalue.promptTitle = 'Accepted values for method'
 
     # add validation ranges
     dv_ref.add("A2:A{}".format(nrows+1))
     dv_trait.add("F2:F{}".format(nrows+1))
     dv_fuzzy.add("K2:M{}".format(nrows+1))
     dv_vvalue.add("J2:J{}".format(nrows+1))
+    dv_mvalue.add("N2:N{}".format(nrows+1))
 
     ## add to sheet
     ws.add_data_validation(dv_vvalue)
+    ws.add_data_validation(dv_mvalue)
     ws.add_data_validation(dv_ref)
     ws.add_data_validation(dv_trait)
     ws.add_data_validation(dv_fuzzy)
@@ -241,6 +268,11 @@ Add any notes, observations or comments in column "notes". Please avoid using co
     r2 = Rule(type="expression", dxf=dxf, stopIfTrue=True)
     r2.formula = ['$H2="numerical"']
     ws.conditional_formatting.add("J2:J{}".format(nrows+1), r2)
+
+    #r3 = Rule(type="expression", dxf=dxf, stopIfTrue=True)
+    # which formula allows to test if table exists?
+    #r3.formula = ['=ISNUMBER(ROWS(INDIRECT(CONCATENATE("method_",$F2))))'] # formula for counting rows in a table
+    #ws.conditional_formatting.add("N2:N{}".format(nrows+1), r2)
 
     cell=ws.cell(row=nrows+1,column=len(hdr))
     tab = Table(displayName="DataEntry", ref="A1:{}{}".format(cell.column_letter,nrows+1))

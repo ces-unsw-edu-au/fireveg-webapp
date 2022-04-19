@@ -14,6 +14,10 @@ from psycopg2.extras import DictCursor
 
 bp = Blueprint('dataentry', __name__, url_prefix='/data-entry')
 
+@bp.route('/')
+@login_required
+def howto():
+    return render_template('data-entry.html', the_title="Data Entry")
 
 @bp.route('/upload', methods=('GET', 'POST'))
 @login_required
@@ -45,7 +49,7 @@ def download_file():
         traits = cur.fetchall()
 
         cur.execute("""
-SELECT code, category_vocabulary, method_vocabulary,
+SELECT code, category_vocabulary,
 pg_catalog.obj_description(t.oid, 'pg_type')::json as vocab
 FROM litrev.trait_info i
 LEFT JOIN pg_type t
@@ -54,9 +58,19 @@ WHERE category_vocabulary IS NOT NULL
 ORDER BY code""")
         vocabs = cur.fetchall()
 
+        cur.execute("""
+SELECT code, method_vocabulary,
+pg_catalog.obj_description(t.oid, 'pg_type')::json as vocab
+FROM litrev.trait_info i
+LEFT JOIN pg_type t
+    ON t.typname=i.method_vocabulary
+WHERE method_vocabulary IS NOT NULL
+ORDER BY code""")
+        mvocabs = cur.fetchall()
+
         cur.close()
 
-        wb = create_input_xl(contactinfo=response, referencelist=refs, specieslist=spps, traitlist=traits, vocabularies=vocabs)
+        wb = create_input_xl(contactinfo=response, referencelist=refs, specieslist=spps, traitlist=traits, vocabularies=vocabs, methods_vocabularies=mvocabs)
         excel_stream = io.BytesIO()
         wb.save(excel_stream)
         excel_stream.seek(0)  # go to the beginning of the stream

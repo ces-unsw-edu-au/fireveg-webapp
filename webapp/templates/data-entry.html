@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1>Data Entry</h1>
+
+<p>Follow the instructions to add new field or literature records.</p>
+
+<h2>Field forms</h2>
+
+<p>TO DO...</p>
+
+<h2>Literature records</h2>
+
+<p>First fill the contact information form in this link, and download the data entry template (File in .xlsx format).</p>
+
+<a href="{{url_for('dataentry.download_file')}}">Download File</a>
+
+<p>The file has one tab with instructions (blue tab), one tab with your contact information and one tab for data entry (green tabs), and other tabs containing tables and vocabularies used as lookup tables for data entry and documentation of traits and values. </p>
+<p>Check the affiliation details you provided, and then proceed to add new literature records to the file following the instructions. Do not modify information in other tabs.</p>
+
+<p>Once completed you will be able to upload the file in the following link:</p>
+
+<a href="{{url_for('dataentry.upload_file')}}">Upload File (TO DO)</a>
+
+{% endblock %}
