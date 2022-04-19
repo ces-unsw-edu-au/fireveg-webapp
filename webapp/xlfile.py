@@ -15,7 +15,7 @@ from openpyxl.worksheet.datavalidation import DataValidation
 def create_input_xl(contactinfo=None, specieslist=None, referencelist=None, traitlist=None, vocabularies=None, methods_vocabularies=None):
     cent_align=Alignment(horizontal='center', vertical='center', wrap_text=False)
     wrap_align=Alignment(horizontal='left', vertical='top', wrap_text=True)
-    sheet_colors = {"instructions": "1072BA" , "entry": "10BA72", "default":"505050"}
+    sheet_colors = {"instructions": "1072BA" , "entry": "10BA72", "addentry": "20CA82", "default":"505050"}
     table_style={"Instructions":TableStyleInfo(name="TableStyleMedium9", showFirstColumn=True, showLastColumn=False, showRowStripes=True, showColumnStripes=False),
              "Contributor": TableStyleInfo(name="TableStyleMedium18", showFirstColumn=True, showLastColumn=False, showRowStripes=False, showColumnStripes=False),
              "Lists": TableStyleInfo(name="TableStyleMedium14", showFirstColumn=True, showLastColumn=False, showRowStripes=False, showColumnStripes=False),
@@ -30,8 +30,8 @@ def create_input_xl(contactinfo=None, specieslist=None, referencelist=None, trai
     {"title": "Instructions", "colWidths":[("B",90),("C",40)], "tabColor":"instructions","active":True},
     {"title": "Contributor", "colWidths":[("A",30),("B",60)], "tabColor":"entry"},
     {"title": "Data entry", "colWidths":[(("A","B","C","E","G","I","N","O"),25), (("D","F","H","J","K","L","M"),12)], "tabColor":"entry"},
+    {"title": "References", "colWidths":[("A",30),("B",60)], "tabColor":"addentry"},
     {"title": "Species list", "colWidths":[(("A",),90),], "tabColor":"default"},
-    {"title": "References", "colWidths":[("A",30),("B",60)], "tabColor":"default"},
     {"title": "Trait description", "colWidths":[("A",12),("B",30),("C",70)], "tabColor":"default"},
     {"title": "Vocabularies", "colWidths":[("A",30),("B",60)], "tabColor":"default"},
     {"title": "Vocabularies for methods", "colWidths":[("A",30),("B",60)], "tabColor":"default"}
@@ -130,6 +130,7 @@ Add any notes, observations or comments in column "notes". Please avoid using co
         tab = Table(displayName="SpeciesList", ref="A1:B{}".format(ws.max_row))
         tab.tableStyleInfo = table_style["Lists"]
         ws.add_table(tab)
+        ws.protection.sheet = True
 
     ## Reference list
     if referencelist is not None:
@@ -154,6 +155,7 @@ Add any notes, observations or comments in column "notes". Please avoid using co
         tab = Table(displayName="TraitInformation", ref="A1:G{}".format(ws.max_row))
         tab.tableStyleInfo = table_style["Info"]
         ws.add_table(tab)
+        ws.protection.sheet = True
 
     ## Vocabularies
     if vocabularies is not None:
@@ -176,6 +178,7 @@ Add any notes, observations or comments in column "notes". Please avoid using co
             tab.tableStyleInfo = table_style["Vocabularies"]
             ws.add_table(tab)
             k=k+2
+        ws.protection.sheet = True
 
     ## methods Vocabularies
     if methods_vocabularies is not None:
@@ -198,6 +201,7 @@ Add any notes, observations or comments in column "notes". Please avoid using co
             tab.tableStyleInfo = table_style["Vocabularies"]
             ws.add_table(tab)
             k=k+2
+        ws.protection.sheet = True
 
     ## Data Entry
     ws = wb["Data entry"]
