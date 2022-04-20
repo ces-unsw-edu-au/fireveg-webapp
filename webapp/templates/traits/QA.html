@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>Fire related traits / {{trait}} </h1>
+{% endblock %}
+
+{% block content %}
+<table>
+    <tr><th>Source</th><th>Raw value</th><th>Nr. records</th></tr>
+{% for item in result %}
+    <tr>
+      <td><a href="{{url_for('biblio.ref_info', id =item.main_source)}}">{{item['main_source']}}</a></td>
+        <td>
+      {% for val in item['raw_value']%}
+          <a class='itemb' href="{{url_for('traits.trait_kwds',trait=trait,kwd=val)}}">
+              {{val}}
+              </a>
+        
+      {% endfor %}
+      </td>
+      <td>{{item['count']}}</td>
+    </tr>
+      {% endfor %}
+      </table>
+
+
+{% endblock %}

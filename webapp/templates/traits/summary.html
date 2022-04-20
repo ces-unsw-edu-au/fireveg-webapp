@@ -27,7 +27,7 @@
             <td colspan='2' class='empty'></td>
             {% else %}
             <td><a href="{{ url_for( 'traits.trait_info', group=row[5], var=row[6]) }}">Info</a></td>
-            <td><a href="{{ url_for( 'traits.trait_list', group=row[5], var=row[6]) }}">Values</a></td>
+            
             {% endif%}
           </tr>
           {% endfor %}

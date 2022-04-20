@@ -45,9 +45,10 @@
           {% endfor %}
               <tr>
                 <td class='empty'>Missing value</td>
-                <td>Imported raw values not matching assigment rules</td>
+                <td>Data entry error, needs review</td>
                 <td>{{ spps | selectattr('var','equalto', None) | map(attribute='nspp') | join(' ')}}</td>
                 <td>{{ spps | selectattr('var','equalto', None) | map(attribute='ncode') | join(' ')}}</td>
+                <td><a href="{{ url_for( 'traits.trait_qa', group=trait[0][0]) }}">Review values</a></td>
                 </tr>
         {% endif %}
       </tbody>
