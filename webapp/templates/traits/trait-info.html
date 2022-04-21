@@ -24,28 +24,29 @@
       </thead>
       <tbody>
         {% if var == 'best' %}
-        {% if desc == None %}
-        <tr>
-          <td class='empty' colspan=2>Missing description</td>
-          <td>{{ spps | selectattr('var','equalto', True) | map(attribute='nspp') | join(' ')}}</td>
-          <td>{{ spps | selectattr('var','equalto', True) | map(attribute='ncode') | join(' ')}}</td>
-          </tr>
-        {% else %}
-          {% for k in desc %}
-            <tr>
-              <td>{{k}}</td>
-              <td>{{desc[k]}}</td>
-              <td>{{ spps | selectattr('var','equalto', True) | map(attribute='nspp') | join(' ')}}</td>
-              <td>{{ spps | selectattr('var','equalto', True) | map(attribute='ncode') | join(' ')}}</td>
-              </tr>
-          {%endfor%}
-          {%endif%}
-            <tr>
-              <td class='empty'>Missing value</td>
-              <td>Imported raw values not matching assignment rules</td>
-              <td>{{ spps | selectattr('var','equalto', False) | map(attribute='nspp') | join(' ')}}</td>
-              <td>{{ spps | selectattr('var','equalto', False) | map(attribute='ncode') | join(' ')}}</td>
-              </tr>
+           {% if desc == None %}
+           <tr>
+             <td class='empty' colspan=2>Missing description</td>
+             <td>{{ spps | selectattr('var','equalto', True) | map(attribute='nspp') | join(' ')}}</td>
+             <td>{{ spps | selectattr('var','equalto', True) | map(attribute='ncode') | join(' ')}}</td>
+             </tr>
+           {% else %}
+             {% for k in desc %}
+               <tr>
+                 <td>{{k}}</td>
+                 <td>{{desc[k]}}</td>
+                 <td>{{ spps | selectattr('var','equalto', True) | map(attribute='nspp') | join(' ')}}</td>
+                 <td>{{ spps | selectattr('var','equalto', True) | map(attribute='ncode') | join(' ')}}</td>
+                 </tr>
+             {%endfor%}
+             {%endif%}
+               <tr>
+                 <td class='empty'>Missing value</td>
+                 <td>Imported raw values not matching assignment rules</td>
+                 <td>{{ spps | selectattr('var','equalto', False) | map(attribute='nspp') | join(' ')}}</td>
+                 <td>{{ spps | selectattr('var','equalto', False) | map(attribute='ncode') | join(' ')}}</td>
+                 <td><a href="{{ url_for( 'traits.trait_qa', trait=trait['code'], valuetype='numerical') }}">Review values</a></td>
+                 </tr>
         {% else %}
           {% for key in desc %}
             <tr>
