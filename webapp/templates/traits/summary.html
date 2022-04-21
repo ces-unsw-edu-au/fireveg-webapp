@@ -23,11 +23,11 @@
             <td>{{row[1]}}</td>
             <td>{{row[2]}}</td>
             <td>{{row[3]}}</td>
-            {% if row[5] == 0 %}
-            <td colspan='2' class='empty'></td>
+            {% if row[5] == 'categorical' %}
+            <td><a href="{{ url_for( 'traits.trait_info', group=row[0], var='norm_value') }}">Info</a></td>
             {% else %}
-            <td><a href="{{ url_for( 'traits.trait_info', group=row[5], var=row[6]) }}">Info</a></td>
-            
+            <td><a href="{{ url_for( 'traits.trait_info', group=row[0], var='best') }}">Info</a></td>
+
             {% endif%}
           </tr>
           {% endfor %}

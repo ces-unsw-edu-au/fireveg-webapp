@@ -5,13 +5,15 @@
 {% endblock %}
 
 {% block content %}
-<h2>{{trait[0][2]}} / {{trait[0][3]}} traits</h2>
+<h2>{{trait['life_stage']}} / {{trait['life_history_process']}} traits</h2>
 
-<h3>{{trait[0][0]}} &ndash; {{trait[0][1]}}</h3>
+<h3>{{trait['code']}} &ndash; {{trait['name']}}</h3>
 <p>
-  Data on {{trait[0][1]}} from {{mainrefs|length}} main references and {{addrefs|length}} additional references.
-
+  Data on {{trait['name']}} from {{mainrefs|length}} main references and {{addrefs|length}} additional references.
 </p>
+<p><b>Trait description</b>: {{trait['description']}} </p>
+
+
   <table class='definitions'>
     <thead>
       <tr>
@@ -22,12 +24,22 @@
       </thead>
       <tbody>
         {% if var == 'best' %}
-          <tr>
-            <td>{{desc[0][0]}}</td>
-            <td>{{desc[0][1]}}</td>
-            <td>{{ spps | selectattr('var','equalto', True) | map(attribute='nspp') | join(' ')}}</td>
-            <td>{{ spps | selectattr('var','equalto', True) | map(attribute='ncode') | join(' ')}}</td>
-            </tr>
+        {% if desc == None %}
+        <tr>
+          <td class='empty' colspan=2>Missing description</td>
+          <td>{{ spps | selectattr('var','equalto', True) | map(attribute='nspp') | join(' ')}}</td>
+          <td>{{ spps | selectattr('var','equalto', True) | map(attribute='ncode') | join(' ')}}</td>
+          </tr>
+        {% else %}
+          {% for k in desc %}
+            <tr>
+              <td>{{k}}</td>
+              <td>{{desc[k]}}</td>
+              <td>{{ spps | selectattr('var','equalto', True) | map(attribute='nspp') | join(' ')}}</td>
+              <td>{{ spps | selectattr('var','equalto', True) | map(attribute='ncode') | join(' ')}}</td>
+              </tr>
+          {%endfor%}
+          {%endif%}
             <tr>
               <td class='empty'>Missing value</td>
               <td>Imported raw values not matching assignment rules</td>
@@ -35,12 +47,12 @@
               <td>{{ spps | selectattr('var','equalto', False) | map(attribute='ncode') | join(' ')}}</td>
               </tr>
         {% else %}
-          {% for pair in desc %}
+          {% for key in desc %}
             <tr>
-              <td>{{pair[0]}}</td>
-              <td>{{pair[1]}}</td>
-              <td>{{ spps | selectattr('var','equalto', pair[0]) | map(attribute='nspp') | join(' ')}}</td>
-              <td>{{ spps | selectattr('var','equalto', pair[0]) | map(attribute='ncode') | join(' ')}}</td>
+              <td>{{key}}</td>
+              <td>{{desc[key]}}</td>
+              <td>{{ spps | selectattr('var','equalto', key) | map(attribute='nspp') | join(' ')}}</td>
+              <td>{{ spps | selectattr('var','equalto', key) | map(attribute='ncode') | join(' ')}}</td>
               </tr>
           {% endfor %}
               <tr>
@@ -48,7 +60,7 @@
                 <td>Data entry error, needs review</td>
                 <td>{{ spps | selectattr('var','equalto', None) | map(attribute='nspp') | join(' ')}}</td>
                 <td>{{ spps | selectattr('var','equalto', None) | map(attribute='ncode') | join(' ')}}</td>
-                <td><a href="{{ url_for( 'traits.trait_qa', group=trait[0][0]) }}">Review values</a></td>
+                <td><a href="{{ url_for( 'traits.trait_qa', trait=trait['code']) }}">Review values</a></td>
                 </tr>
         {% endif %}
       </tbody>
