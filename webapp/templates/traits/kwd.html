@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>Fire related traits / {{trait}} </h1>
+{% endblock %}
+
+{% block content %}
+<table>
+    <tr>
+      <th colspan=2>Species</th>
+      <th>Raw values</th>
+      <th>Norm value</th>
+      <th>Notes</th>
+
+    </tr>
+{% for item in result %}
+    <tr>
+
+      <td><em>{{item['species']}}</em></td>
+      <td><a href="{{url_for('species.sp_info', id=item['species_code'], synonym='use synonym' )}}"><i>{{item['species_code']}}</i></a></td>
+
+
+
+      {% if item['raw_value']==None %}
+        <td class='empty'>No data</td>
+      {% else %}
+        <td>
+          {% for val in item['raw_value'] %}
+            <a class='itemb'>{{val}}</a>
+          {% endfor %}
+        </td>
+      {% endif %}
+
+      {% if item['norm_value'] == None %}
+        <td class='empty'>No data</td>
+      {%else%}
+        <td>{{item['norm_value']}}</td>
+      {% endif %}
+      <td>{{item['notes']}}</td>
+      <td><a href="{{url_for('traits.spp', trait=trait, code=item['species_code'])}}">View record</a></td>
+
+    </tr>
+      {% endfor %}
+      </table>
+
+
+{% endblock %}

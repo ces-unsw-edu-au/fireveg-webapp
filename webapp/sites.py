@@ -57,7 +57,8 @@ def sites_map(survey):
 
     for point in site_list:
         if point[4] is not None:
-            folium.Marker([point[4],point[3]], popup=point[0]).add_to(marker_cluster)
+            msg = "<div>Site label: <a href='%s' target='side-nav'>%s</a> </div>" % (url_for( 'sites.site_info', id=point[0] ),point[0])
+            folium.Marker([point[4],point[3]], popup=msg).add_to(marker_cluster)
     #return folium_map._repr_html_()
     return render_template('sites/map.html', map=folium_map._repr_html_(), survey_name=survey)
 

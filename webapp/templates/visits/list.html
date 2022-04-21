@@ -30,6 +30,12 @@
               <td><a href="{{ url_for( 'visits.visit_info', id=pair[0], dt=pair[1] ) }}">{{ pair[1] }} </a> </td>
             {% endif %}
 
+            {% if pair[5] == None %}
+              <td class='empty'>Observer info missing</td>
+            {% else %}
+              <td>{{ pair[5] }}</td>
+            {% endif %}
+
             {% if pair[2] == None or pair[2] == 0%}
               <td class='empty'>No data added</td>
             {% else %}

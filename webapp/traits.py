@@ -38,6 +38,29 @@ def trait_list(group,var):
     return render_template('traits/list.html', spps=spp_list,group=group,var=var)
 
 
+@bp.route('/QA/<trait>')
+@login_required
+def trait_qa(trait):
+    pg = get_pg_connection()
+    cur = pg.cursor(cursor_factory=DictCursor)
+    qry = 'select distinct main_source,raw_value,count(*) from litrev.{} WHERE norm_value is NULL group by main_source,raw_value,norm_value ;'.format(trait)
+    cur.execute(qry)
+    res = cur.fetchall()
+    cur.close()
+    return render_template('traits/QA.html', result=res, trait=trait)
+
+
+@bp.route('/QA/<trait>/<kwd>')
+@login_required
+def trait_kwds(trait,kwd):
+    pg = get_pg_connection()
+    cur = pg.cursor(cursor_factory=DictCursor)
+    qry = "select species, species_code, raw_value, norm_value, original_notes from litrev.{} WHERE '{}'=ANY(raw_value) ;".format(trait,kwd)
+    cur.execute(qry)
+    res = cur.fetchall()
+    cur.close()
+    return render_template('traits/kwd.html', result=res, trait=trait, kwd=kwd)
+
 @bp.route('/<group>/<var>/info')
 @login_required
 def trait_info(group,var):
