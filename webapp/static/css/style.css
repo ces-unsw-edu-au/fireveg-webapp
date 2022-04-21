@@ -2,6 +2,8 @@ html { font-family: sans-serif; background: #BACEC1; padding: 1rem; }
 body { max-width: 960px; margin: 0 auto; background: #F6F4E8; }
 h1 { font-family: serif; color: #1D3124; margin: 1rem 0; }
 h1.title { color: #BACEC1; }
+h4.credits { color: #1D3124; font-size: 11px; padding-left: 5px; padding-right: 5px;}
+img.logo {padding-left: 5px; padding-right: 5px;}
 th {background: #1D3124; color: #F6F4E8;  }
 td {background: #BACEC1; color: #1D3124; }
 td.empty {background: lightgrey; color: darkgrey; }
@@ -16,6 +18,8 @@ nav ul li a, nav ul li span, header .action { display: block; padding: 0.5rem; }
 .content > header { border-bottom: 1px solid lightgray; display: flex; align-items: flex-end; }
 .content > header h1 { flex: auto; margin: 1rem 0 0.25rem 0; }
 .flash { margin: 1em 0; padding: 1em; background: #cae6f6; border: 1px solid #377ba8; }
+nav.footer {background: #fff; }
+
 .post > header { display: flex; align-items: flex-end; font-size: 0.85em; }
 .post > header > div:first-of-type { flex: auto; }
 .post > header h1 { font-size: 1.5em; margin-bottom: 0; }
