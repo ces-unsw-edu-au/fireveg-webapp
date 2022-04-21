@@ -86,7 +86,8 @@ def trait_info(group,var):
     cur.execute(qry)
     spp_list = cur.fetchall()
 
-    qry = 'SELECT DISTINCT main_source, ref_cite, ref_code, alt_code FROM litrev.{grp} LEFT JOIN litrev.ref_list ON main_source=ref_code  WHERE main_source is NOT NULL;'.format(grp=group)
+
+    qry="SELECT count(record_id) as total,ref_cite, ref_code FROM litrev.{} LEFT JOIN litrev.ref_list ON main_source=ref_code  WHERE main_source is NOT NULL GROUP BY ref_code,ref_cite ".format(group)
     cur.execute(qry)
     ref_list = cur.fetchall()
 
@@ -101,20 +102,14 @@ def trait_info(group,var):
     if traitdata['category_vocabulary'] is not None:
         qry="SELECT pg_catalog.obj_description(t.oid, 'pg_type')::json from pg_type t where typname = '{}';".format(traitdata['category_vocabulary'])
     else:
-
         qry="SELECT (SELECT pg_catalog.col_description(c.oid, cols.ordinal_position::int) FROM pg_catalog.pg_class c WHERE c.oid     = (SELECT CONCAT(cols.table_schema,'.',cols.table_name)::regclass::oid) AND c.relname = cols.table_name)::json  as column_comment FROM information_schema.columns cols WHERE cols.table_catalog = 'dbfireveg' AND cols.table_schema  = 'litrev' AND cols.table_name    = '{}' AND cols.column_name    = 'best';  ".format(group)
     cur.execute(qry)
     slcdata = cur.fetchone()
 
+
+
     cur.close()
 
-    #fname='webapp/static/metadata/trait-description.csv'
-    #data = pd.read_csv(fname)
-    #traitdata = data.loc[data.db_table == group]
-
-    #fname='webapp/static/metadata/trait-value-description.csv'
-    #data = pd.read_csv(fname)
-    #slcdata = data.loc[data.db_table == group][['value','description']]
 
     return render_template('traits/trait-info.html', spps=spp_list, mainrefs=ref_list, addrefs=add_list, group=group, var=var, trait=traitdata, desc=slcdata[0])
 
