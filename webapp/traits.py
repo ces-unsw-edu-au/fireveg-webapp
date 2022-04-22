@@ -69,9 +69,14 @@ def trait_qa(trait):
 @bp.route('/QA/<trait>/<kwd>')
 @login_required
 def trait_kwds(trait,kwd):
+    valuetype = request.args.get('valuetype', default = 'categorical', type = str)
+
     pg = get_pg_connection()
     cur = pg.cursor(cursor_factory=DictCursor)
-    qry = "select species, species_code, raw_value, norm_value, original_notes from litrev.{} WHERE '{}'=ANY(raw_value) ;".format(trait,kwd)
+    if valuetype == 'categorical':
+        qry = "select species, species_code, raw_value, norm_value, original_notes from litrev.{} WHERE '{}'=ANY(raw_value) ;".format(trait,kwd)
+    else:
+        qry = "select species, species_code, raw_value, best as norm_value, original_notes from litrev.{} WHERE '{}'=ANY(raw_value) ;".format(trait,kwd)
     cur.execute(qry)
     res = cur.fetchall()
     cur.close()

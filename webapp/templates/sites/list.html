@@ -5,12 +5,30 @@
     {% if survey == None %}
     List of field sites
     {% else %}
-    Field sites in {{survey}} survey
+    Field sites in {{survey[0]}} survey
     {% endif %}
     {% endblock %}</h1>
 {% endblock %}
 {% block content %}
-<p>Sites are identified by a site label. One site can be visited multiple times. Click any site's label to see more information about site description and coordinates.</p>
+
+  {% if survey == None %}
+    <p>List of all field sites in the database.</p>
+
+    <p>Sites are identified by a site label. One site can be visited multiple times. Click any site's label to see more information about site description and coordinates, and a list of visits to that site.</p>
+
+  {% else %}
+    <p>This is a list of the field sites in the <b>{{survey[0]}}</b> survey. Check other surveys in the <a href="{{ url_for('sites.survey_list') }}">list of surveys</a>.</p>
+    {% if survey[1] == None %}
+    <span class='empty'>No description available for this survey</span>
+    {% else %}
+      <p><b>Survey description:</b> {{survey[1]}} </p>
+    {% endif %}
+    <p>Sites are identified by a site label. Click any site's label to see more information about site description and coordinates, and a list of visits to that site.
+      </p>
+      <p>One site can be visited multiple times, see the <a href="{{ url_for('visits.visits_list',survey=survey[0]) }}">list of visits</a> for this survey. </p>
+  {% endif %}
+
+
 
     <table>
         <tr><th>Site Label</th><th>Location description</th><th>Elevation</th><th>Coordinates (Lat Long WGS84)</th></tr>

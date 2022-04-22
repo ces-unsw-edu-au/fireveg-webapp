@@ -59,7 +59,7 @@
     <dt><b>Missing values</b></dt>
     {% if var == 'best' %}
       {% if spps | selectattr('var','equalto', False) | map(attribute='nspp') | join(' ') |length%}
-        <dd>There are {{ spps | selectattr('var','equalto', False) | map(attribute='nspp') | join(' ')}} taxa with data entry error that need review. <a href="{{ url_for( 'traits.trait_qa', trait=trait['code']) }}">Review missing values</a></dd>
+        <dd>There are {{ spps | selectattr('var','equalto', False) | map(attribute='nspp') | join(' ')}} taxa with data entry error that need review. <a href="{{ url_for( 'traits.trait_qa', trait=trait['code'], valuetype='numerical') }}">Review missing values</a></dd>
       {% else %}
         <dd>No errors in data entry detected so far.</dd>
       {%endif%}
@@ -77,7 +77,7 @@
   <p>
     Data on {{trait['name']}} from {{mainrefs|length}} main references and {{addrefs|length}} additional references.
   </p>
-  
+
   <ul>
   <h3>Main references</h3>
 
