@@ -86,15 +86,20 @@ def sp_info(id):
         return f"<h1>Invalid species code: {id}</h1>"
 
     qrysmp="SELECT visit_id,visit_date,count(distinct sample_nr), species, species_code, seedbank, resprout_organ FROM form.quadrat_samples WHERE species_code=%s GROUP BY visit_id, visit_date, species, species_code, seedbank, resprout_organ ORDER BY visit_id,visit_date;"
-    if synonym == 'valid':
-        cur.execute(qrysmp % spp_info[5])
+    if synonym == 'valid' and isinstance(spp_info[5],int):
+        try:
+            cur.execute(qrysmp, (spp_info[5],))
+            samples = cur.fetchall()
+        except:
+            return f"<h1>Invalid species code: {spp_info[5]}</h1>"
+    elif synonym != 'valid':
+        try:
+            cur.execute(qrysmp, (id,))
+            samples = cur.fetchall()
+        except:
+            return f"<h1>Invalid species code: {id}</h1>"
     else:
-        cur.execute(qrysmp % id)
-    try:
-        samples = cur.fetchall()
-    except:
-        return f"<h1>Invalid species code: {id}</h1>"
-
+        samples = None
     traits = list()
 
     for target in ('surv1','rect2','repr2'):
