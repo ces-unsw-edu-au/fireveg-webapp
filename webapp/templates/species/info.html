@@ -91,7 +91,7 @@ Check: {{check}}
 </div>
 <h2>Field samples</h2>
 
-{% if fsamp|length == 0 %}
+{% if fsamp==None or fsamp|length == 0 %}
 <h3 class='empty'>No field samples recorded for this taxon</h3>
 {% else %}
 <table>

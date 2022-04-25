@@ -52,9 +52,14 @@ def trait_list(group,var):
 @bp.route('/QA/<trait>')
 @login_required
 def trait_qa(trait):
+    valuetype = request.args.get('valuetype', default = 'categorical', type = str)
+
     pg = get_pg_connection()
     cur = pg.cursor(cursor_factory=DictCursor)
-    qry = 'select distinct main_source,raw_value,count(*) from litrev.{} WHERE norm_value is NULL group by main_source,raw_value,norm_value ;'.format(trait)
+    if valuetype == 'categorical':
+        qry = 'select distinct main_source,raw_value,count(*) from litrev.{} WHERE norm_value is NULL group by main_source,raw_value,norm_value ;'.format(trait)
+    else:
+        qry = 'select distinct main_source,raw_value,count(*) from litrev.{} WHERE best is NULL AND lower is NULL and upper is NULL group by main_source,raw_value ;'.format(trait)
     cur.execute(qry)
     res = cur.fetchall()
     cur.close()
@@ -64,9 +69,14 @@ def trait_qa(trait):
 @bp.route('/QA/<trait>/<kwd>')
 @login_required
 def trait_kwds(trait,kwd):
+    valuetype = request.args.get('valuetype', default = 'categorical', type = str)
+
     pg = get_pg_connection()
     cur = pg.cursor(cursor_factory=DictCursor)
-    qry = "select species, species_code, raw_value, norm_value, original_notes from litrev.{} WHERE '{}'=ANY(raw_value) ;".format(trait,kwd)
+    if valuetype == 'categorical':
+        qry = "select species, species_code, raw_value, norm_value, original_notes from litrev.{} WHERE '{}'=ANY(raw_value) ;".format(trait,kwd)
+    else:
+        qry = "select species, species_code, raw_value, best as norm_value, original_notes from litrev.{} WHERE '{}'=ANY(raw_value) ;".format(trait,kwd)
     cur.execute(qry)
     res = cur.fetchall()
     cur.close()
