@@ -7,7 +7,8 @@
 <body>
 
 <nav>
-  <h1 class='title'>Vegetation response to fire - Database prototype v0.2</h1>
+  <h1 class='title'>Fire Ecology Traits for Plants</h1>
+  <h5>Version 1.0</h5>
   <ul>
     {% if g.user %}
       <li><span>{{ g.user['username'] }}</span>
@@ -21,7 +22,8 @@
 
 <nav>
   <ul>
-    <li><span><a href='{{ url_for('index') }}'>Database summary</a></span>
+    <li><span><a href='{{ url_for('index') }}'>Home</a></span>
+      <li><span><a href='{{ url_for('summary') }}'>Database summary</a></span>
     <li><span><a href='{{ url_for('sites.sites_list') }}'>All sites</a></span>
     <li><span><a href='{{ url_for('species.fam_list') }}'>All species</a></span>
     <li><span><a href='{{ url_for('traits.trait_sum') }}'>All traits</a></span>
@@ -47,7 +49,10 @@
 
   <h4 class='credits'>Design and development by:<br/>David A. Keith and Jos&eacute; R. Ferrer-Paris<br/>Centre for Ecosystem Science &mdash; University of New South Wales</h4>
 
-
+  <h4 class='credits'>Supported by: University of NSW <br>
+NSW Bushfire Research Hub <br>
+NESP Threatened Species Recovery Hub <br>
+NSW Department of Planning & Environment</h4>
 
 </nav>
 </body>

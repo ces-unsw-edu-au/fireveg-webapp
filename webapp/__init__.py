@@ -38,7 +38,10 @@ def create_app(test_config=None):
         return render_template('documentation.html', the_title="Home / Documentation")
     @app.route('/index')
     def index():
-        return render_template('index.html', the_title="Home ")
+        return render_template('home.html', the_title="Home ")
+    @app.route('/summary')
+    def summary():
+        return render_template('index.html', the_title="Home / Summary ")
 
     from . import db
     db.init_app(app)
