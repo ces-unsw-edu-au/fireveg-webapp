@@ -211,6 +211,79 @@ Check: {{check}}
       {% endif %}
       {% endfor %}
 
+<h2>Vital Attributes Group</h2>
+
+<p>The species has been tentatively assigned to the following Vital Attribute Groups</p>
+
+<table>
+  <tr>
+    <th>Persistence</th>
+
+      {%if vag['persistence'] == None %}
+        <td class='empty'>Missing information</td>
+      {% else %}
+      <td>
+        {% for k in ('D','Δ','S','Σ','G','Γ','V','U','C','W') %}
+            {%if k in vag['persistence'] %}
+            <span  class='itis'>{{k}}</span>
+            {% else %}
+            <span class='isnot'>{{k}}</span>
+            {% endif %}
+          {% endfor %}
+        </td>
+      {% endif %}
+
+
+    <th>Establishment</th>
+    {%if vag['establishment'] == None %}
+      <td class='empty'>Missing information</td>
+    {% else %}
+    <td>
+      {% for k in ('I','I/T','T','T/r','R') %}
+          {%if k in vag['establishment'] %}
+          <span  class='itis'>{{k}}</span>
+          {% else %}
+          <span class='isnot'>{{k}}</span>
+          {% endif %}
+        {% endfor %}
+    </td>
+    {% endif %}
+
+  </tr>
+  <tr>
+    {%if vag['status_persistence'] == None %}
+    <td colspan='2' class='empty'></td>
+    {% else%}
+    <td colspan='2' class='notes'>
+      {% for entry in vag['status_persistence']%}
+        / {{entry}} /
+      {% endfor %}
+    </td>
+    {% endif %}
+    {%if vag['status_establishment'] == None %}
+    <td colspan='2' class='empty'></td>
+    {% else%}
+    <td colspan='2' class='notes'>
+      {% for entry in vag['status_establishment']%}
+        / {{entry}} /
+      {% endfor %}
+    </td>
+    {% endif %}
+  </tr>
+  {%if vag['rationale_persistence'] != None %}
+  <tr>
+    <td colspan=4  class='notes'>
+      <ol><b>Rationale for persistence</b>
+        {% for entry in vag['rationale_persistence'] %}
+          <li>{{entry}}</li>
+        {% endfor %}
+      </ol>
+
+    </td>
+  </tr>
+  {%endif%}
+</table>
+
 <h2>References</h2>
 <ul>
 <h3>Main references</h3>

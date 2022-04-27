@@ -153,5 +153,9 @@ def sp_info(id):
     cur.execute(qrylit2.format(spcode=spp_info[5]))
     add_list = cur.fetchall()
 
+    qryvag = "SELECT persistence, rationale_persistence, status_persistence, establishment,status_establishment,date_updated FROM vag.va_groups where species_code={spcode}"
+    cur.execute(qryvag.format(spcode=spp_info[1]))
+    vag_info = cur.fetchone()
+
     cur.close()
-    return render_template('species/info.html', info=spp_info, fsamp=samples, traits=traits, mainrefs=ref_list, addrefs=add_list, check=synonym)
+    return render_template('species/info.html', info=spp_info, fsamp=samples, traits=traits, mainrefs=ref_list, addrefs=add_list, check=synonym, vag=vag_info)
