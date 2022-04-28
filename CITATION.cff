@@ -1,0 +1,26 @@
+cff-version: 1.2.0
+title: >-
+  Fire Ecology Traits for Plants: A database for fire
+  research and management
+message: >-
+  If you use this software, please use the
+  preferred-citation.
+type: software
+authors:
+  - family-names: Ferrer-Paris
+    given-names: José R.
+    orcid: 'https://orcid.org/0000-0002-9554-3395'
+    affiliation: UNSW
+  - family-names: Keith
+    given-names: David
+    affiliation: UNSW
+version: v1.0
+date-released: '2022-04-15'
+preferred-citation:
+  authors:
+    - family-names: "Ferrer-Paris"
+      given-names: "José R."
+      orcid: https://orcid.org/0000-0002-9554-3395
+    - family-names: Keith
+      given-names: David A.
+  title: Fire Ecology Traits for Plants: A database for fire research and management. Version 1.00 (2022). Centre for Ecosystem Science, University of New South Wales, Sydney, Australia.

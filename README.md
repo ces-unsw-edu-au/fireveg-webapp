@@ -1,70 +1,38 @@
-# Fireveg webapp based on Python/flask
+# Fire Ecology Traits for Plants
+
+The ***Fire Ecology Traits for Plants*** project is being developed by  [José R. Ferrer-Paris](https://github.com/jrfep) and David Keith in the Centre for Ecosystem Science, University of New South Wales
+
+Please cite this work as:
+
+> Ferrer-Paris, J. R. and Keith, D. A. (2022) Fire Ecology Traits for Plants: A database for fire research and management. Version 1.00. Centre for Ecosystem Science, University of New South Wales, Sydney, Australia.
 
 
+This work has been supported by:
 
-## Documentation
+- [University of New South Wales](https://www.unsw.edu.au/)
+- [NSW Bushfire Research Hub](https://www.bushfirehub.org/)
+- [NESP Threatened Species Recovery Hub](https://www.nespthreatenedspecies.edu.au/)
+- [NSW Department of Planning & Environment](https://www.planning.nsw.gov.au/)
 
-This version has been developed following steps in
-https://flask.palletsprojects.com/en/2.0.x/tutorial/
+## Components of the project
 
-### Set up
+### SQL structure of the database
 
-Create a virtual environment for flask with miniconda:
+Code for defining the structure of the tables in a PostgreSQL database is available in the [fireveg-db](https://github.com/jrfep/fireveg-db) repository.
 
-```sh
-conda create --name flsk
-conda activate flsk
-```
 
-Update and install modules
-```sh
-/usr/local/opt/python@3.9/bin/python3.9 -m pip install --upgrade pip
-pip3 install Flask
-pip install psycopg2-binary
-pip install flask-wtf
-pip install folium
-pip install pandas
-```
+### Database content
 
-Create and initialise directory
-```sh
-mkdir -p ~/proyectos/fireveg/fireveg-webapp
-cd ~/proyectos/fireveg/fireveg-webapp
-git init
-```
+Data not available yet.
 
-```sh
-pip freeze > requirements.txt
-```
+### WebApp
 
-### Test the app
+This repository contains the code for running a Python/Flask webapp.
 
-```sh
-cd ~/proyectos/fireveg/fireveg-webapp
-export FLASK_APP=webapp
-export FLASK_ENV=development
-flask run
-```
+#### Repository structure
 
-Initialise the database:
+- Folder [webapp/](/webapp/) contains all the code for the flask app.
 
-```sh
-cd ~/proyectos/fireveg/fireveg-webapp
-export FLASK_APP=webapp
-export FLASK_ENV=development
-flask init-db
-```
+### Code for managing the database
 
-### Running with gunicorn
-
-```sh
-pip install gunicorn
-cd ~/proyectos/fireveg/fireveg-webapp
-gunicorn -w 4 --reload --bind 0.0.0.0:5000 "webapp:create_app()"
-```
-
-### Other on-line resources
-
-https://python-adv-web-apps.readthedocs.io/en/latest/flask.html
-
-https://www.digitalocean.com/community/tutorials/how-to-use-a-postgresql-database-in-a-flask-application
+code and instruction to perform several tasks in the database is available in the [fire-veg-aust](https://github.com/jrfep/fire-veg-aust) repository.
