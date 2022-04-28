@@ -35,4 +35,4 @@ This repository contains the code for running a Python/Flask webapp.
 
 ### Code for managing the database
 
-code and instruction to perform several tasks in the database is available in the [fire-veg-aust](https://github.com/jrfep/fire-veg-aust) repository.
+Code and instruction to perform several tasks in the database is available in the [fire-veg-aust](https://github.com/jrfep/fire-veg-aust) repository.
