@@ -115,6 +115,7 @@ Check: {{check}}
 {% else %}
   <div class="tabs" id="Field samples" style="">
     <h2>Field samples</h2>
+    <p>The data in this table summarises field work records for this species.</p>
       <table>
         <tr>
           <th>Originally recorded as</th>
@@ -157,7 +158,7 @@ Check: {{check}}
 {% else %}
   <div class="tabs" id="Traits from literature records" style="">
     <h2>Fire related traits (from literature)</h2>
-
+<p>The data in these tables is collated from multiple published and unpublished sources. The <i>Main reference</i> or <i>Main source</i> field indicates the proximate source of the records displayed here, but further details and context can be found in the <i>original sources</i>. Follow the links for the trait value records for each individual trait to consult all sources, original notes and values.</p>
    {% set vars = {'spcode': False} %}
       {% for tt in traits %}
         {% if tt['count'] > 0 %}
@@ -246,7 +247,7 @@ Check: {{check}}
 
 <h2>Vital Attributes Group</h2>
 
-<p>The species has been tentatively assigned to the following Vital Attribute Groups</p>
+<p>The species has been tentatively assigned to the following Vital Attribute Groups based on the summary of traits reported in the literature.</p>
 
 <table>
   <tr>

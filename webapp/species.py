@@ -24,7 +24,7 @@ CREATE TEMP TABLE species_traits (species_code,trait_codes) AS (
     UNION SELECT 'surv6' AS table_name, species_code FROM litrev.surv6
     UNION SELECT 'surv7' AS table_name, species_code FROM litrev.surv7
     UNION SELECT 'disp1' AS table_name, species_code FROM litrev.disp1
-    UNION SELECT 'repr3' AS table_name, species_code FROM litrev.disp1
+    UNION SELECT 'repr3' AS table_name, species_code FROM litrev.repr3a
     UNION SELECT 'repr3a' AS table_name, species_code FROM litrev.repr3
     UNION SELECT 'surv4' AS table_name, species_code FROM litrev.surv4
     UNION SELECT 'surv1' AS table_name, species_code FROM litrev.surv1
