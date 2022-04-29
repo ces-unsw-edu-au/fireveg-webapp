@@ -24,7 +24,8 @@ CREATE TEMP TABLE species_traits (species_code,trait_codes) AS (
     UNION SELECT 'surv6' AS table_name, species_code FROM litrev.surv6
     UNION SELECT 'surv7' AS table_name, species_code FROM litrev.surv7
     UNION SELECT 'disp1' AS table_name, species_code FROM litrev.disp1
-    UNION SELECT 'repr3' AS table_name, species_code FROM litrev.repr3
+    UNION SELECT 'repr3' AS table_name, species_code FROM litrev.disp1
+    UNION SELECT 'repr3a' AS table_name, species_code FROM litrev.repr3
     UNION SELECT 'surv4' AS table_name, species_code FROM litrev.surv4
     UNION SELECT 'surv1' AS table_name, species_code FROM litrev.surv1
   )
@@ -86,45 +87,54 @@ def cat_list(id):
 @login_required
 def sp_info(id):
 
-    fname='webapp/static/metadata/trait-description.csv'
-    traitdata = pd.read_csv(fname)
 
     pg = get_pg_connection()
     cur = pg.cursor(cursor_factory=DictCursor)
 
+    qry = "SELECT code,name, description, value_type, life_stage, life_history_process, category_vocabulary, method_vocabulary from litrev.trait_info;"
+    cur.execute(qry)
+    res = cur.fetchall()
+    traitdata = pd.DataFrame(res,columns=['code','name', 'description', 'value_type', 'life_stage', 'life_history_process', 'category_vocabulary', 'method_vocabulary'])
+    #fname='webapp/static/metadata/trait-description.csv'
+    #traitdata = pd.read_csv(fname)
+    qryspp="SELECT \"scientificName\", \"speciesID\"::int, family, \"taxonRank\", family, \"speciesCode_Synonym\", \"scientificNameAuthorship\", \"vernacularName\", \"establishmentMeans\", \"primaryGrowthFormGroup\", \"secondaryGrowthFormGroups\", \"stateConservation\", \"protectedInNSW\", \"countryConservation\" from species.caps WHERE \"{column}\"='{value}'"
     synonym = request.args.get('synonym', default = 'valid', type = str)
     if synonym != 'valid':
-        qryspp="SELECT \"scientificName\", \"speciesID\"::int, family, \"taxonRank\", family, \"speciesCode_Synonym\", \"scientificNameAuthorship\", \"vernacularName\", \"establishmentMeans\", \"primaryGrowthFormGroup\", \"secondaryGrowthFormGroups\", \"stateConservation\", \"protectedInNSW\", \"countryConservation\" from species.caps WHERE \"speciesCode_Synonym\"='%s';"
+        qryspp=qryspp.format(column="speciesCode_Synonym",value=id)
     else:
-        qryspp="SELECT \"scientificName\", \"speciesID\"::int, family, \"taxonRank\", family, \"speciesCode_Synonym\", \"scientificNameAuthorship\", \"vernacularName\", \"establishmentMeans\", \"primaryGrowthFormGroup\", \"secondaryGrowthFormGroups\", \"stateConservation\", \"protectedInNSW\", \"countryConservation\" from species.caps WHERE \"speciesID\"=%s;"
-    cur.execute(qryspp % (id))
+        qryspp=qryspp.format(column="speciesID",value=id)
+
+    cur.execute(qryspp )
     try:
         spp_info = cur.fetchone()
     except:
         return f"<h1>Invalid species code: {id}</h1>"
 
     qrysmp="SELECT visit_id,visit_date,count(distinct sample_nr), species, species_code, seedbank, resprout_organ FROM form.quadrat_samples WHERE species_code=%s GROUP BY visit_id, visit_date, species, species_code, seedbank, resprout_organ ORDER BY visit_id,visit_date;"
-    if synonym == 'valid' and isinstance(spp_info[5],int):
-        try:
-            cur.execute(qrysmp, (spp_info[5],))
-            samples = cur.fetchall()
-        except:
-            return f"<h1>Invalid species code: {spp_info[5]}</h1>"
-    elif synonym != 'valid':
-        try:
-            cur.execute(qrysmp, (id,))
-            samples = cur.fetchall()
-        except:
-            return f"<h1>Invalid species code: {id}</h1>"
-    else:
-        samples = None
+    #if synonym == 'valid' and isinstance(spp_info[5],int):
+    try:
+        cur.execute(qrysmp, (spp_info[5],))
+        samples = cur.fetchall()
+    except:
+        #samples = None # ? is this an option...
+        return f"<h1>Invalid species code: {spp_info[5]}</h1>"
+    #elif synonym != 'valid':
+    #    try:
+    #        cur.execute(qrysmp, (id,))
+    #        samples = cur.fetchall()
+    #        except:
+    #        return f"<h1>Invalid species code: {id}</h1>"
+    #else:
+    #    samples = None
+
+
     traits = list()
 
-    for target in ('surv1','rect2','repr2','disp1','germ8','surv4'):
+    for target in ('germ1','surv1','rect2','repr2','disp1','germ8','surv4'):
         qryresp="SELECT species, species_code, norm_value, main_source, count(record_id), sum(weight) as weight FROM litrev.{table} WHERE species_code='{code}' GROUP BY species, species_code, norm_value, main_source;"
         cur.execute(qryresp.format(table=target,code=spp_info[5]))
         if cur.rowcount>0:
-            entry = traitdata.loc[traitdata['Trait code'] == target]
+            entry = traitdata.loc[traitdata['code'] == target]
             entry.reset_index(drop=True, inplace=True)
             traits.append({
             "trait":target,
@@ -137,7 +147,7 @@ def sp_info(id):
         qryresp="SELECT record_id, species, species_code, best, lower, upper, main_source FROM litrev.{table} WHERE species_code='{code}';"
         cur.execute(qryresp.format(table=target,code=spp_info[5]))
         if cur.rowcount>0:
-            entry = traitdata.loc[traitdata['Trait code'] == target]
+            entry = traitdata.loc[traitdata['code'] == target]
             entry.reset_index(drop=True, inplace=True)
             traits.append({
             "trait":target,

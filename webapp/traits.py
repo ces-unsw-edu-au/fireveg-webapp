@@ -88,10 +88,10 @@ def trait_info(group,var):
     pg = get_pg_connection()
     cur = pg.cursor(cursor_factory=DictCursor)
 
-    if var == 'best':
+    if var in ('best','numerical'):
         qry = 'SELECT (best is not NULL OR lower IS NOT NULL OR upper IS NOT NULL) as var,count(DISTINCT species) as nspp, count(DISTINCT \"speciesID\") as ncode FROM litrev.{grp} LEFT JOIN species.caps ON species_code::text="speciesCode_Synonym"  GROUP BY var '.format(grp=group)
     else:
-        qry = 'SELECT {var} as var,count(DISTINCT species) as nspp, count(DISTINCT \"speciesID\") as ncode FROM litrev.{grp} LEFT JOIN species.caps ON species_code::text="speciesCode_Synonym" GROUP BY {var}'.format(var=var,grp=group)
+        qry = 'SELECT norm_value as var,count(DISTINCT species) as nspp, count(DISTINCT \"speciesID\") as ncode FROM litrev.{grp} LEFT JOIN species.caps ON species_code::text="speciesCode_Synonym" GROUP BY norm_value'.format(grp=group)
 
     cur.execute(qry)
     spp_list = cur.fetchall()

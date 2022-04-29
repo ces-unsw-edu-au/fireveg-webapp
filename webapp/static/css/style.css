@@ -40,6 +40,9 @@ span.isnot {background-color: #F6F4E8; color: #BACEC1; padding-left: 0.25rem; pa
 
 a.itemb {background-color: #E59560; color: #1D3124; padding-left: 0.25rem; padding-right: 0.25rem; border: 1px solid #1D3124; text-decoration: none; margin-left: 0.25rem;margin-left: 0.25rem}
 
+button.selecttab {background-color: #E59560; color: #1D3124; padding-left: 0.25rem; padding-right: 0.25rem; border: 1px solid #1D3124; text-decoration: none; margin-left: 0.25rem;margin-left: 0.25rem}
+button.dontselecttab {background-color: darkgrey; color: lightgrey; padding-left: 0.25rem; padding-right: 0.25rem; border: 1px solid #1D3124; text-decoration: none; margin-left: 0.25rem;margin-left: 0.25rem}
+
 div.tabs {display: none;}
 /* Container holding the image and the text */
 .occ_map {

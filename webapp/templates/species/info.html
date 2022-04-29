@@ -2,8 +2,7 @@
 
 {% block header %}
 
-  <h1>
-    <i>{% block title %}{{ info[0] }}{% endblock %}</i>  </h1>
+  <h1><i>{% block title %}{{ info[0] }}{% endblock %}</i>  </h1>
     <span>
       <strong>Family:</strong>
       {% if info[2] == None %}
@@ -83,133 +82,167 @@ Check: {{check}}
     {% endif %}
       </tr>
 </table>
-
-<div class="occ_map">
-<img src="https://biocache.ala.org.au/ws/density/map?q={{info[0]}}" style="width:330px;" alt="Density of occurrences for {{info[0]}}"/>
-<div class="occ_legend" >Occurrences in <a href='https://bie.ala.org.au/search?q={{info[0]}}' target='_blank'>Atlas of Living Australia</a></div>
-  </div>
 </div>
-<h2>Field samples</h2>
+
+<p>Click tab to display information on:</p>
+
+<button class='selecttab' onclick="openTab('Occurrence Map (from ALA)')">Occurrence Map (from ALA)</button>
 
 {% if fsamp==None or fsamp|length == 0 %}
-<h3 class='empty'>No field samples recorded for this taxon</h3>
+  <button class='dontselecttab'>No field samples for this taxon</button>
 {% else %}
-<table>
-
-<tr>
-  <th>Originally recorded as</th>
-  <th>Site id</th>
-  <th>Visit date</th>
-  <th>Nr. of subplots</th>
-  <th>Seedbank</th>
-  <th>Regenerative organ</th>
-</tr>
-{% for entry in fsamp %}
-
-<tr><td><i>{{entry[3]}}</i> / species code {{entry[4]}}</td>
-  <td>
-  <a href="{{ url_for('sites.site_info', id =entry[0]) }}">{{ entry[0]}}</a></td>
-  <td>  <a href="{{ url_for('visits.visit_info', id =entry[0], dt=entry[1]) }}">{{ entry[1]}}</a></td>
-  <td>{{ entry[2] }}</td>
-  {% if entry[5] == None %}
-  <td class='empty'>No value recorded.</td>
-  {% else %}
-  <td>{{ entry[5] }}</td>
-  {% endif %}
-  {% if entry[6] == None %}
-  <td class='empty'>No value recorded.</td>
-  {% else %}
-  <td>{{ entry[6] }}</td>
-  {% endif %}
-</tr>
-
-{% endfor %}
-<table>
+  <button class='selecttab' onclick="openTab('Field samples')">Field samples</button>
 {% endif %}
 
+{% if traits==None or traits|length == 0 %}
+  <button class='dontselecttab'>No literature records for this taxon</button>
+{% else %}
+  <button class='selecttab' onclick="openTab('Traits from literature records')">Traits from literature records</button>
+{%endif%}
 
-  <h2>Fire related traits (from literature)</h2>
+{% if vag==None or vag|length == 0 %}
+  <button class='dontselecttab'>No data for Vital Attributes</button>
+{% else %}
+  <button class='selecttab' onclick="openTab('Vital Attributes')">Vital Attributes</button>
+{%endif%}
 
- {% set vars = {'spcode': False} %}
-    {% for tt in traits %}
-      {% if tt['count'] > 0 %}
+{% if mainrefs|length>0 or addrefs|length> 0 %}
+  <button class='selecttab' onclick="openTab('References')">References</button>
+{%endif%}
 
-      <h4>{{tt['metadata']['Trait name'][0]}}</h4>
 
-      <p><a href="{{url_for('traits.trait_info',group=tt['metadata']['db_table'][0],var=tt['metadata']['db_column'][0])}}">Information about this trait</a> / <a href="{{url_for('traits.spp', trait=tt['trait'], code=info[5])}}">Review trait values for this species</a></p>
-
+{% if fsamp==None or fsamp|length == 0 %}
+{% else %}
+  <div class="tabs" id="Field samples" style="">
+    <h2>Field samples</h2>
       <table>
-        {% if tt['metadata']['db_column'][0] == 'norm_value' %}
-        <tr> <th>Species</th> <th>Value</th> <th>Nr. of records</th> <th>Weight</th> <th>Main reference</th> </tr>
-        {% else %}
-        <tr><th>Species</th><th>Years</th><th>Main reference</th></tr>
-        {% endif %}
-        {% for entry in tt['list'] %}
-          {% if tt['metadata']['db_column'][0] == 'norm_value' %}
-          <tr>
-               {% if vars.spcode != entry['species'] %}
-               {% set vars = {'spcode': entry['species']} -%}
-               <td><i>{{entry['species']}}</i> / species code {{entry['species_code']}}</td>
-               {% else %}
-               <td></td>
-               {% endif %}
-             {% if entry['norm_value'] == None %}
-               <td class='empty'>No value recorded.</td>
-             {% else %}
-             <td>{{ entry['norm_value'] }}</td>
-             <td>{{entry['count']}}</td>
-             <td>{{entry['weight']}}</td>
-           {% endif %}
-             {% if entry['main_source'] == None %}
-               <td class='empty'>No value recorded.</td>
-             {% else %}
-               <td><a href="#{{entry['main_source']}}">{{ entry['main_source']  }}</a></td>
-             {% endif %}
-             </tr>
+        <tr>
+          <th>Originally recorded as</th>
+          <th>Site id</th>
+          <th>Visit date</th>
+          <th>Nr. of subplots</th>
+          <th>Seedbank</th>
+          <th>Regenerative organ</th>
+        </tr>
+        {% for entry in fsamp %}
+          <tr><td><i>{{entry[3]}}</i> / species code {{entry[4]}}</td>
+          <td>
+          <a href="{{ url_for('sites.site_info', id =entry[0]) }}">{{ entry[0]}}</a></td>
+          <td>  <a href="{{ url_for('visits.visit_info', id =entry[0], dt=entry[1]) }}">{{ entry[1]}}</a></td>
+          <td>{{ entry[2] }}</td>
+          {% if entry[5] == None %}
+          <td class='empty'>No value recorded.</td>
           {% else %}
-            {% if vars.spcode != entry[1] %}
-            {% set vars = {'spcode': entry[1]} -%}
-            {% endif %}
-
-            <tr>
-            <td><i>{{entry.species}}</i> / species code {{entry.species_code}}</td>
-
-            <td>
-            {% if entry['best'] == None %}
-            {% if entry['lower'] == None and entry['upper'] != None %}
-             &lt; {{ entry['upper'] }}
-            {% elif entry['lower'] != None and entry['upper'] == None %}
-             &gt; {{ entry['lower'] }}
-            {% elif entry['lower'] != None and entry['upper'] != None %}
-             ({{ entry['lower'] }} &ndash; {{ entry['upper'] }})
-            {% else %}
-            <span class='empty'>No value recorded.</span>
-            {% endif %}
-            {% else %}
-            {% if entry['lower'] == None and entry['upper'] != None %}
-             {{ entry['best'] }} (&lt; {{ entry['upper'] }})
-            {% elif entry['lower'] != None and entry['upper'] == None %}
-             {{ entry['best'] }} (&gt; {{ entry['lower'] }})
-            {% elif entry['lower'] != None and entry['upper'] != None %}
-             {{ entry['best'] }} ({{ entry['lower'] }} &ndash; {{ entry['upper'] }})
-            {% else %}
-             {{ entry['best'] }}
-            {% endif %}
-            {% endif %}
-            </td>
-            {% if entry['main_source'] == None %}
-            <td class='empty'>No value recorded.</td>
-            {% else %}
-            <td><a href="#{{entry['main_source']}}">{{ entry['main_source']  }}</a></td>
-            {% endif %}
-            </tr>
+          <td>{{ entry[5] }}</td>
           {% endif %}
+          {% if entry[6] == None %}
+          <td class='empty'>No value recorded.</td>
+          {% else %}
+          <td>{{ entry[6] }}</td>
+          {% endif %}
+          </tr>
         {% endfor %}
       </table>
+    </div>
+{% endif %}
 
+<div class="tabs" id="Occurrence Map (from ALA)" style="">
+  <div class="occ_map">
+  <img src="https://biocache.ala.org.au/ws/density/map?q={{info[0]}}" style="width:330px;" alt="Density of occurrences for {{info[0]}}"/>
+  <div class="occ_legend" >Occurrences in <a href='https://bie.ala.org.au/search?q={{info[0]}}' target='_blank'>Atlas of Living Australia</a></div>
+    </div>
+  </div>
 
-      {% endif %}
-      {% endfor %}
+{% if traits==None or traits|length == 0 %}
+{% else %}
+  <div class="tabs" id="Traits from literature records" style="">
+    <h2>Fire related traits (from literature)</h2>
+
+   {% set vars = {'spcode': False} %}
+      {% for tt in traits %}
+        {% if tt['count'] > 0 %}
+
+        <h4>{{tt['metadata']['code'][0]}} &mdash; {{tt['metadata']['name'][0]}}</h4>
+
+        <p><a href="{{url_for('traits.trait_info',group=tt['metadata']['code'][0],var=tt['metadata']['value_type'][0])}}">Information about this trait</a> / <a href="{{url_for('traits.spp', trait=tt['trait'], code=info[5])}}">Review trait values for this species</a></p>
+
+        <table>
+          {% if tt['metadata']['value_type'][0] == 'categorical' %}
+          <tr> <th>Species</th> <th>Value</th> <th>Nr. of records</th> <th>Weight</th> <th>Main reference</th> </tr>
+          {% else %}
+          <tr><th>Species</th><th>Years</th><th>Main reference</th></tr>
+          {% endif %}
+          {% for entry in tt['list'] %}
+            {% if tt['metadata']['value_type'][0] == 'categorical' %}
+            <tr>
+                 {% if vars.spcode != entry['species'] %}
+                 {% set vars = {'spcode': entry['species']} -%}
+                 <td><i>{{entry['species']}}</i> / species code {{entry['species_code']}}</td>
+                 {% else %}
+                 <td></td>
+                 {% endif %}
+               {% if entry['norm_value'] == None %}
+                 <td class='empty'>No value recorded.</td>
+               {% else %}
+               <td>{{ entry['norm_value'] }}</td>
+               <td>{{entry['count']}}</td>
+               <td>{{entry['weight']}}</td>
+             {% endif %}
+               {% if entry['main_source'] == None %}
+                 <td class='empty'>No value recorded.</td>
+               {% else %}
+                 <td><a onclick="openTab('References')" href="#{{entry['main_source']}}">{{ entry['main_source']  }}</a></td>
+               {% endif %}
+               </tr>
+            {% else %}
+              {% if vars.spcode != entry[1] %}
+              {% set vars = {'spcode': entry[1]} -%}
+              {% endif %}
+
+              <tr>
+              <td><i>{{entry.species}}</i> / species code {{entry.species_code}}</td>
+
+              <td>
+              {% if entry['best'] == None %}
+              {% if entry['lower'] == None and entry['upper'] != None %}
+               &lt; {{ entry['upper'] }}
+              {% elif entry['lower'] != None and entry['upper'] == None %}
+               &gt; {{ entry['lower'] }}
+              {% elif entry['lower'] != None and entry['upper'] != None %}
+               ({{ entry['lower'] }} &ndash; {{ entry['upper'] }})
+              {% else %}
+              <span class='empty'>No value recorded.</span>
+              {% endif %}
+              {% else %}
+              {% if entry['lower'] == None and entry['upper'] != None %}
+               {{ entry['best'] }} (&lt; {{ entry['upper'] }})
+              {% elif entry['lower'] != None and entry['upper'] == None %}
+               {{ entry['best'] }} (&gt; {{ entry['lower'] }})
+              {% elif entry['lower'] != None and entry['upper'] != None %}
+               {{ entry['best'] }} ({{ entry['lower'] }} &ndash; {{ entry['upper'] }})
+              {% else %}
+               {{ entry['best'] }}
+              {% endif %}
+              {% endif %}
+              </td>
+              {% if entry['main_source'] == None %}
+              <td class='empty'>No value recorded.</td>
+              {% else %}
+              <td><a onclick="openTab('References')" href="#{{entry['main_source']}}">{{ entry['main_source']  }}</a></td>
+              {% endif %}
+              </tr>
+            {% endif %}
+          {% endfor %}
+        </table>
+        {% endif %}
+    {% endfor %}
+
+  </div>
+{%endif%}
+
+{% if vag==None or vag|length == 0 %}
+{% else %}
+<div class="tabs" id="Vital Attributes" style="">
 
 <h2>Vital Attributes Group</h2>
 
@@ -284,6 +317,14 @@ Check: {{check}}
   {%endif%}
 </table>
 
+</div>
+{%endif%}
+
+
+{% if mainrefs|length>0 or addrefs|length> 0 %}
+
+<div class="tabs" id="References" style="">
+
 <h2>References</h2>
 <ul>
 <h3>Main references</h3>
@@ -307,5 +348,8 @@ Check: {{check}}
    {% endfor %}
  </ul>
 </ul>
+
+</div>
+{%endif%}
 
 {% endblock %}
