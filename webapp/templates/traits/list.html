@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block header %}
-  <h1>Fire related traits / {{group}} / {{var}}</h1>
+  <h1>Fire ecology traits / {% block title %}{{group}}{% endblock %} / {{var}}</h1>
 {% endblock %}
 
 {% block content %}
