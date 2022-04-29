@@ -1,9 +1,22 @@
 {% extends 'base.html' %}
 
+
+{% block header %}
+<h1>{% block title %}Documentation{% endblock %}</h1>
+{% endblock %}
+
+
 {% block content %}
 
-<h1>Documentation</h1>
+<p>You can navigate this website from the <a href="{{url_for('summary')}}">Database summary page</a>.</p>
 
-<p>Content will be written here...</p>
+<p>Data from field work has been contributed by David Keith and collaborators.</p>
+<p>Field data is organised by surveys. Each survey has several sites visited one or more times.</p>
+
+
+<p>Fire ecology traits have been defined and described by David Keith and collaborators. Description of the traits are summarised in the <a href="{{url_for('traits.trait_sum')}}">trait summary page</a>. Information and vocabularies for each trait are accessible from the trait's own summay page.</p>
+<p>Fire ecology trait data has been collated from multiple published and unpublished sources. See original sources for details and context. </p>
+
+<p>Vital attribute groups are based on ... </p>
 
 {% endblock %}
