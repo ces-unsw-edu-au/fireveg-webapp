@@ -7,6 +7,7 @@ img.logo {padding-left: 5px; padding-right: 5px;}
 th {background: #1D3124; color: #F6F4E8;  }
 td {background: #BACEC1; color: #1D3124; }
 td.empty {background: lightgrey; color: darkgrey; }
+td.notes {font-size: 10px; color: #1D3124; }
 a { color: #E59560; }
 hr { border: none; border-top: 1px solid #BACEC1; }
 nav { background: #1D3124; color: #F6F4E8;   display: flex; align-items: center; padding: 0 0.5rem; }
@@ -34,7 +35,13 @@ input.danger { color: #cc2f2e; }
 input[type=submit] { align-self: start; min-width: 10em; }
 span.empty {color: lightgray;}
 span.item {background-color: #BACEC1; color: #F6F4E8; padding-left: 0.25rem; padding-right: 0.25rem;}
+span.itis {background-color: #E59560; color: #1D3124; padding-left: 0.25rem; padding-right: 0.25rem;border: 1px solid #1D3124;}
+span.isnot {background-color: #F6F4E8; color: #BACEC1; padding-left: 0.25rem; padding-right: 0.25rem;border: 1px solid #1D3124;}
+
 a.itemb {background-color: #E59560; color: #1D3124; padding-left: 0.25rem; padding-right: 0.25rem; border: 1px solid #1D3124; text-decoration: none; margin-left: 0.25rem;margin-left: 0.25rem}
+
+button.selecttab {background-color: #E59560; color: #1D3124; padding-left: 0.25rem; padding-right: 0.25rem; border: 1px solid #1D3124; text-decoration: none; margin-left: 0.25rem;margin-left: 0.25rem}
+button.dontselecttab {background-color: darkgrey; color: lightgrey; padding-left: 0.25rem; padding-right: 0.25rem; border: 1px solid #1D3124; text-decoration: none; margin-left: 0.25rem;margin-left: 0.25rem}
 
 div.tabs {display: none;}
 /* Container holding the image and the text */

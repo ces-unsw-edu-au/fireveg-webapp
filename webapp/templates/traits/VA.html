@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>Fire related traits / Vital attributes</h1>
+{% endblock %}
+
+{% block content %}
+
+<table>
+  <caption>Rationale for determining Persistence categories</caption>
+  <tr>
+    <th colspan=9>Steps</th>
+    <th>Categories</th>
+    <th>Nr. of Taxa</th>
+  </tr>
+  <tr>
+    <th>1</th>
+    <th>2</th>
+    <th>3</th>
+    <th>4</th>
+    <th>5</th>
+    <th>6</th>
+    <th>7</th>
+    <th>8</th>
+    <th>9</th>
+  </tr>
+  {% for item in persistence %}
+  <tr>
+    {% for k in (0,1,2,3,4,5,6,7,8) %}
+    <td class='notes'>{{item['rationale_persistence'][k]}}</td>
+    {% endfor %}
+    {%if item['persistence'] == None %}
+    <td class='empty'>No data</td>
+    {% else %}
+      <td>
+        {% for kat in item['persistence'] %}
+        <a class='itemb'>{{kat}}</a>
+        {% endfor %}
+      </td>
+      {% endif %}
+    <td>{{item['count']}}</td>
+  </tr>
+  {% endfor %}
+
+</table>
+
+
+<table width=40%>
+<caption>Number of taxa for each combination of persistence (rows) and establishment (columns) categories</caption>
+    <tr>
+      <th></th>
+      {% for item in cols %}
+      <th>{{item}}</th>
+      {% endfor %}
+    </tr>
+    {% for line in cats %}
+    <tr>
+      <th>{{rows[loop.index-1]}}</th>
+      {% for cell in line %}
+      <td>{{cell}}</td>
+      {%endfor%}
+    </tr>
+      {% endfor %}
+      </table>
+
+
+{% endblock %}
