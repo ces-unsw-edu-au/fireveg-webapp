@@ -99,12 +99,12 @@ Check: {{check}}
 {% else %}
   <button class='selecttab' onclick="openTab('Traits from literature records')">Traits from literature records</button>
 {%endif%}
-
+<!--
 {% if vag==None or vag|length == 0 %}
   <button class='dontselecttab'>No data for Vital Attributes</button>
 {% else %}
   <button class='selecttab' onclick="openTab('Vital Attributes')">Vital Attributes</button>
-{%endif%}
+{%endif%} -->
 
 {% if mainrefs|length>0 or addrefs|length> 0 %}
   <button class='selecttab' onclick="openTab('References')">References</button>
