@@ -66,27 +66,26 @@
   {% if veginfo == None %}
   No information on vegetation type recorded.
   {%else%}
-  <strong>Vegetation type:</strong>
+  <strong>Vegetation description:</strong>
   	{% if veginfo[0] == None %}
   		<span class='empty'>Description not available.</span>
   	{% else %}
   		{{ veginfo[0] }}.
   	{% endif %}
   <br/>
-  <strong>Vegetation Category ID:</strong>
+  <strong>Vegetation Formation (NSW):</strong>
   {% if veginfo[1] == None %}
   	<span class='empty'>No data available.</span>
   	{% else %}
-      {{ veginfo[1] }} (confidence
-        {{ veginfo[2] }}).
+      {{ veginfo[1] }}.
   	{% endif %}
   <br/>
-  <strong>Threatened ecological community:</strong>
-  	{% if veginfo[3] == None %}
+  <strong>Vegetation class (NSW):</strong>
+  	{% if veginfo[2] == None %}
   	<span class='empty'>No data available.</span>
 
   	{% else %}
-      {{ veginfo[3] }}.
+      {{ veginfo[2] }}.
   	{% endif %}
   {% endif %}
 </p>

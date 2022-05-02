@@ -43,7 +43,7 @@ def visit_info(id,dt):
     qry3 = "SELECT measured_var,units,best,lower,upper FROM form.field_visit_vegetation_estimates WHERE visit_id='%s' AND visit_date='%s' ORDER BY measured_var ASC;"
 
 
-    qry4 = "SELECT vegtype,vegcategoryid,confidenceid,threatenedecologicalcommunity FROM form.field_visit_vegetation WHERE visit_id='%s' AND visit_date='%s';"
+    qry4 = "SELECT vegetation_description, vegetation_formation, vegetation_class FROM form.field_visit_veg_description WHERE visit_id='%s' AND visit_date='%s';"
 
     qry5 = "select sample_method,count(DISTINCT sample_nr) FROM form.field_samples WHERE visit_id='%s' AND visit_date='%s' GROUP BY sample_method;"
 
