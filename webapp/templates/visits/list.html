@@ -29,7 +29,7 @@
 <p>Sites are identified by a site label. One site can be visited multiple times. Click any site's label to see more information about site description and coordinates. Click on the visit's date to see more information regarding the visit event.</p>
 
     <table>
-        <tr><th>Survey Name</th><th>Site Label</th><th>Visit date</th><th>Main observer</th><th>Nr. of subplots</th><th>Nr. of taxa</th></tr>
+        <tr><th>Survey Name</th><th>Site Label</th><th>Visit date</th><th>Main observer</th><th>Vegetation</th><th>Nr. of subplots</th><th>Nr. of taxa</th></tr>
     {% for pair in visits %}
         <tr>
           {% if pair[4] == None %}
@@ -52,6 +52,12 @@
               <td>{{ pair[5] }}</td>
             {% endif %}
 
+            {% if pair[6] == None %}
+              <td class='empty'>No vegetation data</td>
+            {% else %}
+              <td>{{ pair[6] }} / {{ pair[7] }}</td>
+            {% endif %}
+
             {% if pair[2] == None or pair[2] == 0%}
               <td class='empty'>No data added</td>
             {% else %}
@@ -63,6 +69,7 @@
             {% else %}
               <td>{{ pair[3] }}</td>
             {% endif %}
+
         </tr>
     {% endfor %}
     </table>
