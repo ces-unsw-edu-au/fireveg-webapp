@@ -1,8 +1,10 @@
 {% extends 'base.html' %}
 
-{% block content %}
+{% block header %}
+<h1>{% block title %}Summary{% endblock %}</h1>
+{% endblock %}
 
-<h1>Welcome</h1>
+{% block content %}
 
 <p>You are required to register to access the content of this site.</p>
 

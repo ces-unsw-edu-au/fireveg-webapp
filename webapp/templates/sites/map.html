@@ -1,12 +1,21 @@
 {% extends 'base.html' %}
 
+{% block title %}
+{% if survey_name != None %}
+Map for survey {{survey_name}}
+{% else %}
+Map of all sites
+{% endif %}
+{% endblock %}
+
 {% block header %}
 {% if survey_name != None %}
-<h1>Location of sites in survey {{survey_name}}</h1>
+<h1>Map of sites in survey {{survey_name}}</h1>
 {% else %}
   <h1>Map of all sites</h1>
 {% endif %}
 {% endblock %}
+
 {% block content %}
 <p>Sites are identified by a site label. One site can be visited multiple times. Click any site's label to see more information about site description and coordinates.</p>
 
