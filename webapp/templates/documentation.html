@@ -10,13 +10,37 @@
 
 <p>You can navigate this website from the <a href="{{url_for('summary')}}">Database summary page</a>.</p>
 
-<p>Data from field work has been contributed by David Keith and collaborators.</p>
-<p>Field data is organised by surveys. Each survey has several sites visited one or more times.</p>
+<p>You are required to register to access the content of this site.</p>
+
+<p>Click on the buttons below to read documentation regarding the different topics of this site.</p>
+
+<button class='selecttab' onclick="openTab('Species')">Species information</button>
+<button class='selecttab' onclick="openTab('Field')">Field work</button>
+<button class='selecttab' onclick="openTab('Traits')">Fire ecology traits</button>
+<button class='selecttab' onclick="openTab('VAG')">Vital Attributes</button>
+
+<div class="tabs" id="Field" style="">
+  <h2>Field work datasets</h2>
+  <p>Data from field work has been contributed by David Keith and collaborators.</p>
+  <p>Field data is organised by surveys. Each survey has several sites visited one or more times.</p>
+</div>
+<div class="tabs" id="Traits" style="">
+  <h2>Fire ecology traits</h2>
+  <p>Fire ecology traits have been defined and described by David Keith and collaborators. Description of the traits are summarised in the <a href="{{url_for('traits.trait_sum')}}">trait summary page</a>. Information and vocabularies for each trait are accessible from the trait's own summay page.</p>
+  <p>Fire ecology trait data has been collated from multiple published and unpublished sources. See original sources for details and context. </p>
+
+</div>
+<div class="tabs" id="Species" style="">
+  <h2>Species information</h2>
+  <p>Basic species data information was imported from BioNET.</p>
+
+</div>
 
 
-<p>Fire ecology traits have been defined and described by David Keith and collaborators. Description of the traits are summarised in the <a href="{{url_for('traits.trait_sum')}}">trait summary page</a>. Information and vocabularies for each trait are accessible from the trait's own summay page.</p>
-<p>Fire ecology trait data has been collated from multiple published and unpublished sources. See original sources for details and context. </p>
+<div class="tabs" id="VAG" style="">
+  <h2>Vital attribute groups (TO DO)</h2>
+  <p>Vital attribute groups are based on ... </p>
 
-<p>Vital attribute groups are based on ... </p>
+</div>
 
 {% endblock %}
