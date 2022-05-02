@@ -6,7 +6,46 @@
 
 {% block content %}
 
-<div>
+<div class="">
+<h3>Site description</h3>
+{% if visitinfo[1] == None %}
+  <span class='empty'>Description not available.</span>
+{% else %}
+  {{ visitinfo[1] }}.
+{% endif %}
+<br/>
+<strong>Main Observer:</strong>
+{% if visitinfo[2] == None %}
+<span class='empty'>No data available.</span>
+{% else %}
+  {{ visitinfo[2] }}:
+    {{ visitinfo[3] }}
+      {{ visitinfo[4] }} .
+{% endif %}
+<br/>
+<strong>Survey name:</strong>
+{% if visitinfo[6] == None %}
+<span class='empty'>Not assigned to any survey.</span>
+
+{% else %}
+<a href='{{url_for("visits.visits_list",survey=visitinfo[6])}}'>
+  {{ visitinfo[6] }}
+</a>.
+{% endif %}
+</div>
+
+<p>
+<button class='selecttab' onclick="openTab('Location')">Location information</button>
+  {% if veginfo == None %}
+  <button class='dontselecttab' >No vegetation description available</button>
+  {% else %}
+  <button class='selecttab' onclick="openTab('Vegetation')">Vegetation description</button>
+  {% endif %}
+
+<button class='selecttab' onclick="openTab('Subplots')">Species in subplots</button>
+</p>
+
+  <div class="tabs" id="Location" style="">
   <h4>Location information</h4>
 <strong>Location description:</strong>
 	{% if siteinfo[1] == None %}
@@ -34,90 +73,65 @@
 
 </div>
 
-<div>
-  <h4>Visit</h4>
-<strong>Site description:</strong>
-	{% if visitinfo[1] == None %}
-		<span class='empty'>Description not available.</span>
-	{% else %}
-		{{ visitinfo[1] }}.
-	{% endif %}
-<br/>
-<strong>Main Observer:</strong>
-{% if visitinfo[2] == None %}
-	<span class='empty'>No data available.</span>
-	{% else %}
-    {{ visitinfo[2] }}:
-      {{ visitinfo[3] }}
-        {{ visitinfo[4] }} .
-	{% endif %}
-<br/>
-<strong>Survey name:</strong>
-	{% if visitinfo[6] == None %}
-	<span class='empty'>Not assigned to any survey.</span>
 
-	{% else %}
-  <a href='{{url_for("visits.visits_list",survey=visitinfo[6])}}'>
-    {{ visitinfo[6] }}
-  </a>.
-	{% endif %}
+{% if veginfo == None %}
 
-<p>
-  {% if veginfo == None %}
-  No information on vegetation type recorded.
+{% else %}
+
+  <div class="tabs" id="Vegetation" style="">
+    <p>
+      <strong>Vegetation description:</strong>
+      	{% if veginfo[0] == None %}
+      		<span class='empty'>Description not available.</span>
+      	{% else %}
+      		{{ veginfo[0] }}.
+      	{% endif %}
+      <br/>
+      <strong>Vegetation Formation (NSW):</strong>
+      {% if veginfo[1] == None %}
+      	<span class='empty'>No data available.</span>
+      	{% else %}
+          {{ veginfo[1] }}.
+      	{% endif %}
+      <br/>
+      <strong>Vegetation class (NSW):</strong>
+      	{% if veginfo[2] == None %}
+      	<span class='empty'>No data available.</span>
+
+      	{% else %}
+          {{ veginfo[2] }}.
+      	{% endif %}
+    </p>
+
+  {% if estvars|length == 0 %}
+  No information on vegetation structure recorded.
   {%else%}
-  <strong>Vegetation description:</strong>
-  	{% if veginfo[0] == None %}
-  		<span class='empty'>Description not available.</span>
-  	{% else %}
-  		{{ veginfo[0] }}.
-  	{% endif %}
-  <br/>
-  <strong>Vegetation Formation (NSW):</strong>
-  {% if veginfo[1] == None %}
-  	<span class='empty'>No data available.</span>
-  	{% else %}
-      {{ veginfo[1] }}.
-  	{% endif %}
-  <br/>
-  <strong>Vegetation class (NSW):</strong>
-  	{% if veginfo[2] == None %}
-  	<span class='empty'>No data available.</span>
+    <table>
+      <caption>Estimated/Measured variables</caption>
+        <tr><th>Variable</th><th>units</th><th>Best</th><th>Lower - Upper bounds</th></tr>
+    {% for pair in estvars %}
+      <tr>
 
-  	{% else %}
-      {{ veginfo[2] }}.
-  	{% endif %}
-  {% endif %}
-</p>
+        <td>{{ pair[0] }}</td>
+        <td>{{ pair[1] }}</td>
+        {% if pair[2] == None %}
+          <td class='empty'>None given</td>
+        {% else %}
+          <td>{{ pair[2] }}</td>
+        {% endif %}
+        {% if pair[3] == None and pair[4] == None%}
+          <td class='empty'>None given</td>
+        {% else %}
+          <td>{{ pair[3] }} &ndash;  {{ pair[4] }}</td>
+        {% endif %}
+      </tr>
+    {% endfor %}
+    </table>
+    {% endif %}
+  </div>
+{% endif %}
 
-{% if estvars|length == 0 %}
-No information on vegetation structure recorded.
-{%else%}
-  <table>
-    <caption>Estimated/Measured variables</caption>
-      <tr><th>Variable</th><th>units</th><th>Best</th><th>Lower - Upper bounds</th></tr>
-  {% for pair in estvars %}
-    <tr>
-
-      <td>{{ pair[0] }}</td>
-      <td>{{ pair[1] }}</td>
-      {% if pair[2] == None %}
-        <td class='empty'>None given</td>
-      {% else %}
-        <td>{{ pair[2] }}</td>
-      {% endif %}
-      {% if pair[3] == None and pair[4] == None%}
-        <td class='empty'>None given</td>
-      {% else %}
-        <td>{{ pair[3] }} &ndash;  {{ pair[4] }}</td>
-      {% endif %}
-    </tr>
-  {% endfor %}
-  </table>
-  {% endif %}
-</div>
-
-<div>
+<div class="tabs" id="Subplots" style="">
 
   <p>
     {% if smpinfo == None %}
