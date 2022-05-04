@@ -18,13 +18,13 @@ def visits_list(survey):
     pg = get_pg_connection()
     cur = pg.cursor()
     if survey == None:
-        qry='SELECT visit_id,visit_date,count(distinct sample_nr),count(distinct species_code),survey_name,CONCAT(givennames,\' \',surname) as main_observer FROM form.field_visit v LEFT JOIN form.field_samples s USING(visit_id,visit_date) LEFT JOIN form.quadrat_samples q USING (visit_id,visit_date,sample_nr) LEFT JOIN form.observerid ON mainobserver=userkey GROUP BY survey_name, visit_id, visit_date, givennames, surname ORDER BY survey_name,visit_id;'
+        qry='SELECT visit_id,visit_date,count(distinct sample_nr),count(distinct species_code),survey_name,CONCAT(givennames,\' \',surname) as main_observer, vegetation_formation, vegetation_class FROM form.field_visit v LEFT JOIN form.field_samples s USING(visit_id,visit_date) LEFT JOIN form.quadrat_samples q USING (visit_id,visit_date,sample_nr) LEFT JOIN form.observerid ON mainobserver=userkey LEFT JOIN form.field_visit_veg_description USING(visit_id,visit_date) GROUP BY survey_name, visit_id, visit_date, givennames, surname, vegetation_formation, vegetation_class ORDER BY survey_name,visit_id;'
     else:
         qry="SELECT * FROM form.surveys where survey_name=%s"
         cur.execute(qry,(survey,))
         survinfo=cur.fetchone()
 
-        qry='SELECT visit_id,visit_date,count(distinct sample_nr),count(distinct species_code),survey_name,CONCAT(givennames,\' \',surname) as main_observer  FROM form.field_visit v LEFT JOIN form.field_samples s USING(visit_id,visit_date) LEFT JOIN form.quadrat_samples q USING (visit_id,visit_date,sample_nr) LEFT JOIN form.observerid ON mainobserver=userkey  WHERE survey_name=\'%s\' GROUP BY survey_name,visit_id,visit_date, givennames, surname ORDER BY survey_name,visit_id;' % survey
+        qry='SELECT visit_id,visit_date,count(distinct sample_nr),count(distinct species_code),survey_name,CONCAT(givennames,\' \',surname) as main_observer, vegetation_formation, vegetation_class  FROM form.field_visit v LEFT JOIN form.field_samples s USING(visit_id,visit_date) LEFT JOIN form.quadrat_samples q USING (visit_id,visit_date,sample_nr) LEFT JOIN form.observerid ON mainobserver=userkey LEFT JOIN form.field_visit_veg_description USING(visit_id,visit_date)  WHERE survey_name=\'%s\' GROUP BY survey_name,visit_id,visit_date, givennames, surname, vegetation_formation, vegetation_class ORDER BY survey_name,visit_id;' % survey
     cur.execute(qry)
     visit_list = cur.fetchall()
     cur.close()
@@ -43,7 +43,7 @@ def visit_info(id,dt):
     qry3 = "SELECT measured_var,units,best,lower,upper FROM form.field_visit_vegetation_estimates WHERE visit_id='%s' AND visit_date='%s' ORDER BY measured_var ASC;"
 
 
-    qry4 = "SELECT vegtype,vegcategoryid,confidenceid,threatenedecologicalcommunity FROM form.field_visit_vegetation WHERE visit_id='%s' AND visit_date='%s';"
+    qry4 = "SELECT vegetation_description, vegetation_formation, vegetation_class FROM form.field_visit_veg_description WHERE visit_id='%s' AND visit_date='%s';"
 
     qry5 = "select sample_method,count(DISTINCT sample_nr) FROM form.field_samples WHERE visit_id='%s' AND visit_date='%s' GROUP BY sample_method;"
 
