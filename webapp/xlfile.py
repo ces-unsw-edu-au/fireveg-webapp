@@ -31,7 +31,7 @@ def create_input_xl(contactinfo=None, specieslist=None, referencelist=None, trai
     {"title": "Contributor", "colWidths":[("A",30),("B",60)], "tabColor":"entry"},
     {"title": "Data entry", "colWidths":[(("A","B","C","E","G","I","N","O"),25), (("D","F","H","J","K","L","M"),12)], "tabColor":"entry"},
     {"title": "References", "colWidths":[("A",30),("B",60)], "tabColor":"addentry"},
-    {"title": "Species list", "colWidths":[(("A",),90),], "tabColor":"default"},
+    {"title": "Species list", "colWidths":[(("A","G","H"),90),(("C","D",),30),(("E","F","I"),25)], "tabColor":"default"},
     {"title": "Trait description", "colWidths":[("A",12),("B",30),("C",70)], "tabColor":"default"},
     {"title": "Vocabularies", "colWidths":[("A",30),("B",60)], "tabColor":"default"},
     {"title": "Vocabularies for methods", "colWidths":[("A",30),("B",60)], "tabColor":"default"}
@@ -53,19 +53,23 @@ def create_input_xl(contactinfo=None, specieslist=None, referencelist=None, trai
 
     instructions = [
 """
-Fill in your name and affilation in the "Contributor" tab, so that we can keep track of your contributions. Optionally fill in contact information for queries regarding your contribution.
+Fill in your name, affilation and contact details in the "Contributor" tab, so that we can keep track of your contributions and contact you with any queries.
 """,
 """
-Go to sheet "Data Entry" and fill one (or more) record(s) for each combination of reference + species + trait. Use "Insert > Table Rows Above/Below" to ensure new records have same format and validation options.
+Go to sheet "Data Entry" and fill one (or more) record(s) for each combination of reference + species + trait.
 """,
 """
 For each record, select references (main source and original sources columns) from the drop down list. If reference is not found, go to list of reference and add it to the table (use "Insert > Table Rows Above/Below" to add record to the list of references)
 """,
 """
-For each record, type in species name as given by main source in "original_species_name" column. A XLOOKUP function will look for a match in the species code table (list_spcode) and populate columns species_code and species_name, but this can be overridden with a manual entry if needed.
+For each record, type in species name as given by main source in "original_species_name" column. A XLOOKUP function will look for a match in the species table (SpeciesList) and populate columns species_code and species_name, but this can be overridden with a manual entry if needed. 
+
+The data in the Species List is taken from BioNET (export from February 2022). The Species Code used in the data entry worksheet comes from the 'speciesCode_Synonym' column in BioNET.
+
+The 'Species list' worksheet is locked to avoid accidental changes, but it is not password protected, so you should be able to unlock the sheet for filtering and sorting.
 """,
 """
-Select a trait from the drop down menu. A XLOOKUP function will look at the trait code table and populate columns for trait name and trait type (categorical or numerical). The choice will determine the list of values for the "norm_value" column.
+Select a trait from the drop down menu. A XLOOKUP function will look at the trait code table and populate columns for trait name and trait type (categorical or numerical). The choice will determine the list of values for the "norm_value" column. The 'Trait description' worksheet is locked to avoid accidental changes, but it is not password protected, so you should be able to unlock the sheet for filtering and sorting.
 """,
 """
 Add raw value as given by original source, might include values, units and short explanatory text about observation or measurement.
@@ -74,6 +78,8 @@ Add raw value as given by original source, might include values, units and short
 For numeric trait values (e.g. age in years) we use a triplet of integer values (columns best, lower and upper) to describe a fuzzy number. Fill out any needed numbers and leave other columns blank. If in doubt leave all columns blank. Examples a raw value of "5 (3-7)" would be best:5, lower:3 upper:7; a value of ">5" would be lower:5, best:blank, upper:blank; etc. This column is colored red if the selected trait is not numerical.
 
 For categorical variables, use values from drop-down list. The list will update when a categorical trait is selected and will be colored red if the selected trait is not categorical. If raw value does not match any of the options, leave blank. Values not in the dropdown list will not be imported in the database, but you can add a comment in the "notes" column.
+
+The 'Vocabularies' and 'Vocabularies for methods' worksheets are locked to avoid accidental changes, but they are not password protected, so you should be able to unlock the sheet for filtering and sorting.
 """,
 """
 Fill method of estimation from drop down list.
@@ -124,7 +130,7 @@ Add any notes, observations or comments in column "notes". Please avoid using co
     ## Species list
     if specieslist is not None:
         ws = wb["Species list"]
-        ws.append(["Scientific Name","Code"])
+        ws.append(["Scientific Name","Code","Family", "Genus", "Scientific Name ID in BioNET", "current Scientific Name Code", "Current Scientific Name", "Current Vernacular Name", "is Current?"])
         for row in specieslist:
             ws.append(row)
         tab = Table(displayName="SpeciesList", ref="A1:B{}".format(ws.max_row))
@@ -205,7 +211,7 @@ Add any notes, observations or comments in column "notes". Please avoid using co
 
     ## Data Entry
     ws = wb["Data entry"]
-    nrows = 20
+    nrows = 200
     hdr=["Main source", "Original sources", "Original species name", "Species code", "Species name", "Trait code", "Trait name","Trait type","Raw value", "Norm value", "Best", "Lower", "Upper", "Method of estimation","Notes"]
     ws.append(hdr)
     dv_ref = DataValidation(type="list",

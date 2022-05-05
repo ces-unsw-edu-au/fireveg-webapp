@@ -39,7 +39,7 @@ def download_file():
 
         pg = get_pg_connection()
         cur = pg.cursor(cursor_factory=DictCursor)
-        cur.execute('SELECT "scientificName","speciesCode_Synonym" FROM species.caps;')
+        cur.execute('SELECT "scientificName", "speciesCode_Synonym", family, genus, "scientificNameID", "currentScientificNameCode", "currentScientificName", "currentVernacularName", "isCurrent" FROM species.caps order by "sortOrder";')
         spps = cur.fetchall()
 
         cur.execute("SELECT ref_code,ref_cite FROM litrev.ref_list")
@@ -77,7 +77,7 @@ ORDER BY code""")
         return send_file(
                 excel_stream,
                 mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                attachment_filename="File.xlsx",
+                attachment_filename="fire-ecology-traits-data-entry-form.xlsx",
                 as_attachment=True,
                 cache_timeout=0
         )
