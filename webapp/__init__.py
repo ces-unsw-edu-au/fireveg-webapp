@@ -66,5 +66,9 @@ def create_app(test_config=None):
     app.register_blueprint(traits.bp)
     from . import biblio
     app.register_blueprint(biblio.bp)
+    from . import dataentry
+    app.register_blueprint(dataentry.bp)
+    from . import dataxport
+    app.register_blueprint(dataxport.bp)
 
     return app
