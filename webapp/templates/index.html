@@ -30,8 +30,12 @@
         <li><a href="{{ url_for('species.fam_list') }}">List of species per family</a></li>
         <li><a href="{{ url_for('species.threat_list') }}">List of species per category of threat</a></li>
       </ul>
-    
-    <li><a href="{{ url_for('dataentry.howto') }}">Data entry</a></li>
+
+    <li>Data entry and data export</li>
+      <ul>
+         <li><a href="{{ url_for('dataentry.howto') }}">Data entry</a></li>
+         <li><a href="{{ url_for('dataexport.download_file') }}">Export trait data</a></li>
+      </ul>
   </ul>
 </div>
 {% endblock %}

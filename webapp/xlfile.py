@@ -9,20 +9,172 @@ from openpyxl.styles import Alignment, PatternFill, Border, Font # Side, Alignme
 from openpyxl.formatting import Rule
 from openpyxl.styles.differential import DifferentialStyle
 from openpyxl.worksheet.datavalidation import DataValidation
+from openpyxl.utils.dataframe import dataframe_to_rows
+from openpyxl.utils import get_column_letter
+import pandas as pd
+
+import datetime
+
+# common stuff
+cent_align=Alignment(horizontal='center', vertical='center', wrap_text=False)
+wrap_align=Alignment(horizontal='left', vertical='top', wrap_text=True)
+sheet_colors = {"instructions": "1072BA" , "intro": "1072BA" , "entry": "10BA72", "summary": "5AFF5A", "addentry": "20CA82", "default":"505050"}
+fontSmall = Font(size = "9")
+table_style={"Instructions":TableStyleInfo(name="TableStyleMedium9", showFirstColumn=True, showLastColumn=False, showRowStripes=True, showColumnStripes=False),
+         "Contributor": TableStyleInfo(name="TableStyleMedium18", showFirstColumn=True, showLastColumn=False, showRowStripes=False, showColumnStripes=False),
+         "Lists": TableStyleInfo(name="TableStyleMedium14", showFirstColumn=True, showLastColumn=False, showRowStripes=False, showColumnStripes=False),
+         "Info":  TableStyleInfo(name="TableStyleMedium14", showFirstColumn=True, showLastColumn=False, showRowStripes=False, showColumnStripes=False),
+         "Vocabularies": TableStyleInfo(name="TableStyleMedium14", showFirstColumn=True, showLastColumn=False, showRowStripes=False, showColumnStripes=False),
+         "Entry": TableStyleInfo(name="TableStyleMedium18", showFirstColumn=False, showLastColumn=False, showRowStripes=False, showColumnStripes=False)
+         }
+
+## Update this content if necessary
+output_info = ("Fire Ecology Traits for Plants",
+        "Version 1.00 (April 2022)",
+        "This data export reflects the status of the database on the %s" % datetime.date.today().strftime('%d %b %Y'),
+        "Developed by  José R. Ferrer-Paris and David Keith",
+        "Centre for Ecosystem Science / University of New South Wales",
+        "Please cite this work as:",
+        "Ferrer-Paris, J. R. and Keith, D. A. (2022) Fire Ecology Traits for Plants: A database for fire research and management. Version 1.00. Centre for Ecosystem Science, University of New South Wales, Sydney, Australia.",
+        "DISCLAIMER:",
+        "DATA IS NOT READY FOR FINAL USE OR CRITICAL APPLICATIONS AND YOU SHOULD NOT DISTRIBUTE THIS DATA."
+        )
+
+output_wsheets = (
+{"title": "About", "colWidths":[("A",90),("B",40)], "tabColor":"intro","active":True},
+{"title": "Summary", "colWidths":[("A",70),("B",10),(("C","D","E","F","G","H","I","J","K"),30),(("L","M","N",),25)], "tabColor":"summary"},
+{"title": "References", "colWidths":[("A",25),("B",80)], "tabColor":"addentry"},
+{"title": "Trait description", "colWidths":[("A",12),("B",30),("C",70)], "tabColor":"default"}
+)
+
+output_supporters = ({'institution':"University of New South Wales",'url':"https://www.unsw.edu.au/"},
+              {'institution':"NSW Bushfire Research Hub",'url':"https://www.bushfirehub.org/"},
+              {'institution':"NESP Threatened Species Recovery Hub",'url':"https://www.nespthreatenedspecies.edu.au/"},
+              {'institution':"NSW Department of Planning & Environment",'url':"https://www.planning.nsw.gov.au/"})
 
 
+output_description = {"about": (
+              "Taxonomic nomenclature following BioNET (data export from February 2022)",
+              "Data in the report is summarised based on BioNET fields 'currentScientificName' and 'currentScientificNameCode'",
+              "For general description of the traits, please refer to the 'Trait description' sheet",
+              "Vocabularies for categorical traits are available in the 'Vocabularies' sheet",
+              "For categorical traits the values in the 'Summary' sheet show the different values reported in the literature records separated by slashes.",
+               "If more than one category has been reported, the values are ordered from higher to lower 'weight', categories receiving less than 10% weight are in round brackets, categories with less than 5% in square brackets",
+              "The default weight is calculated by multiplying the number of times a value is reported (nr. of records) with the weight given to each record (default to 1), and divided by the weight of all records for a given species.",
+              "Default weights  overridden by expert advice to the administrator will be marked, with justification given in the Notes column of the output.",
+              "An asterisk (*) in a trait cell indicates a potential data entry error or uncertainty in the assignment of a trait category or value.",
+              "'Import/Entry sources' refer to references that were imported directly using automated scripts or manual entry. These include: 1) Primary observations of traits from published research or reports; and 2) Compilations of data (e.g. databases, spreadsheets, published reviews) that include two or more sources of primary observations.",
+              "'Indirect sources' refer to references that were cited in Import/Entry sources, where the latter are compilations of multiple primary sources (see Import/Entry sources). Information from indirect sources may have been modified when it was incorporated into those compilations. The original source of primary trait observations has not yet been verified prior to import into this database. When the primary source is reviewed and the trait values are verified, these records will be attributed to the primary source as 'Import/Entry sources'.",
+              "Some sheets are protected to avoid accidental changes, but they are not password protected. If you need to filter and reorder entries in the table, please unprotect the sheet first.",
+              ),
+                "traits":("The following table gives a general description of the traits used in the 'Summary' sheet",
+                               "This sheet is protected to avoid accidental changes, but it is not password protected. If you need to filter and reorder entries in the table, please unprotect the sheet first.",
+                              "Vocabularies for categorical traits are available in the 'Vocabularies' sheet","",""),
+                "references":("The following table includes bibliographical information for the sources referenced in the 'Summary' sheet","This sheet is protected to avoid accidental changes, but it is not password protected. If you need to filter and reorder entries in the table, please unprotect the sheet first.", "","")}
+
+
+
+def create_output_xl(traitsummary=None, referencelist=None, traitlist=None, info=output_info, wsheets=output_wsheets, description=output_description, supporters=output_supporters):
+    wb = Workbook()
+    ws = wb.active
+
+    for item in wsheets:
+        if "active" in item.keys():
+            ws = wb.active
+            ws.title = item['title']
+        else:
+            ws = wb.create_sheet(item['title'])
+        for k in item['colWidths']:
+            for j in k[0]:
+                ws.column_dimensions[j].width = k[1]
+        ws.sheet_properties.tabColor = sheet_colors[item["tabColor"]]
+
+    ## About
+    ws = wb["About"]
+    k = 1
+    for row in info:
+        ws.cell(k,1,value=row)
+        ws.cell(k,1).alignment=wrap_align
+        k=k+1
+    ## check these if info was updated/changed
+    ws.cell(1,1).style='Title'
+    ws.cell(5,1).hyperlink='https://www.unsw.edu.au/research/ecosystem'
+    ws.cell(5,1).style='Hyperlink'
+    # Disclaimer, check these if info was updated/changed
+    ws.cell(8,1).font=Font(color="FF0000", bold=True,italic=False)
+    ws.cell(9,1).font=Font(color="FF0000", italic=True)
+    k=k+2
+    ws.cell(k-1,1,value="This work has been supported by:")
+    for item in supporters:
+        cell=ws.cell(k,1)
+        cell.value=item['institution']
+        cell.hyperlink=item['url']
+        cell.style = "Hyperlink"
+        k=k+1
+    k=k+2
+    for row in description['about']:
+        ws.cell(k,1,value=row)
+        ws.cell(k,1).alignment=wrap_align
+        k=k+1
+    ws.protection.sheet = True
+
+    ## Trait Description
+    ws = wb["Trait description"]
+    k=1
+    for row in description['traits']:
+        ws.cell(k,3,value=row)
+        ws.cell(k,3).alignment=wrap_align
+        k=k+1
+    ws.append(["Trait Code", "Trait Name", "Description", "Type", "Life stage", "Life history process", "Data migration"])
+    for row in traitlist:
+        ws.append(row)
+    #ws.max_row
+    for j in range(k,ws.max_row+1):
+        ws.cell(j,3).alignment=wrap_align
+    tab = Table(displayName="TraitInformation", ref="A{}:G{}".format(k,ws.max_row))
+    tab.tableStyleInfo = table_style["Info"]
+    ws.add_table(tab)
+    ws.protection.sheet = True
+
+    ## Summary
+    ws = wb["Summary"]
+    ws.append(['Species','Code','surv1','surv4','germ1','germ8','rect2','repr2','repr3','repr3a','disp1','Original Species name(s) used','Import/Entry sources','Indirect sources'])
+    rows = dataframe_to_rows(traitsummary[['Species','Code','surv1','surv4','germ1','germ8','rect2','repr2','repr3','repr3a','disp1','orig_species','main_refs','orig_refs']],index=False, header=False)
+    #rows = dataframe_to_rows(traitsummary,index=False, header=False)
+    for r_idx, row in enumerate(rows, 2):
+        for c_idx, value in enumerate(row, 1):
+            ws.cell(row=r_idx, column=c_idx, value=value)
+        for k in (12,13,14):
+            ws.cell(r_idx,k).alignment=wrap_align
+            ws.cell(r_idx,k).font = fontSmall
+    tab = Table(displayName="Summary", ref="A1:{}{}".format(get_column_letter(c_idx),r_idx))
+    tab.tableStyleInfo = table_style["Lists"]
+    ws.add_table(tab)
+
+    ## References
+    ws = wb["References"]
+    k=1
+
+    for row in description['references']:
+        ws.cell(k,2,value=row)
+        ws.cell(k,2).alignment=wrap_align
+        k=k+1
+    ws.append(["Reference code", "Reference information"])
+    for row in referencelist:
+        ws.append(row)
+    #ws.max_row
+    for j in range(k+1,ws.max_row+1):
+        ws.cell(j,2).alignment=wrap_align
+        ws.cell(j,2).font = fontSmall
+    tab = Table(displayName="ReferenceInformation", ref="A{}:B{}".format(k,ws.max_row))
+    tab.tableStyleInfo = table_style["Lists"]
+    ws.add_table(tab)
+    ws.protection.sheet = True
+
+    ## Finalise and return
+    return wb
 
 def create_input_xl(contactinfo=None, specieslist=None, referencelist=None, traitlist=None, vocabularies=None, methods_vocabularies=None):
-    cent_align=Alignment(horizontal='center', vertical='center', wrap_text=False)
-    wrap_align=Alignment(horizontal='left', vertical='top', wrap_text=True)
-    sheet_colors = {"instructions": "1072BA" , "entry": "10BA72", "addentry": "20CA82", "default":"505050"}
-    table_style={"Instructions":TableStyleInfo(name="TableStyleMedium9", showFirstColumn=True, showLastColumn=False, showRowStripes=True, showColumnStripes=False),
-             "Contributor": TableStyleInfo(name="TableStyleMedium18", showFirstColumn=True, showLastColumn=False, showRowStripes=False, showColumnStripes=False),
-             "Lists": TableStyleInfo(name="TableStyleMedium14", showFirstColumn=True, showLastColumn=False, showRowStripes=False, showColumnStripes=False),
-             "Info":  TableStyleInfo(name="TableStyleMedium14", showFirstColumn=True, showLastColumn=False, showRowStripes=False, showColumnStripes=False),
-             "Vocabularies": TableStyleInfo(name="TableStyleMedium14", showFirstColumn=True, showLastColumn=False, showRowStripes=False, showColumnStripes=False),
-             "Entry": TableStyleInfo(name="TableStyleMedium18", showFirstColumn=False, showLastColumn=False, showRowStripes=False, showColumnStripes=False)
-             }
     wb = Workbook()
     ws = wb.active
 
@@ -62,7 +214,7 @@ Go to sheet "Data Entry" and fill one (or more) record(s) for each combination o
 For each record, select references (main source and original sources columns) from the drop down list. If reference is not found, go to list of reference and add it to the table (use "Insert > Table Rows Above/Below" to add record to the list of references)
 """,
 """
-For each record, type in species name as given by main source in "original_species_name" column. A XLOOKUP function will look for a match in the species table (SpeciesList) and populate columns species_code and species_name, but this can be overridden with a manual entry if needed. 
+For each record, type in species name as given by main source in "original_species_name" column. A XLOOKUP function will look for a match in the species table (SpeciesList) and populate columns species_code and species_name, but this can be overridden with a manual entry if needed.
 
 The data in the Species List is taken from BioNET (export from February 2022). The Species Code used in the data entry worksheet comes from the 'speciesCode_Synonym' column in BioNET.
 

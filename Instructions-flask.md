@@ -40,6 +40,7 @@ pip freeze > requirements.txt
 ### Test the app
 
 ```sh
+conda activate flsk
 cd ~/proyectos/fireveg/fireveg-webapp
 export FLASK_APP=webapp
 export FLASK_ENV=development
