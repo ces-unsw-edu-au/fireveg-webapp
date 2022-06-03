@@ -25,7 +25,7 @@ SELECT "currentScientificName" as spp, "currentScientificNameCode" as sppcode,
 FROM litrev.{}
 LEFT JOIN species.caps
 ON species_code="speciesCode_Synonym"
-WHERE  "currentScientificName" is not NULL AND weight>0 AND main_source is not NULL
+WHERE species ilike '%euca%' and "currentScientificName" is not NULL AND weight>0 AND main_source is not NULL
 GROUP BY spp,sppcode;
 """
 
