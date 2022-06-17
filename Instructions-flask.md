@@ -16,6 +16,12 @@ conda create --name flsk
 conda activate flsk
 ```
 
+or...
+
+```sh
+source venv/bin/activate
+```
+
 Update and install modules
 ```sh
 /usr/local/opt/python@3.9/bin/python3.9 -m pip install --upgrade pip
@@ -67,6 +73,7 @@ cd ~/proyectos/fireveg/fireveg-webapp
 export FLASK_APP=webapp
 export FLASK_ENV=development
 flask init-dataentry
+flask init-data-export
 ```
 
 ### Running with gunicorn
