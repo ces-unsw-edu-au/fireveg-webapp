@@ -1,5 +1,5 @@
 import os
-
+import logging
 from flask import Flask, render_template
 
 
@@ -66,5 +66,12 @@ def create_app(test_config=None):
     app.register_blueprint(traits.bp)
     from . import biblio
     app.register_blueprint(biblio.bp)
+    from . import dataentry
+    app.register_blueprint(dataentry.bp)
+    from . import dataxport
+    app.register_blueprint(dataxport.bp)
+
+    gunicorn_logger = logging.getLogger('gunicorn.error')
+    app.logger.handlers = gunicorn_logger.handlers
 
     return app

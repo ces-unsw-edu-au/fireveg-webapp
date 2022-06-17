@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Download Data Entry Template{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+<h1>File download</h1>
+
+<p>The form will be prefilled with your contact information, you can modify the details below. Click on the button to download the data entry file in <i>xlsx</i> format:</p>
+<form method=post enctype=multipart/form-data>
+  <label for="Name">Name</label>
+<input type="text" name="Name" value="{{g.user['username']}}">
+<label for="Affiliation">Affiliation</label>
+<input type="text" name="Affiliation" value="{{g.user['affiliation']}}">
+<label for="Contact">Contact information</label>
+<textarea name="Contact" rows="8" cols="80">{{g.user['contact']}}</textarea>
+<input type=submit value=Download>
+</form>
+
+<p>The file contain several tables, named ranges, lookup and validation functions. These have been tested in <b>Excel desktop app</b> and <b><a href="https://docs.microsoft.com/en-us/office365/servicedescriptions/office-online-service-description/excel-online">Excel for the web</a></b>, but might not work in other office software.</p>
+<p>Once you open the file, please follow instructions (blue tab).</p>
+{% endblock %}

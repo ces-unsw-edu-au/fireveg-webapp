@@ -24,6 +24,9 @@ pip install psycopg2-binary
 pip install flask-wtf
 pip install folium
 pip install pandas
+pip install datetime
+pip install openpyxl
+
 ```
 
 Create and initialise directory
@@ -40,6 +43,7 @@ pip freeze > requirements.txt
 ### Test the app
 
 ```sh
+conda activate flsk
 cd ~/proyectos/fireveg/fireveg-webapp
 export FLASK_APP=webapp
 export FLASK_ENV=development
