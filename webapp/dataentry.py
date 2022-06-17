@@ -16,10 +16,17 @@ import openpyxl
 
 bp = Blueprint('dataentry', __name__, url_prefix='/data-entry')
 
-@bp.route('/')
+@bp.route('/', methods=('GET', 'POST'))
 @login_required
 def howto():
-    return render_template('data-entry.html', the_title="Data Entry")
+    if request.method == 'POST':
+        # Quick option, for small instances
+        return send_file(current_app.config['DATAENTRY'],         attachment_filename="fire-ecology-traits-data-entry-form.xlsx",
+            mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            cache_timeout=0
+        )
+    else:
+        return render_template('data-entry.html', the_title="Data Entry")
 
 @bp.route('/upload', methods=('GET', 'POST'))
 @login_required
@@ -43,7 +50,7 @@ def download_file():
             cache_timeout=0
         )
         # If we can afford a better instance, we can use this time/resource consumming alternative:
-        
+
         #contactinfo = request.form
         #wb = openpyxl.load_workbook(current_app.config['DATAENTRY'])
         #if contactinfo is not None:
