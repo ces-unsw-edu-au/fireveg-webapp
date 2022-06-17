@@ -59,6 +59,16 @@ export FLASK_ENV=development
 flask init-db
 ```
 
+
+Update the data entry form:
+
+```sh
+cd ~/proyectos/fireveg/fireveg-webapp
+export FLASK_APP=webapp
+export FLASK_ENV=development
+flask init-dataentry
+```
+
 ### Running with gunicorn
 
 ```sh
