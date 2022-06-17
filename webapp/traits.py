@@ -116,12 +116,16 @@ def trait_info(group,var):
     cur.execute(qry)
     slcdata = cur.fetchone()
 
-
-
+    if traitdata['method_vocabulary'] is not None:
+        qry="SELECT pg_catalog.obj_description(t.oid, 'pg_type')::json from pg_type t where typname = '{}';".format(traitdata['method_vocabulary'])
+        cur.execute(qry)
+        mtds = cur.fetchone()
+    else:
+        mtds = None
     cur.close()
 
 
-    return render_template('traits/trait-info.html', spps=spp_list, mainrefs=ref_list, addrefs=add_list, group=group, var=var, trait=traitdata, desc=slcdata[0])
+    return render_template('traits/trait-info.html', spps=spp_list, mainrefs=ref_list, addrefs=add_list, group=group, var=var, trait=traitdata, desc=slcdata[0], methods=mtds[0])
 
 @bp.route('/<trait>/<code>')
 @login_required

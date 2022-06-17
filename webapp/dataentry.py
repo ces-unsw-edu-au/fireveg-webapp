@@ -1,5 +1,5 @@
 from flask import (
-    Blueprint, flash, g, redirect, render_template, request, url_for, send_file
+    Blueprint, flash, g, redirect, render_template, current_app, request, url_for, send_file
 )
 import pandas as pd
 import io
@@ -11,6 +11,8 @@ from webapp.db import get_db
 from webapp.xlfile import create_input_xl
 from webapp.pg import get_pg_connection
 from psycopg2.extras import DictCursor
+import openpyxl
+
 
 bp = Blueprint('dataentry', __name__, url_prefix='/data-entry')
 
@@ -35,42 +37,14 @@ def upload_file():
 @login_required
 def download_file():
     if request.method == 'POST':
-        response = request.form
+        contactinfo = request.form
+        wb = openpyxl.load_workbook(current_app.config['DATAENTRY'])
+        if contactinfo is not None:
+            ws = wb['Contributor']
+            ws.cell(row=2,column=2,value=contactinfo['Name'])
+            ws.cell(row=3,column=2,value=contactinfo['Affiliation'])
+            ws.cell(row=4,column=2,value=contactinfo['Contact'])
 
-        pg = get_pg_connection()
-        cur = pg.cursor(cursor_factory=DictCursor)
-        cur.execute('SELECT "scientificName", "speciesCode_Synonym", family, genus, "scientificNameID", "currentScientificNameCode", "currentScientificName", "currentVernacularName", "isCurrent" FROM species.caps order by "sortOrder";')
-        spps = cur.fetchall()
-
-        cur.execute("SELECT ref_code,ref_cite FROM litrev.ref_list")
-        refs = cur.fetchall()
-
-        cur.execute("SELECT code,name,description,value_type,life_stage,life_history_process,priority FROM litrev.trait_info WHERE priority IS NOT NULL ORDER BY code ")
-        traits = cur.fetchall()
-
-        cur.execute("""
-SELECT code, category_vocabulary,
-pg_catalog.obj_description(t.oid, 'pg_type')::json as vocab
-FROM litrev.trait_info i
-LEFT JOIN pg_type t
-    ON t.typname=i.category_vocabulary
-WHERE category_vocabulary IS NOT NULL
-ORDER BY code""")
-        vocabs = cur.fetchall()
-
-        cur.execute("""
-SELECT code, method_vocabulary,
-pg_catalog.obj_description(t.oid, 'pg_type')::json as vocab
-FROM litrev.trait_info i
-LEFT JOIN pg_type t
-    ON t.typname=i.method_vocabulary
-WHERE method_vocabulary IS NOT NULL
-ORDER BY code""")
-        mvocabs = cur.fetchall()
-
-        cur.close()
-
-        wb = create_input_xl(contactinfo=response, referencelist=refs, specieslist=spps, traitlist=traits, vocabularies=vocabs, methods_vocabularies=mvocabs)
         excel_stream = io.BytesIO()
         wb.save(excel_stream)
         excel_stream.seek(0)  # go to the beginning of the stream
@@ -79,7 +53,6 @@ ORDER BY code""")
                 mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
                 attachment_filename="fire-ecology-traits-data-entry-form.xlsx",
                 as_attachment=True,
-                cache_timeout=0
-        )
+                cache_timeout=0)
     else:
         return render_template('data-entry/download.html')

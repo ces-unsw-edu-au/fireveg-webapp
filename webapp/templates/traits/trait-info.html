@@ -72,6 +72,18 @@
     {% endif %}
   </ul>
 
+  <h2>Methods</h2>
+  {% if methods != None %}
+  <table>
+    {% for k in methods  %}
+    <tr>
+      <th>{{k}}</th>
+      <td>{{methods[k]}}</td>
+    </tr>
+     {% endfor %}
+  </table>
+  {%endif%}
+
   <h2>References</h2>
 
   <p>
