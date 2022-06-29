@@ -26,50 +26,68 @@ def create_app(test_config=None):
     except OSError:
         pass
 
-    # a simple page that says hello
-    @app.route('/hello')
-    def hello():
-        return 'Hello, World!'
-
+    # Here are some fixed routes:
     # we can write an 'about' page
     @app.route('/about')
     def about():
         return render_template('about.html', the_title="Home / About")
+    # place for simple documentation of features for end user
     @app.route('/documentation')
     def documentation():
         return render_template('documentation.html', the_title="Home / Documentation")
+    # this is the welcome page
     @app.route('/index')
     def index():
         return render_template('home.html', the_title="Home ")
+    # this is the summary with links to the different modules
     @app.route('/summary')
     def summary():
         return render_template('index.html', the_title="Home / Summary ")
 
+    #additional url rule for index
+    app.add_url_rule('/', endpoint='index')
+
+    # Initialise some app functions
+    # databases: I use a sqlite solution for user registration and login: this is stored in the local instance folder
     from . import db
     db.init_app(app)
+    # databases: content of the database is in a external postgresql database
     from . import pg
     pg.init_app(app)
+    # I include here some functions for the export of xlsx files
+    # do we need to call this here? probably not
     from . import xlinit
     xlinit.init_app(app)
 
+    ## Blueprints
+
+    # This is the authentication blueprint
     from . import auth
     app.register_blueprint(auth.bp)
 
-    #from . import blog
-    #app.register_blueprint(blog.bp)
+    ## These are blueprints for each component or module
 
-    app.add_url_rule('/', endpoint='index')
-
+    # Field work data is handled by the sites and visits blueprints
+    # This is the `Green table/module` from the original diagramm from DK
     from . import sites
     app.register_blueprint(sites.bp)
     from . import visits
     app.register_blueprint(visits.bp)
+
+    ## All things related to the taxonomy should go to the species blueprint
     from . import species
     app.register_blueprint(species.bp)
+
+
+    # this blueprint is for the fire ecology trait recorded from literature sources
+    # This is the `Blue table/module` from the original diagramm from DK
     from . import traits
     app.register_blueprint(traits.bp)
+
     from . import biblio
     app.register_blueprint(biblio.bp)
+
+
     from . import dataentry
     app.register_blueprint(dataentry.bp)
     from . import dataxport

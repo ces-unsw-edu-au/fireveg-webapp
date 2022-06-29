@@ -25,7 +25,7 @@ source venv/bin/activate
 Update and install modules
 ```sh
 /usr/local/opt/python@3.9/bin/python3.9 -m pip install --upgrade pip
-pip3 install Flask
+pip3 install -U Flask
 pip install psycopg2-binary
 pip install flask-wtf
 pip install folium
