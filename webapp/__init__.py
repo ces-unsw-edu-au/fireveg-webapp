@@ -8,7 +8,9 @@ def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_mapping(
         SECRET_KEY='dev',
+        # for authentication
         DATABASE=os.path.join(app.instance_path, 'webapp.sqlite'),
+        # path to files for data entry and export
         DATAENTRY=os.path.join(app.instance_path, 'data-entry.xlsx'),
         DATAXPORT=os.path.join(app.instance_path, 'data-export.xlsx'),
     )
@@ -84,16 +86,21 @@ def create_app(test_config=None):
     from . import traits
     app.register_blueprint(traits.bp)
 
+    # this blueprint is for the list of references
     from . import biblio
     app.register_blueprint(biblio.bp)
 
-
+    # These blueprints are for functions to import and export data in workbook format
+    #
     from . import dataentry
     app.register_blueprint(dataentry.bp)
     from . import dataxport
     app.register_blueprint(dataxport.bp)
 
+    # Added this for handling error messages
+    # this is only relevant when using gunicorn
     gunicorn_logger = logging.getLogger('gunicorn.error')
     app.logger.handlers = gunicorn_logger.handlers
 
+    # This is it!
     return app

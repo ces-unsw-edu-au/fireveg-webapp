@@ -1,5 +1,7 @@
+## This script is for creating workbooks and saving them in the instance folder of the deployment
+# These functions are intended to be triggered by admin user on a regular basis, for example by calling a cron job
 
-## for creating forms
+
 import click
 from flask import current_app, g
 from flask.cli import with_appcontext
@@ -10,8 +12,9 @@ from webapp.pg import get_pg_connection
 from psycopg2.extras import DictCursor
 
 
+## First, define SQL queries
 
-## queries: ## test with -- WHERE species ilike '%euca%' and
+## These are general queries for categorical and numeric traits
 qryCategorical= """
 SELECT "currentScientificName" as spp, "currentScientificNameCode" as sppcode,
     array_agg(species) as nspp,
@@ -40,7 +43,56 @@ WHERE "currentScientificName" is not NULL AND weight>0
 GROUP BY spp,sppcode;
 """
 
-## functions
+## Other queries:
+
+qryRefs="""
+SELECT ref_code,ref_cite
+FROM litrev.ref_list
+WHERE ref_code IN %s
+ORDER BY ref_code;
+"""
+
+qryTraits="""
+SELECT code,name,description,value_type,life_stage,life_history_process,priority
+FROM litrev.trait_info
+ORDER BY code;
+"""
+
+qryAllRefs="""
+SELECT ref_code,ref_cite
+FROM litrev.ref_list;
+"""
+
+qrySomeTraits="""
+SELECT code,name,description,value_type,life_stage,life_history_process,priority
+FROM litrev.trait_info
+WHERE priority IS NOT NULL
+ORDER BY code;
+"""
+
+qrySpps="""
+SELECT "scientificName", "speciesCode_Synonym", family, genus, "scientificNameID", "currentScientificNameCode", "currentScientificName", "currentVernacularName", "isCurrent"
+FROM species.caps order by "sortOrder";
+"""
+
+qryVocabs="""
+SELECT code, category_vocabulary, pg_catalog.obj_description(t.oid, 'pg_type')::json as vocab
+FROM litrev.trait_info i
+LEFT JOIN pg_type t
+ON t.typname=i.category_vocabulary
+WHERE category_vocabulary IS NOT NULL
+ORDER BY code;
+"""
+qryMethodVocabs="""
+SELECT code, method_vocabulary, pg_catalog.obj_description(t.oid, 'pg_type')::json as vocab
+FROM litrev.trait_info i
+LEFT JOIN pg_type t
+ON t.typname=i.method_vocabulary
+WHERE method_vocabulary IS NOT NULL
+ORDER BY code;
+"""
+
+## Next, declare functions to be used for summarising values in the workbook cells
 
 def summarise_values(x,w):
     if None in x:
@@ -77,7 +129,8 @@ def summarise_triplet(x,y,z,w):
         val=val.replace("nan","?")
     return val
 
-## define command line commands
+## Now, define command line commands
+# These functions are intended to be triggered by admin user on a regular basis, for example by calling a cron job
 
 @click.command('init-data-export')
 @with_appcontext
@@ -162,12 +215,11 @@ def init_dataexport_command():
             valid_refs=valid_refs+x
 
     valid_refs=tuple(set(valid_refs))
-
-    cur.execute("SELECT ref_code,ref_cite FROM litrev.ref_list WHERE ref_code IN %s ORDER BY ref_code",(valid_refs,))
+    cur.execute(qryRefs,(valid_refs,))
     ref_info = cur.fetchall()
 
 
-    cur.execute("SELECT code,name,description,value_type,life_stage,life_history_process,priority FROM litrev.trait_info ORDER BY code")
+    cur.execute(qryTraits)
     trait_info = cur.fetchall()
 
     cur.close()
@@ -181,33 +233,20 @@ def init_dataexport_command():
 def init_dataentryform_command():
     pg = get_pg_connection()
     cur = pg.cursor(cursor_factory=DictCursor)
-    cur.execute('SELECT "scientificName", "speciesCode_Synonym", family, genus, "scientificNameID", "currentScientificNameCode", "currentScientificName", "currentVernacularName", "isCurrent" FROM species.caps order by "sortOrder";')
+
+    cur.execute(qrySpps)
     spps = cur.fetchall()
 
-    cur.execute("SELECT ref_code,ref_cite FROM litrev.ref_list")
+    cur.execute(qryAllRefs)
     refs = cur.fetchall()
 
-    cur.execute("SELECT code,name,description,value_type,life_stage,life_history_process,priority FROM litrev.trait_info WHERE priority IS NOT NULL ORDER BY code ")
+    cur.execute(qrySomeTraits)
     traits = cur.fetchall()
 
-    cur.execute("""
-SELECT code, category_vocabulary,
-pg_catalog.obj_description(t.oid, 'pg_type')::json as vocab
-FROM litrev.trait_info i
-LEFT JOIN pg_type t
-ON t.typname=i.category_vocabulary
-WHERE category_vocabulary IS NOT NULL
-ORDER BY code""")
+    cur.execute(qryVocabs)
     vocabs = cur.fetchall()
 
-    cur.execute("""
-SELECT code, method_vocabulary,
-pg_catalog.obj_description(t.oid, 'pg_type')::json as vocab
-FROM litrev.trait_info i
-LEFT JOIN pg_type t
-ON t.typname=i.method_vocabulary
-WHERE method_vocabulary IS NOT NULL
-ORDER BY code""")
+    cur.execute(qryMethodVocabs)
     mvocabs = cur.fetchall()
 
     cur.close()
@@ -217,6 +256,7 @@ ORDER BY code""")
     wb.save(current_app.config['DATAENTRY'])
     click.echo('Template saved at designated location')
 
+## Now, register these commands in the init_app function
 
 def init_app(app):
     app.cli.add_command(init_dataentryform_command)
