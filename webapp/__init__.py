@@ -12,7 +12,8 @@ def create_app(test_config=None):
         DATABASE=os.path.join(app.instance_path, 'webapp.sqlite'),
         # path to files for data entry and export
         DATAENTRY=os.path.join(app.instance_path, 'data-entry.xlsx'),
-        DATAXPORT=os.path.join(app.instance_path, 'data-export.xlsx'),
+        DATAXPORT=os.path.join(app.instance_path, 'data-summary-export.xlsx'),
+        RECORDXPORT=os.path.join(app.instance_path, 'data-all-records-export.xlsx'),
     )
 
     if test_config is None:

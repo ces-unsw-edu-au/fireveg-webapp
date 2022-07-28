@@ -28,53 +28,204 @@ table_style={"Instructions":TableStyleInfo(name="TableStyleMedium9", showFirstCo
          "Entry": TableStyleInfo(name="TableStyleMedium18", showFirstColumn=False, showLastColumn=False, showRowStripes=False, showColumnStripes=False)
          }
 
-## Update this content if necessary
-output_info = ("Fire Ecology Traits for Plants",
-        "Version 1.00 (April 2022)",
-        "This data export reflects the status of the database on the %s" % datetime.date.today().strftime('%d %b %Y'),
-        "Developed by  José R. Ferrer-Paris and David Keith",
-        "Centre for Ecosystem Science / University of New South Wales",
-        "Please cite this work as:",
-        "Ferrer-Paris, J. R. and Keith, D. A. (2022) Fire Ecology Traits for Plants: A database for fire research and management. Version 1.00. Centre for Ecosystem Science, University of New South Wales, Sydney, Australia.",
-        "DISCLAIMER:",
-        "DATA IS NOT READY FOR FINAL USE OR CRITICAL APPLICATIONS AND YOU SHOULD NOT DISTRIBUTE THIS DATA."
-        )
-
-output_wsheets = (
-{"title": "About", "colWidths":[("A",90),("B",40)], "tabColor":"intro","active":True},
-{"title": "Summary", "colWidths":[("A",70),("B",10),(("C","D","E","F","G","H","I","J","K"),30),(("L","M","N",),25)], "tabColor":"summary"},
-{"title": "References", "colWidths":[("A",25),("B",80)], "tabColor":"addentry"},
-{"title": "Trait description", "colWidths":[("A",12),("B",30),("C",70)], "tabColor":"default"}
-)
-
-output_supporters = ({'institution':"University of New South Wales",'url':"https://www.unsw.edu.au/"},
-              {'institution':"NSW Bushfire Research Hub",'url':"https://www.bushfirehub.org/"},
-              {'institution':"NESP Threatened Species Recovery Hub",'url':"https://www.nespthreatenedspecies.edu.au/"},
-              {'institution':"NSW Department of Planning & Environment",'url':"https://www.planning.nsw.gov.au/"})
+#####
+## Content:
+## Content for these functions is declared in xlcontent.py and saved to pickle files in folder content
+#####
 
 
-output_description = {"about": (
-              "Taxonomic nomenclature following BioNET (data export from February 2022)",
-              "Data in the report is summarised based on BioNET fields 'currentScientificName' and 'currentScientificNameCode'",
-              "For general description of the traits, please refer to the 'Trait description' sheet",
-              "Vocabularies for categorical traits are available in the 'Vocabularies' sheet",
-              "For categorical traits the values in the 'Summary' sheet show the different values reported in the literature records separated by slashes.",
-               "If more than one category has been reported, the values are ordered from higher to lower 'weight', categories receiving less than 10% weight are in round brackets, categories with less than 5% in square brackets",
-              "The default weight is calculated by multiplying the number of times a value is reported (nr. of records) with the weight given to each record (default to 1), and divided by the weight of all records for a given species.",
-              "Default weights  overridden by expert advice to the administrator will be marked, with justification given in the Notes column of the output.",
-              "An asterisk (*) in a trait cell indicates a potential data entry error or uncertainty in the assignment of a trait category or value.",
-              "'Import/Entry sources' refer to references that were imported directly using automated scripts or manual entry. These include: 1) Primary observations of traits from published research or reports; and 2) Compilations of data (e.g. databases, spreadsheets, published reviews) that include two or more sources of primary observations.",
-              "'Indirect sources' refer to references that were cited in Import/Entry sources, where the latter are compilations of multiple primary sources (see Import/Entry sources). Information from indirect sources may have been modified when it was incorporated into those compilations. The original source of primary trait observations has not yet been verified prior to import into this database. When the primary source is reviewed and the trait values are verified, these records will be attributed to the primary source as 'Import/Entry sources'.",
-              "Some sheets are protected to avoid accidental changes, but they are not password protected. If you need to filter and reorder entries in the table, please unprotect the sheet first.",
-              ),
-                "traits":("The following table gives a general description of the traits used in the 'Summary' sheet",
-                               "This sheet is protected to avoid accidental changes, but it is not password protected. If you need to filter and reorder entries in the table, please unprotect the sheet first.",
-                              "Vocabularies for categorical traits are available in the 'Vocabularies' sheet","",""),
-                "references":("The following table includes bibliographical information for the sources referenced in the 'Summary' sheet","This sheet is protected to avoid accidental changes, but it is not password protected. If you need to filter and reorder entries in the table, please unprotect the sheet first.", "","")}
+#####
+## This is the function to create a detailed output workbook, each row is a record
+#####
+def create_list_records_xl(
+traitsummary=None, referencelist=None, traitlist=None, wsheets=None, info=None, supporters=None, description=None):
+    wb = Workbook()
+    ws = wb.active
+
+    for item in wsheets:
+        if "active" in item.keys():
+            ws = wb.active
+            ws.title = item['title']
+        else:
+            ws = wb.create_sheet(item['title'])
+        for k in item['colWidths']:
+            for j in k[0]:
+                ws.column_dimensions[j].width = k[1]
+                ws.sheet_properties.tabColor = sheet_colors[item["tabColor"]]
+
+    ## About
+    ws = wb["About"]
+    k = 1
+    for row in info:
+        ws.cell(k,1,value=row)
+        ws.cell(k,1).alignment=wrap_align
+        k=k+1
+    ## check these if info was updated/changed
+    ws.cell(1,1).style='Title'
+    ws.cell(5,1).hyperlink='https://www.unsw.edu.au/research/ecosystem'
+    ws.cell(5,1).style='Hyperlink'
+    # Disclaimer, check these if info was updated/changed
+    ws.cell(8,1).font=Font(color="FF0000", bold=True,italic=False)
+    ws.cell(9,1).font=Font(color="FF0000", italic=True)
+    k=k+2
+    ws.cell(k-1,1,value="This work has been supported by:")
+    for item in supporters:
+        cell=ws.cell(k,1)
+        cell.value=item['institution']
+        cell.hyperlink=item['url']
+        cell.style = "Hyperlink"
+        k=k+1
+    k=k+2
+    for row in description['about']:
+        ws.cell(k,1,value=row)
+        ws.cell(k,1).alignment=wrap_align
+        k=k+1
+    ws.protection.sheet = True
+
+    ## Trait Description
+    ws = wb["Trait description"]
+    k=1
+    for row in description["traits"]:
+        ws.cell(k,3,value=row)
+        ws.cell(k,3).alignment=wrap_align
+        k=k+1
+
+    tab_begin=k
+    ws.append(["Trait Code", "Trait Name", "Description", "Type", "Life stage", "Life history process", "Data migration"])
+    k=k+1
+
+    for row in traitlist:
+        j=1
+        for key in ["code","name","description","value_type","life_stage","life_history_process","priority"]:
+            val=row[key]
+            ws.cell(row=k, column=j, value=val)
+            j=j+1
+        k=k+1
+
+    for j in range(tab_begin,ws.max_row+1):
+        ws.cell(j,3).alignment=wrap_align
+
+    tab = Table(displayName="TraitInformation", ref="A{}:G{}".format(tab_begin,ws.max_row))
+
+    tab.tableStyleInfo = table_style["Info"]
+    ws.add_table(tab)
+    ws.protection.sheet = True
+
+    ## Summary
+
+    ws = wb["Summary"]
+
+    colnames = ['scientific name','current code (BioNET)',
+                'original name (as entered)','CAPS code (old)',
+                'trait code','trait name','norm value',
+                'best','lower','upper',
+                'method of estimation',
+                'weight','source ref','other ref','DB link']
+    ws.append(colnames)
+
+    rows = traitsummary.sort_values(by =['scientific name','trait code']).to_dict(orient="records")
 
 
+    for r_idx, row in enumerate(rows, 2):
 
-def create_output_xl(traitsummary=None, referencelist=None, traitlist=None, info=output_info, wsheets=output_wsheets, description=output_description, supporters=output_supporters):
+        ws.cell(row=r_idx, column=1, value=row['scientific name'])
+        ws.cell(r_idx,1).font  = Font(italic=True)
+
+        ws.cell(row=r_idx, column=2, value=row['current code (BioNET)'])
+        if row['original name'] != row['scientific name']:
+            ws.cell(row=r_idx, column=3, value=row['original name'])
+            ws.cell(r_idx,3).font  = Font(italic=True, color="110000")
+            ws.cell(row=r_idx, column=4, value=row['CAPS code'])
+        ws.cell(row=r_idx, column=5, value=row['trait code'])
+        ws.cell(row=r_idx, column=6, value=row['trait name'])
+
+        ws.cell(row=r_idx, column=11, value=row['method'])
+        ws.cell(row=r_idx, column=12, value=row['weight'])
+        ws.cell(row=r_idx, column=13, value=row['source ref'])
+        if row['other ref'] is not None:
+            oref="; ".join(row['other ref'])
+            ws.cell(row=r_idx, column=14, value=oref)
+
+        if isinstance(row['norm value'],str):
+            val=row['norm value']
+        elif row['norm value'] is None:
+            val="(data input ERROR)"
+        else:
+            triplet=row['norm value']
+            k=7
+            for j in triplet:
+                k=k+1
+                if j is not None:
+                    ws.cell(row=r_idx, column=k, value=j)
+            if triplet[0] is not None:
+                if triplet[1] is None and triplet[2] is None:
+                    val=triplet[0]
+                else:
+                    val = "%s (%s -- %s)" % tuple(triplet)
+            else:
+                if triplet[1] is None:
+                    if triplet[2] is None:
+                        val="(data input ERROR)"
+                    else:
+                        val = "<%s" % triplet[2]
+                elif triplet[2] is None:
+                    val = ">%s" % triplet[1]
+                else:
+                    val = "(%s -- %s)" % (triplet[1],triplet[2])
+        ws.cell(row=r_idx, column=7, value=val)
+
+        val = "trait:%s / sp code:%s / record id:%s" % (row['trait code'],row['CAPS code'],row['recordid'])
+        url = "http://13.54.3.205/traits/%s/%s" % (row['trait code'],row['CAPS code'])
+        cell=ws.cell(row=r_idx, column=15, value=val)
+        cell.hyperlink=url
+        cell.style='Hyperlink'
+
+        for j in (2,4,5,7,12):
+            ws.cell(r_idx,j).alignment=cent_align
+        for j in (11,13,14,15):
+            ws.cell(r_idx,j).font = fontSmall
+            ws.cell(r_idx,j).alignment=wrap_align
+
+
+    tab = Table(displayName="Summary", ref="A1:{}{}".format(get_column_letter(15),r_idx))
+    tab.tableStyleInfo = table_style["Lists"]
+    ws.add_table(tab)
+
+
+    ## References
+    ws = wb["References"]
+
+    k=1
+
+    for row in description["references"]:
+        ws.cell(k,2,value=row)
+        ws.cell(k,2).alignment=wrap_align
+        k=k+1
+
+
+    ws.append(["Reference code", "Reference information"])
+
+    for row in referencelist:
+        ws.append(row)
+
+    #ws.max_row
+    for j in range(k+1,ws.max_row+1):
+        ws.cell(j,2).alignment=wrap_align
+        ws.cell(j,2).font = fontSmall
+
+    tab = Table(displayName="ReferenceInformation", ref="A{}:B{}".format(k,ws.max_row))
+
+    tab.tableStyleInfo = table_style["Lists"]
+    ws.add_table(tab)
+    ws.protection.sheet = True
+
+    ## Finalise and return
+    return wb
+
+#####
+## This is the function to create a summary output report
+#####
+def create_output_xl(traitsummary=None, referencelist=None, traitlist=None, info=None, wsheets=None, description=None, supporters=None):
     wb = Workbook()
     ws = wb.active
 
@@ -174,21 +325,13 @@ def create_output_xl(traitsummary=None, referencelist=None, traitlist=None, info
     ## Finalise and return
     return wb
 
-def create_input_xl(contactinfo=None, specieslist=None, referencelist=None, traitlist=None, vocabularies=None, methods_vocabularies=None):
+#####
+## This is the function to create a data entry document to download
+#####
+def create_input_xl(contactinfo=None, specieslist=None, referencelist=None, traitlist=None, vocabularies=None, methods_vocabularies=None, wsheets=None, instructions=None, links=None):
     wb = Workbook()
     ws = wb.active
 
-    wsheets = (
-    {"title": "Instructions", "colWidths":[("B",90),("C",40)], "tabColor":"instructions","active":True},
-    {"title": "Contributor", "colWidths":[("A",30),("B",60)], "tabColor":"entry"},
-    {"title": "Data entry", "colWidths":[(("A","B","C","E","G","I","N","O"),25), (("D","F","H","J","K","L","M"),12)], "tabColor":"entry"},
-    {"title": "References", "colWidths":[("A",30),("B",60)], "tabColor":"addentry"},
-    {"title": "Species list", "colWidths":[(("A","G","H"),90),(("C","D",),30),(("E","F","I"),25)], "tabColor":"default"},
-    {"title": "Trait description", "colWidths":[("A",12),("B",30),("C",70)], "tabColor":"default"},
-    {"title": "Vocabularies", "colWidths":[("A",30),("B",60)], "tabColor":"default"},
-    {"title": "Vocabularies for methods", "colWidths":[("A",30),("B",60)], "tabColor":"default"}
-
-    )
     for item in wsheets:
         if "active" in item.keys():
             ws = wb.active
@@ -203,51 +346,6 @@ def create_input_xl(contactinfo=None, specieslist=None, referencelist=None, trai
     ## instructions
     ws = wb["Instructions"]
 
-    instructions = [
-"""
-Fill in your name, affilation and contact details in the "Contributor" tab, so that we can keep track of your contributions and contact you with any queries.
-""",
-"""
-Go to sheet "Data Entry" and fill one (or more) record(s) for each combination of reference + species + trait.
-""",
-"""
-For each record, select references (main source and original sources columns) from the drop down list. If reference is not found, go to list of reference and add it to the table (use "Insert > Table Rows Above/Below" to add record to the list of references)
-""",
-"""
-For each record, type in species name as given by main source in "original_species_name" column. A XLOOKUP function will look for a match in the species table (SpeciesList) and populate columns species_code and species_name, but this can be overridden with a manual entry if needed.
-
-The data in the Species List is taken from BioNET (export from February 2022). The Species Code used in the data entry worksheet comes from the 'speciesCode_Synonym' column in BioNET.
-
-The 'Species list' worksheet is locked to avoid accidental changes, but it is not password protected, so you should be able to unlock the sheet for filtering and sorting.
-""",
-"""
-Select a trait from the drop down menu. A XLOOKUP function will look at the trait code table and populate columns for trait name and trait type (categorical or numerical). The choice will determine the list of values for the "norm_value" column. The 'Trait description' worksheet is locked to avoid accidental changes, but it is not password protected, so you should be able to unlock the sheet for filtering and sorting.
-""",
-"""
-Add raw value as given by original source, might include values, units and short explanatory text about observation or measurement.
-""",
-"""
-For numeric trait values (e.g. age in years) we use a triplet of integer values (columns best, lower and upper) to describe a fuzzy number. Fill out any needed numbers and leave other columns blank. If in doubt leave all columns blank. Examples a raw value of "5 (3-7)" would be best:5, lower:3 upper:7; a value of ">5" would be lower:5, best:blank, upper:blank; etc. This column is colored red if the selected trait is not numerical.
-
-For categorical variables, use values from drop-down list. The list will update when a categorical trait is selected and will be colored red if the selected trait is not categorical. If raw value does not match any of the options, leave blank. Values not in the dropdown list will not be imported in the database, but you can add a comment in the "notes" column.
-
-The 'Vocabularies' and 'Vocabularies for methods' worksheets are locked to avoid accidental changes, but they are not password protected, so you should be able to unlock the sheet for filtering and sorting.
-""",
-"""
-Fill method of estimation from drop down list.
-""",
-"""
-Add any notes, observations or comments in column "notes". Please avoid using colors or any other formatting, nor add comment on particular cells, rather write all comments as text in the "notes" column.
-"""]
-
-    links = [("#Contributor!A1","Go to 'Contributor' table"),
-         ("#'Data entry'!A1","Go to 'Data Entry' table"),
-         ("#'References'!A1","Go to 'References' table"),
-         ("#'Species list'!A1","Go to 'Species list' table"),
-         ("#'Trait description'!A1","Go to 'Trait description' table"),
-         None,
-         ("#'Vocabularies'!A1","Go to 'Vocabularies' table"),
-         None,None,None]
 
     ws.append(["Step", "Instructions","Links"])
     for k in range(len(instructions)):

@@ -69,11 +69,15 @@ flask init-db
 Update the data entry form:
 
 ```sh
+cd ~/proyectos/fireveg/fireveg-webapp/webapp
+python xlcontent.py
+
 cd ~/proyectos/fireveg/fireveg-webapp
 export FLASK_APP=webapp
 export FLASK_ENV=development
 flask init-dataentry
 flask init-data-export
+flask init-recordlist-export
 ```
 
 ### Running with gunicorn
