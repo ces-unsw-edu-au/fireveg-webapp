@@ -35,6 +35,194 @@ table_style={"Instructions":TableStyleInfo(name="TableStyleMedium9", showFirstCo
 
 
 #####
+## This is the function to create a detailed output workbook, each row is a record
+#####
+def create_list_records_xl(
+traitsummary=None, referencelist=None, traitlist=None, wsheets=None, info=None, supporters=None, description=None):
+    wb = Workbook()
+    ws = wb.active
+
+    for item in wsheets:
+        if "active" in item.keys():
+            ws = wb.active
+            ws.title = item['title']
+        else:
+            ws = wb.create_sheet(item['title'])
+        for k in item['colWidths']:
+            for j in k[0]:
+                ws.column_dimensions[j].width = k[1]
+                ws.sheet_properties.tabColor = sheet_colors[item["tabColor"]]
+
+    ## About
+    ws = wb["About"]
+    k = 1
+    for row in info:
+        ws.cell(k,1,value=row)
+        ws.cell(k,1).alignment=wrap_align
+        k=k+1
+    ## check these if info was updated/changed
+    ws.cell(1,1).style='Title'
+    ws.cell(5,1).hyperlink='https://www.unsw.edu.au/research/ecosystem'
+    ws.cell(5,1).style='Hyperlink'
+    # Disclaimer, check these if info was updated/changed
+    ws.cell(8,1).font=Font(color="FF0000", bold=True,italic=False)
+    ws.cell(9,1).font=Font(color="FF0000", italic=True)
+    k=k+2
+    ws.cell(k-1,1,value="This work has been supported by:")
+    for item in supporters:
+        cell=ws.cell(k,1)
+        cell.value=item['institution']
+        cell.hyperlink=item['url']
+        cell.style = "Hyperlink"
+        k=k+1
+    k=k+2
+    for row in description['about']:
+        ws.cell(k,1,value=row)
+        ws.cell(k,1).alignment=wrap_align
+        k=k+1
+    ws.protection.sheet = True
+
+    ## Trait Description
+    ws = wb["Trait description"]
+    k=1
+    for row in description["traits"]:
+        ws.cell(k,3,value=row)
+        ws.cell(k,3).alignment=wrap_align
+        k=k+1
+
+    tab_begin=k
+    ws.append(["Trait Code", "Trait Name", "Description", "Type", "Life stage", "Life history process", "Data migration"])
+    k=k+1
+
+    for row in traitlist:
+        j=1
+        for key in ["code","name","description","value_type","life_stage","life_history_process","priority"]:
+            val=row[key]
+            ws.cell(row=k, column=j, value=val)
+            j=j+1
+        k=k+1
+
+    for j in range(tab_begin,ws.max_row+1):
+        ws.cell(j,3).alignment=wrap_align
+
+    tab = Table(displayName="TraitInformation", ref="A{}:G{}".format(tab_begin,ws.max_row))
+
+    tab.tableStyleInfo = table_style["Info"]
+    ws.add_table(tab)
+    ws.protection.sheet = True
+
+    ## Summary
+
+    ws = wb["Summary"]
+
+    colnames = ['scientific name','current code (BioNET)',
+                'original name (as entered)','CAPS code (old)',
+                'trait code','trait name','norm value',
+                'best','lower','upper',
+                'method of estimation',
+                'weight','source ref','other ref','DB link']
+    ws.append(colnames)
+
+    rows = traitsummary.sort_values(by =['scientific name','trait code']).to_dict(orient="records")
+
+
+    for r_idx, row in enumerate(rows, 2):
+
+        ws.cell(row=r_idx, column=1, value=row['scientific name'])
+        ws.cell(r_idx,1).font  = Font(italic=True)
+
+        ws.cell(row=r_idx, column=2, value=row['current code (BioNET)'])
+        if row['original name'] != row['scientific name']:
+            ws.cell(row=r_idx, column=3, value=row['original name'])
+            ws.cell(r_idx,3).font  = Font(italic=True, color="110000")
+            ws.cell(row=r_idx, column=4, value=row['CAPS code'])
+        ws.cell(row=r_idx, column=5, value=row['trait code'])
+        ws.cell(row=r_idx, column=6, value=row['trait name'])
+
+        ws.cell(row=r_idx, column=11, value=row['method'])
+        ws.cell(row=r_idx, column=12, value=row['weight'])
+        ws.cell(row=r_idx, column=13, value=row['source ref'])
+        if row['other ref'] is not None:
+            oref="; ".join(row['other ref'])
+            ws.cell(row=r_idx, column=14, value=oref)
+
+        if isinstance(row['norm value'],str):
+            val=row['norm value']
+        elif row['norm value'] is None:
+            val="(data input ERROR)"
+        else:
+            triplet=row['norm value']
+            k=7
+            for j in triplet:
+                k=k+1
+                if j is not None:
+                    ws.cell(row=r_idx, column=k, value=j)
+            if triplet[0] is not None:
+                if triplet[1] is None and triplet[2] is None:
+                    val=triplet[0]
+                else:
+                    val = "%s (%s -- %s)" % tuple(triplet)
+            else:
+                if triplet[1] is None:
+                    if triplet[2] is None:
+                        val="(data input ERROR)"
+                    else:
+                        val = "<%s" % triplet[2]
+                elif triplet[2] is None:
+                    val = ">%s" % triplet[1]
+                else:
+                    val = "(%s -- %s)" % (triplet[1],triplet[2])
+        ws.cell(row=r_idx, column=7, value=val)
+
+        val = "trait:%s / sp code:%s / record id:%s" % (row['trait code'],row['CAPS code'],row['recordid'])
+        url = "http://13.54.3.205/traits/%s/%s" % (row['trait code'],row['CAPS code'])
+        cell=ws.cell(row=r_idx, column=15, value=val)
+        cell.hyperlink=url
+        cell.style='Hyperlink'
+
+        for j in (2,4,5,7,12):
+            ws.cell(r_idx,j).alignment=cent_align
+        for j in (11,13,14,15):
+            ws.cell(r_idx,j).font = fontSmall
+            ws.cell(r_idx,j).alignment=wrap_align
+
+
+    tab = Table(displayName="Summary", ref="A1:{}{}".format(get_column_letter(15),r_idx))
+    tab.tableStyleInfo = table_style["Lists"]
+    ws.add_table(tab)
+
+
+    ## References
+    ws = wb["References"]
+
+    k=1
+
+    for row in description["references"]:
+        ws.cell(k,2,value=row)
+        ws.cell(k,2).alignment=wrap_align
+        k=k+1
+
+
+    ws.append(["Reference code", "Reference information"])
+
+    for row in referencelist:
+        ws.append(row)
+
+    #ws.max_row
+    for j in range(k+1,ws.max_row+1):
+        ws.cell(j,2).alignment=wrap_align
+        ws.cell(j,2).font = fontSmall
+
+    tab = Table(displayName="ReferenceInformation", ref="A{}:B{}".format(k,ws.max_row))
+
+    tab.tableStyleInfo = table_style["Lists"]
+    ws.add_table(tab)
+    ws.protection.sheet = True
+
+    ## Finalise and return
+    return wb
+
+#####
 ## This is the function to create a summary output report
 #####
 def create_output_xl(traitsummary=None, referencelist=None, traitlist=None, info=None, wsheets=None, description=None, supporters=None):

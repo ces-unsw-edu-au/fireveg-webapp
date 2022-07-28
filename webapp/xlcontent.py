@@ -24,6 +24,44 @@ general_info = (
 with open('content/common_data.pik', 'wb') as f:
   pickle.dump([general_supporters,general_info], f, -1)
 
+
+recordlist_wsheets = (
+    {"title": "About", "colWidths":[("A",90),("B",40)], "tabColor":"intro","active":True},
+    {"title": "Summary", "colWidths":[(("A","C","N"),45),
+
+                                      (("B","D","E","H","I","J","L"),12),
+                                      (("F","G","K","M","O"),30)],
+     "tabColor":"summary"},
+    {"title": "References", "colWidths":[("A",25),("B",80)], "tabColor":"addentry"},
+    {"title": "Trait description", "colWidths":[(("A","D","E","F"),12),(("B","G"),30),("C",70)], "tabColor":"default"}
+    )
+
+recordlist_description = {"about": (
+              "Taxonomic nomenclature following BioNET (data export from February 2022)",
+              "Data in the report is summarised based on BioNET fields 'currentScientificName' and 'currentScientificNameCode'",
+              "For general description of the traits, please refer to the 'Trait description' sheet",
+              "Vocabularies for categorical traits are available in the 'Vocabularies' sheet",
+              "For categorical traits the values in the 'Summary' sheet show the different values reported in the literature records separated by slashes.",
+               "If more than one category has been reported, the values are ordered from higher to lower 'weight', categories receiving less than 10% weight are in round brackets, categories with less than 5% in square brackets",
+              "The default weight is calculated by multiplying the number of times a value is reported (nr. of records) with the weight given to each record (default to 1), and divided by the weight of all records for a given species.",
+              "Default weights  overridden by expert advice to the administrator will be marked, with justification given in the Notes column of the output.",
+              "An asterisk (*) in a trait cell indicates a potential data entry error or uncertainty in the assignment of a trait category or value.",
+              "'Import/Entry sources' refer to references that were imported directly using automated scripts or manual entry. These include: 1) Primary observations of traits from published research or reports; and 2) Compilations of data (e.g. databases, spreadsheets, published reviews) that include two or more sources of primary observations.",
+              "'Indirect sources' refer to references that were cited in Import/Entry sources, where the latter are compilations of multiple primary sources (see Import/Entry sources). Information from indirect sources may have been modified when it was incorporated into those compilations. The original source of primary trait observations has not yet been verified prior to import into this database. When the primary source is reviewed and the trait values are verified, these records will be attributed to the primary source as 'Import/Entry sources'.",
+              "Some sheets are protected to avoid accidental changes, but they are not password protected. If you need to filter and reorder entries in the table, please unprotect the sheet first.",
+              ),
+                "traits":("The following table gives a general description of the traits used in the 'Summary' sheet",
+                               "This sheet is protected to avoid accidental changes, but it is not password protected. If you need to filter and reorder entries in the table, please unprotect the sheet first.",
+                              "Vocabularies for categorical traits are available in the 'Vocabularies' sheet","",""),
+                "references":("The following table includes bibliographical information for the sources referenced in the 'Summary' sheet",
+                               "This sheet is protected to avoid accidental changes, but it is not password protected. If you need to filter and reorder entries in the table, please unprotect the sheet first.",
+                              "",""
+                              )
+                              }
+
+with open('content/output_recordlist_data.pik', 'wb') as f:
+  pickle.dump([recordlist_wsheets,recordlist_description], f, -1)
+
 output_wsheets = [
   {
     "title": "About",
@@ -166,6 +204,36 @@ WHERE "currentScientificName" is not NULL AND weight>0
 GROUP BY spp,sppcode;
 """
 
+## These are the set of four queries for export of individual records:
+
+qry= """
+SELECT "currentScientificName" as spp, "currentScientificNameCode" as sppcode,
+    species, species_code,
+    '{trait}' as trait_code,
+    '{traitname}' as trait_name,
+    %s
+    %s
+    weight as w,
+    main_source as refs,
+    original_sources as orefs,
+    record_id
+FROM litrev.{trait}
+LEFT JOIN species.caps
+ON species_code="speciesCode_Synonym"
+WHERE "currentScientificName" is not NULL AND weight>0
+ORDER BY spp;
+"""
+
+norm_cat="norm_value::text as val,"
+norm_num="ARRAY[best,lower,upper] as val,"
+method="method_of_estimation,"
+nomethod="NULL as method_of_estimation,"
+qryCat=qry % (norm_cat,nomethod)
+qryNum=qry % (norm_num,nomethod)
+qryCatMet=qry % (norm_cat,method)
+qryNumMet=qry % (norm_num,method)
+
+
 ## Other queries:
 
 qryRefs="""
@@ -176,7 +244,7 @@ ORDER BY ref_code;
 """
 
 qryTraits="""
-SELECT code,name,description,value_type,life_stage,life_history_process,priority
+SELECT code,name, description, value_type, life_stage, life_history_process, priority, method_vocabulary
 FROM litrev.trait_info
 ORDER BY code;
 """
@@ -216,4 +284,4 @@ ORDER BY code;
 """
 
 with open('content/sql_queries.pik', 'wb') as f:
-  pickle.dump([qryCategorical, qryNumeric, qryRefs, qryTraits, qryAllRefs, qrySomeTraits, qrySpps, qryVocabs, qryMethodVocabs], f, -1)
+  pickle.dump([qryCategorical, qryNumeric, qryRefs, qryTraits, qryAllRefs, qrySomeTraits, qrySpps, qryVocabs, qryMethodVocabs, qryCat, qryNum, qryCatMet, qryNumMet], f, -1)

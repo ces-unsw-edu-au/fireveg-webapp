@@ -77,6 +77,7 @@ export FLASK_APP=webapp
 export FLASK_ENV=development
 flask init-dataentry
 flask init-data-export
+flask init-recordlist-export
 ```
 
 ### Running with gunicorn

@@ -7,7 +7,7 @@ from flask import current_app, g
 from flask.cli import with_appcontext
 
 import pandas as pd
-from webapp.xlfile import create_input_xl, create_output_xl
+from webapp.xlfile import create_input_xl, create_output_xl, create_list_records_xl
 from webapp.pg import get_pg_connection
 from psycopg2.extras import DictCursor
 
@@ -16,7 +16,7 @@ import pickle
 ## First, load SQL queries
 
 with open('webapp/content/sql_queries.pik', 'rb') as f:
- qryCategorical, qryNumeric, qryRefs, qryTraits, qryAllRefs, qrySomeTraits, qrySpps, qryVocabs, qryMethodVocabs = pickle.load(f)
+ qryCategorical, qryNumeric, qryRefs, qryTraits, qryAllRefs, qrySomeTraits, qrySpps, qryVocabs, qryMethodVocabs, qryCat, qryNum, qryCatMet, qryNumMet = pickle.load(f)
 
 ## Load other content from pickle:
 
@@ -68,6 +68,56 @@ def summarise_triplet(x,y,z,w):
 
 ## Now, define command line commands
 # These functions are intended to be triggered by admin user on a regular basis, for example by calling a cron job
+
+
+@click.command('init-recordlist-export')
+@with_appcontext
+def init_recordexport_command():
+    pg = get_pg_connection()
+    cur = pg.cursor(cursor_factory=DictCursor)
+
+    cur.execute(qryTraits)
+    trait_info = cur.fetchall()
+
+    traitnames=dict()
+    for k in trait_info:
+        traitnames[k[0]]={'name':k[1],'type':k[3],'method':k["method_vocabulary"] is not None}
+
+    records=list()
+    traits = ['surv1','surv4','repr2','rect2','disp1','germ1','germ8','repr3','repr3a','repr4',]
+    colnames = ['scientific name','current code (BioNET)','original name','CAPS code',
+                'trait code','trait name','norm value','method','weight','source ref','other ref','recordid']
+    for trait in traits:
+        if traitnames[trait]['type']=='categorical' and traitnames[trait]['method']==False:
+            cur.execute(qryCat.format(trait=trait,traitname=traitnames[trait]['name']))
+        elif traitnames[trait]['type']=='categorical' and traitnames[trait]['method']==True:
+            cur.execute(qryCatMet.format(trait=trait,traitname=traitnames[trait]['name']))
+        elif traitnames[trait]['type']=='numeric' and traitnames[trait]['method']==True:
+            cur.execute(qryNumMet.format(trait=trait,traitname=traitnames[trait]['name']))
+        else:
+            cur.execute(qryNum.format(trait=trait,traitname=traitnames[trait]['name']))
+        res = cur.fetchall()
+        records.extend(res)
+
+    df = pd.DataFrame(records,columns=colnames)
+
+    flat_list=df['source ref'].unique().tolist()
+    for sublist in df['other ref'].tolist():
+        if sublist is not None:
+            flat_list.extend(sublist)
+
+    valid_refs=tuple(set(flat_list))
+
+    cur.execute(qryRefs,(valid_refs,))
+    ref_info = cur.fetchall()
+
+
+    cur.close()
+
+    wb = create_list_records_xl(traitsummary=df, referencelist=ref_info, traitlist=trait_info, info=general_info, wsheets=output_wsheets, description=output_description, supporters=general_supporters)
+    wb.save(current_app.config['RECORDXPORT'])
+    click.echo('Template saved at designated location')
+
 
 @click.command('init-data-export')
 @with_appcontext
@@ -201,3 +251,4 @@ def init_dataentryform_command():
 def init_app(app):
     app.cli.add_command(init_dataentryform_command)
     app.cli.add_command(init_dataexport_command)
+    app.cli.add_command(init_recordexport_command)
