@@ -11,86 +11,23 @@ from webapp.xlfile import create_input_xl, create_output_xl
 from webapp.pg import get_pg_connection
 from psycopg2.extras import DictCursor
 
+import pickle
 
-## First, define SQL queries
+## First, load SQL queries
 
-## These are general queries for categorical and numeric traits
-qryCategorical= """
-SELECT "currentScientificName" as spp, "currentScientificNameCode" as sppcode,
-    array_agg(species) as nspp,
-    array_agg(norm_value::text) as val,array_agg(weight) as w,
-    array_agg(main_source) as refs,
-    array_accum(original_sources) as orefs
+with open('webapp/content/sql_queries.pik', 'rb') as f:
+ qryCategorical, qryNumeric, qryRefs, qryTraits, qryAllRefs, qrySomeTraits, qrySpps, qryVocabs, qryMethodVocabs = pickle.load(f)
 
-FROM litrev.{}
-LEFT JOIN species.caps
-ON species_code="speciesCode_Synonym"
-WHERE  "currentScientificName" is not NULL AND weight>0 AND main_source is not NULL
-GROUP BY spp,sppcode;
-"""
-## WHERE species ilike '%euca%' and
+## Load other content from pickle:
 
-qryNumeric= """
-SELECT "currentScientificName" as spp, "currentScientificNameCode" as sppcode,
-array_agg(species) as nspp,
-array_agg(best) as best,array_agg(lower) as lower,array_agg(upper) as upper,array_agg(weight) as w,
-array_agg(main_source) as refs,
-array_accum(original_sources) as orefs
-FROM litrev.{}
-LEFT JOIN species.caps
-ON species_code="speciesCode_Synonym"
-WHERE "currentScientificName" is not NULL AND weight>0
-GROUP BY spp,sppcode;
-"""
+with open('webapp/content/common_data.pik', 'rb') as f:
+    general_supporters,general_info = pickle.load(f)
 
-## Other queries:
+with open('webapp/content/data_entry_data.pik', 'rb') as f:
+    input_wsheets, input_instructions, input_links = pickle.load(f)
 
-qryRefs="""
-SELECT ref_code,ref_cite
-FROM litrev.ref_list
-WHERE ref_code IN %s
-ORDER BY ref_code;
-"""
-
-qryTraits="""
-SELECT code,name,description,value_type,life_stage,life_history_process,priority
-FROM litrev.trait_info
-ORDER BY code;
-"""
-
-qryAllRefs="""
-SELECT ref_code,ref_cite
-FROM litrev.ref_list;
-"""
-
-qrySomeTraits="""
-SELECT code,name,description,value_type,life_stage,life_history_process,priority
-FROM litrev.trait_info
-WHERE priority IS NOT NULL
-ORDER BY code;
-"""
-
-qrySpps="""
-SELECT "scientificName", "speciesCode_Synonym", family, genus, "scientificNameID", "currentScientificNameCode", "currentScientificName", "currentVernacularName", "isCurrent"
-FROM species.caps order by "sortOrder";
-"""
-
-qryVocabs="""
-SELECT code, category_vocabulary, pg_catalog.obj_description(t.oid, 'pg_type')::json as vocab
-FROM litrev.trait_info i
-LEFT JOIN pg_type t
-ON t.typname=i.category_vocabulary
-WHERE category_vocabulary IS NOT NULL
-ORDER BY code;
-"""
-qryMethodVocabs="""
-SELECT code, method_vocabulary, pg_catalog.obj_description(t.oid, 'pg_type')::json as vocab
-FROM litrev.trait_info i
-LEFT JOIN pg_type t
-ON t.typname=i.method_vocabulary
-WHERE method_vocabulary IS NOT NULL
-ORDER BY code;
-"""
+with open('webapp/content/output_summary_data.pik', 'rb') as f:
+    output_wsheets, output_description = pickle.load(f)
 
 ## Next, declare functions to be used for summarising values in the workbook cells
 
@@ -224,9 +161,11 @@ def init_dataexport_command():
 
     cur.close()
 
-    wb = create_output_xl(traitsummary=df, referencelist=ref_info, traitlist=trait_info)
+    wb = create_output_xl(traitsummary=df, referencelist=ref_info, traitlist=trait_info, info=general_info, wsheets=output_wsheets, description=output_description, supporters=general_supporters)
     wb.save(current_app.config['DATAXPORT'])
     click.echo('Template saved at designated location')
+
+
 
 @click.command('init-dataentry')
 @with_appcontext
@@ -251,7 +190,8 @@ def init_dataentryform_command():
 
     cur.close()
 
-    wb = create_input_xl(contactinfo=None, referencelist=refs, specieslist=spps, traitlist=traits, vocabularies=vocabs, methods_vocabularies=mvocabs)
+    wb = create_input_xl(contactinfo=None, referencelist=refs, specieslist=spps, traitlist=traits, vocabularies=vocabs, methods_vocabularies=mvocabs,
+    wsheets=input_wsheets, instructions=input_instructions, links=input_links)
 
     wb.save(current_app.config['DATAENTRY'])
     click.echo('Template saved at designated location')
