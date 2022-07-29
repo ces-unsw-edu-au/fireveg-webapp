@@ -66,12 +66,22 @@ flask init-db
 ```
 
 
-Update the data entry form:
+## Update the data entry form
 
+First update the pickle files with content for the data entry form:
 ```sh
 cd ~/proyectos/fireveg/fireveg-webapp/webapp
 python xlcontent.py
+```
 
+Create a folder for the upload of files:
+```sh
+mkdir -p ~/proyectos/fireveg/fireveg-webapp/instance/uploaded_files/litrev
+mkdir -p ~/proyectos/fireveg/fireveg-webapp/instance/uploaded_files/fieldform
+```
+
+
+```sh
 cd ~/proyectos/fireveg/fireveg-webapp
 export FLASK_APP=webapp
 export FLASK_ENV=development

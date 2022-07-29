@@ -1,18 +1,33 @@
 {% extends 'base.html' %}
 
-{% block content %}
+{% block header %}
+  <h1>{% block title %}Data Entry{% endblock %}</h1>
+{% endblock %}
 
-<h1>Data Entry</h1>
+{% block content %}
 
 <p>Follow the instructions to add new field or literature records.</p>
 
 <h2>Field forms</h2>
 
-<p>TO DO...</p>
+<p>Please use the latest template for data entry of field data. Instructions and method descriptions are in preparation ...</p>
+
+<h3>File download</h3>
+
+<p>Click on the button to download the data entry file in <i>xlsx</i> format:</p>
+<form method=post enctype=multipart/form-data>
+<input type=submit value=Download>
+</form>
+
+<h3>File upload</h3>
+
+<p>Once completed you will be able to upload the file in the following link:</p>
+
+<a href="{{url_for('dataentry.upload_file', destination='fieldform')}}">Upload File</a>
 
 <h2>Literature records</h2>
 
-<h1>File download</h1>
+<h3>File download</h3>
 
 <p>The Data entry file has one tab with instructions (blue tab), one tab with your contact information, tabs for data entry (green tabs), and other tabs containing tables and vocabularies used as lookup tables for data entry and documentation of traits and values. </p>
 
@@ -30,6 +45,6 @@
 
 <p>Once completed you will be able to upload the file in the following link:</p>
 
-<a href="{{url_for('dataentry.upload_file')}}">Upload File (TO DO)</a>
+<a href="{{url_for('dataentry.upload_file', destination='litrev')}}">Upload File</a>
 
 {% endblock %}

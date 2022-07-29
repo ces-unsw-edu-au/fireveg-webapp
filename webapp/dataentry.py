@@ -4,6 +4,7 @@ from flask import (
 import pandas as pd
 import io
 
+from werkzeug.utils import secure_filename
 from werkzeug.exceptions import abort
 
 from webapp.auth import login_required
@@ -12,9 +13,25 @@ from webapp.xlfile import create_input_xl
 from webapp.pg import get_pg_connection
 from psycopg2.extras import DictCursor
 import openpyxl
-
+import os
+import datetime
 
 bp = Blueprint('dataentry', __name__, url_prefix='/data-entry')
+
+
+def make_tree(path):
+    tree = dict(name=os.path.basename(path), children=[])
+    try: lst = os.listdir(path)
+    except OSError:
+        pass #ignore errors
+    else:
+        for name in lst:
+            fn = os.path.join(path, name)
+            if os.path.isdir(fn):
+                tree['children'].append(make_tree(fn))
+            else:
+                tree['children'].append(dict(name=name))
+    return tree
 
 @bp.route('/', methods=('GET', 'POST'))
 @login_required
@@ -28,21 +45,32 @@ def howto():
     else:
         return render_template('data-entry.html', the_title="Data Entry")
 
-@bp.route('/upload', methods=('GET', 'POST'))
+
+@bp.route('/upload/<destination>', methods=('GET', 'POST'))
+@bp.route('/upload', defaults={'destination': None}, methods=('GET', 'POST'))
 @login_required
-def upload_file():
+def upload_file(destination):
     if request.method == 'POST':
-        print(request.files['file'])
+        #print(request.files['file'])
+        print(request)
         f = request.files['file']
-        data_xls = pd.read_excel(f)
-        return data_xls.to_html()
-    return render_template('data-entry/upload.html')
+        filename= datetime.datetime.now().strftime('%Y%m%d_%H%M%S_') + secure_filename(f.filename)
+        upload_path = os.path.join(current_app.config['UPLOAD_FOLDER'],
+        request.form['destination'],
+        filename)
+        f.save(upload_path)
+        path = current_app.config['UPLOAD_FOLDER']
+        return render_template('data-entry/show-dir.html', tree=make_tree(path), uploadedfile=filename)
+        #return "File saved successfully to %s " % filename
+        #data_xls = pd.read_excel(f)
+        #return data_xls.to_html()
+    return render_template('data-entry/upload.html',destination=destination)
 
 ## create and download excel file for data entry:
 
 @bp.route('/download', methods=('GET', 'POST'))
 @login_required
-def download_file():
+def download_file(destination):
     if request.method == 'POST':
         # Quick option, for small instances
         return send_file(current_app.config['DATAENTRY'],         attachment_filename="fire-ecology-traits-data-entry-form.xlsx",
