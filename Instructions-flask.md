@@ -80,6 +80,14 @@ mkdir -p ~/proyectos/fireveg/fireveg-webapp/instance/uploaded_files/litrev
 mkdir -p ~/proyectos/fireveg/fireveg-webapp/instance/uploaded_files/fieldform
 ```
 
+For the field work proforma, we just copy the file provided by David, since we have not replicated this form in our python scripts:
+
+```sh
+mv ~/Desktop/FireResponseProforma_20220621\[1\].docx ~/proyectos/fireveg/fireveg-webapp/instance/field-work-proforma.xlsx
+
+```
+
+For the other data entry and export forms, we can use the app functions below:
 
 ```sh
 cd ~/proyectos/fireveg/fireveg-webapp

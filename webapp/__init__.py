@@ -14,6 +14,7 @@ def create_app(test_config=None):
         UPLOAD_FOLDER=os.path.join(app.instance_path, 'uploaded_files'),
         #MAX_CONTENT-PATH=
         DATAENTRY=os.path.join(app.instance_path, 'data-entry.xlsx'),
+        PROFORMA=os.path.join(app.instance_path, 'field-work-proforma.docx'),
         DATAXPORT=os.path.join(app.instance_path, 'data-summary-export.xlsx'),
         RECORDXPORT=os.path.join(app.instance_path, 'data-all-records-export.xlsx'),
     )

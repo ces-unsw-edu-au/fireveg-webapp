@@ -37,11 +37,15 @@ def make_tree(path):
 @login_required
 def howto():
     if request.method == 'POST':
-        # Quick option, for small instances
-        return send_file(current_app.config['DATAENTRY'],         attachment_filename="fire-ecology-traits-data-entry-form.xlsx",
-            mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            cache_timeout=0
-        )
+        destination=request.form['destination']
+        # # Quick option, for small instances
+        if destination=='data entry':
+             return send_file(current_app.config['DATAENTRY'],         attachment_filename="fire-ecology-traits-data-entry-form.xlsx",             mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', cache_timeout=0)
+
+        elif destination=='field proforma':
+             return send_file(current_app.config['PROFORMA'],         attachment_filename="fire-ecology-fieldwork-proforma.docx", mimetype='application/vnd.openxmlformats-officedocument.wordprocessingml.document', cache_timeout=0)
+        else:
+            return "file not found!"
     else:
         return render_template('data-entry.html', the_title="Data Entry")
 
@@ -68,15 +72,21 @@ def upload_file(destination):
 
 ## create and download excel file for data entry:
 
-@bp.route('/download', methods=('GET', 'POST'))
+@bp.route('/download/<destination>', methods=('GET', 'POST'))
+@bp.route('/download', defaults={'destination': None}, methods=('GET', 'POST'))
 @login_required
 def download_file(destination):
     if request.method == 'POST':
+        destination=request.form['destination']
         # Quick option, for small instances
-        return send_file(current_app.config['DATAENTRY'],         attachment_filename="fire-ecology-traits-data-entry-form.xlsx",
-            mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            cache_timeout=0
-        )
+        if destination=='data entry':
+            #return send_file(current_app.config['DATAENTRY'],         attachment_filename="fire-ecology-traits-data-entry-form.xlsx",             mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', cache_timeout=0)
+            print(destination)
+        elif destination=='field proforma':
+            print("hello")
+            #return send_file(current_app.config['PROFORMA'],         attachment_filename="fire-ecology-fieldwork-proforma.xlsx", mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', cache_timeout=0)
+        else:
+            print("bye")
         # If we can afford a better instance, we can use this time/resource consumming alternative:
 
         #contactinfo = request.form
