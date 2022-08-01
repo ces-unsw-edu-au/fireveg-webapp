@@ -66,12 +66,30 @@ flask init-db
 ```
 
 
-Update the data entry form:
+## Update the data entry form
 
+First update the pickle files with content for the data entry form:
 ```sh
 cd ~/proyectos/fireveg/fireveg-webapp/webapp
 python xlcontent.py
+```
 
+Create a folder for the upload of files:
+```sh
+mkdir -p ~/proyectos/fireveg/fireveg-webapp/instance/uploaded_files/litrev
+mkdir -p ~/proyectos/fireveg/fireveg-webapp/instance/uploaded_files/fieldform
+```
+
+For the field work proforma, we just copy the file provided by David, since we have not replicated this form in our python scripts:
+
+```sh
+mv ~/Desktop/FireResponseProforma_20220621\[1\].docx ~/proyectos/fireveg/fireveg-webapp/instance/field-work-proforma.xlsx
+
+```
+
+For the other data entry and export forms, we can use the app functions below:
+
+```sh
 cd ~/proyectos/fireveg/fireveg-webapp
 export FLASK_APP=webapp
 export FLASK_ENV=development

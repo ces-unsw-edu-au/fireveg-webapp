@@ -20,13 +20,14 @@ cent_align=Alignment(horizontal='center', vertical='center', wrap_text=False)
 wrap_align=Alignment(horizontal='left', vertical='top', wrap_text=True)
 sheet_colors = {"instructions": "1072BA" , "intro": "1072BA" , "entry": "10BA72", "summary": "5AFF5A", "addentry": "20CA82", "default":"505050"}
 fontSmall = Font(size = "9")
-table_style={"Instructions":TableStyleInfo(name="TableStyleMedium9", showFirstColumn=True, showLastColumn=False, showRowStripes=True, showColumnStripes=False),
-         "Contributor": TableStyleInfo(name="TableStyleMedium18", showFirstColumn=True, showLastColumn=False, showRowStripes=False, showColumnStripes=False),
-         "Lists": TableStyleInfo(name="TableStyleMedium14", showFirstColumn=True, showLastColumn=False, showRowStripes=False, showColumnStripes=False),
-         "Info":  TableStyleInfo(name="TableStyleMedium14", showFirstColumn=True, showLastColumn=False, showRowStripes=False, showColumnStripes=False),
-         "Vocabularies": TableStyleInfo(name="TableStyleMedium14", showFirstColumn=True, showLastColumn=False, showRowStripes=False, showColumnStripes=False),
-         "Entry": TableStyleInfo(name="TableStyleMedium18", showFirstColumn=False, showLastColumn=False, showRowStripes=False, showColumnStripes=False)
-         }
+table_style={
+    "Instructions":TableStyleInfo(name="TableStyleMedium9", showFirstColumn=True, showLastColumn=False, showRowStripes=True, showColumnStripes=False),
+     "Contributor": TableStyleInfo(name="TableStyleMedium18", showFirstColumn=True, showLastColumn=False, showRowStripes=False, showColumnStripes=False),
+     "Lists": TableStyleInfo(name="TableStyleMedium14", showFirstColumn=True, showLastColumn=False, showRowStripes=False, showColumnStripes=False),
+     "Info":  TableStyleInfo(name="TableStyleMedium14", showFirstColumn=True, showLastColumn=False, showRowStripes=False, showColumnStripes=False),
+     "Vocabularies": TableStyleInfo(name="TableStyleMedium14", showFirstColumn=True, showLastColumn=False, showRowStripes=False, showColumnStripes=False),
+     "Entry": TableStyleInfo(name="TableStyleMedium18", showFirstColumn=False, showLastColumn=False, showRowStripes=False, showColumnStripes=False)
+     }
 
 #####
 ## Content:

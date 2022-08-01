@@ -7,7 +7,17 @@
 {% block content %}
 <h1>Excel file upload (xlsx file format)</h1>
 <form method=post enctype=multipart/form-data>
-<p><input type=file name=file><input type=submit value=Upload>
+<label for="destination">Type of file to upload</label>
+  <select class="" name="destination">
+    {% if destination=='litrev' %}
+    <option value="litrev">Fire ecology trait records from literature</option>
+    {% elif destination=='fieldform' %}
+    <option value="fieldform">Field data proforma</option>
+    {% else %}
+    <option value="other">Other formats</option>
+    {% endif %}
+  </select>
+<input type=file name=file><input type=submit value=Upload>
 </form>
 
 {% endblock %}
