@@ -21,10 +21,13 @@ bp = Blueprint('dataexport', __name__, url_prefix='/data-xport')
 @login_required
 def download_file():
     if request.method == 'POST':
-
-        return send_file(current_app.config['DATAXPORT'],         attachment_filename="DRAFT-fire-ecology-traits-data-export-DRAFT.xlsx",
+        output_name="DRAFT-fire-ecology-traits-data-export-DRAFT.xlsx"
+        return send_file(current_app.config['DATAXPORT'],
             mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            cache_timeout=0
+            as_attachment=True,
+            download_name=output_name
+            #attachment_filename=output_name,
+            #cache_timeout=0
         )
     else:
         return render_template('data-export/download.html')
