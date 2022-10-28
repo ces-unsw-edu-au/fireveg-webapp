@@ -124,8 +124,7 @@ def trait_info(group,var):
         mtds = None
     cur.close()
 
-
-    return render_template('traits/trait-info.html', spps=spp_list, mainrefs=ref_list, addrefs=add_list, group=group, var=var, trait=traitdata, desc=slcdata[0], methods=mtds[0])
+    return render_template('traits/trait-info.html', spps=spp_list, mainrefs=ref_list, addrefs=add_list, group=group, var=var, trait=traitdata, desc=slcdata[0], methods=mtds)
 
 @bp.route('/<trait>/<code>')
 @login_required

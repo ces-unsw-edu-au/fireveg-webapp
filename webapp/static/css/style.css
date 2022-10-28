@@ -33,6 +33,7 @@ nav.footer {background: #fff; }
 .content textarea { min-height: 12em; resize: vertical; }
 input.danger { color: #cc2f2e; }
 input[type=submit] { align-self: start; min-width: 10em; }
+p.missing {color: lightgray;}
 span.empty {color: lightgray;}
 span.item {background-color: #BACEC1; color: #F6F4E8; padding-left: 0.25rem; padding-right: 0.25rem;}
 span.itis {background-color: #E59560; color: #1D3124; padding-left: 0.25rem; padding-right: 0.25rem;border: 1px solid #1D3124;}

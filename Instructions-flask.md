@@ -115,6 +115,12 @@ flask init-data-export
 flask init-recordlist-export
 ```
 
+### Updating/upgrading Python
+
+There are some difference with function `send_file` between Flask version 2.0.2 and 2.2.2 will need to test different virtual environments to see if it is worth upgrading in the deployment or downgrading in the local machine.
+
+
+
 ### Running with gunicorn
 
 ```sh

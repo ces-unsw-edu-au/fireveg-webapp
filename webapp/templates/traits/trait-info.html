@@ -75,13 +75,15 @@
   <h2>Methods</h2>
   {% if methods != None %}
   <table>
-    {% for k in methods  %}
+    {% for k in methods[0]  %}
     <tr>
       <th>{{k}}</th>
-      <td>{{methods[k]}}</td>
+      <td>{{methods[0][k]}}</td>
     </tr>
      {% endfor %}
   </table>
+  {% else %}
+  <p class='missing'> This trait has no additional method vocabulary.</p>
   {%endif%}
 
   <h2>References</h2>
