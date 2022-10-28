@@ -16,15 +16,26 @@ conda create --name flsk
 conda activate flsk
 ```
 
-or...
+or with venv...
+
+```sh
+python3 -m venv ~/proyectos/flsk
+source ~/proyectos/flsk/bin/activate
+```
 
 ```sh
 source venv/bin/activate
 ```
 
+Check python version
+```sh
+python --version
+```
+
 Update and install modules
 ```sh
-/usr/local/opt/python@3.9/bin/python3.9 -m pip install --upgrade pip
+pip install --upgrade pip
+#/usr/local/opt/python@3.9/bin/python3.9 -m pip install --upgrade pip
 pip3 install -U Flask
 pip install psycopg2-binary
 pip install flask-wtf
@@ -49,7 +60,8 @@ pip freeze > requirements.txt
 ### Test the app
 
 ```sh
-conda activate flsk
+# conda activate flsk ## or
+# source ~/proyectos/flsk/bin/activate
 cd ~/proyectos/fireveg/fireveg-webapp
 export FLASK_APP=webapp
 export FLASK_ENV=development
@@ -70,14 +82,18 @@ flask init-db
 
 First update the pickle files with content for the data entry form:
 ```sh
-cd ~/proyectos/fireveg/fireveg-webapp/webapp
+cd ~/proyectos/fireveg-webapp/webapp
+
 python xlcontent.py
 ```
 
 Create a folder for the upload of files:
 ```sh
-mkdir -p ~/proyectos/fireveg/fireveg-webapp/instance/uploaded_files/litrev
-mkdir -p ~/proyectos/fireveg/fireveg-webapp/instance/uploaded_files/fieldform
+cd ~/proyectos/fireveg/fireveg-webapp/ ## or
+cd ~/proyectos/fireveg-webapp/
+
+mkdir -p instance/uploaded_files/litrev
+mkdir -p instance/uploaded_files/fieldform
 ```
 
 For the field work proforma, we just copy the file provided by David, since we have not replicated this form in our python scripts:
