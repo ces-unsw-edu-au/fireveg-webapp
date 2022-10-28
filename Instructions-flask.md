@@ -1,7 +1,5 @@
 # Fireveg webapp based on Python/flask
 
-
-
 ## Documentation
 
 This version has been developed following steps in
@@ -16,12 +14,14 @@ conda create --name flsk
 conda activate flsk
 ```
 
-or with venv...
+or with venv... in our local machine
 
 ```sh
 python3 -m venv ~/proyectos/flsk
 source ~/proyectos/flsk/bin/activate
 ```
+
+or with venv... in the cloud instance within the project/fireveg-webapp folder:
 
 ```sh
 source venv/bin/activate
@@ -64,7 +64,7 @@ pip freeze > requirements.txt
 # source ~/proyectos/flsk/bin/activate
 cd ~/proyectos/fireveg/fireveg-webapp
 export FLASK_APP=webapp
-export FLASK_ENV=development
+export FLASK_DEBUG=development
 flask run
 ```
 
@@ -73,7 +73,7 @@ Initialise the database:
 ```sh
 cd ~/proyectos/fireveg/fireveg-webapp
 export FLASK_APP=webapp
-export FLASK_ENV=development
+export FLASK_DEBUG=development
 flask init-db
 ```
 
@@ -106,9 +106,10 @@ mv ~/Desktop/FireResponseProforma_20220621\[1\].docx ~/proyectos/fireveg/fireveg
 For the other data entry and export forms, we can use the app functions below:
 
 ```sh
-cd ~/proyectos/fireveg/fireveg-webapp
+cd ~/proyectos/fireveg/fireveg-webapp ## or
+cd ~/proyectos/fireveg-webapp/
 export FLASK_APP=webapp
-export FLASK_ENV=development
+export FLASK_DEBUG=development
 flask init-dataentry
 flask init-data-export
 flask init-recordlist-export
