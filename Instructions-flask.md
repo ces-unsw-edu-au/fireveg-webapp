@@ -64,17 +64,11 @@ pip freeze > requirements.txt
 # source ~/proyectos/flsk/bin/activate
 cd ~/proyectos/fireveg/fireveg-webapp
 export FLASK_APP=webapp
-export FLASK_DEBUG=development
+export FLASK_DEBUG=TRUE
+# initialise sqlite database if doesn't exists
+[ -e instance/webapp.sqlite ] || flask init-db
+# run the webapp
 flask run
-```
-
-Initialise the database:
-
-```sh
-cd ~/proyectos/fireveg/fireveg-webapp
-export FLASK_APP=webapp
-export FLASK_DEBUG=development
-flask init-db
 ```
 
 
@@ -109,7 +103,8 @@ For the other data entry and export forms, we can use the app functions below:
 cd ~/proyectos/fireveg/fireveg-webapp ## or
 cd ~/proyectos/fireveg-webapp/
 export FLASK_APP=webapp
-export FLASK_DEBUG=development
+export FLASK_DEBUG=TRUE
+# export FLASK_ENV=development # deprecated
 flask init-dataentry
 flask init-data-export
 flask init-recordlist-export

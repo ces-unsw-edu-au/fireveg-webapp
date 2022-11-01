@@ -27,7 +27,7 @@ Mako==1.1.6
 MarkupSafe==2.0.1
 numpy==1.23.0
 openpyxl==3.0.9
-packaging @ file:///private/tmp/sip--packaging-20220416-83003-1hqovwb/packaging-21.3
+# packaging @ file:///private/tmp/sip--packaging-20220416-83003-1hqovwb/packaging-21.3
 pandas==1.4.1
 Pillow==9.1.1
 ply==3.11
@@ -40,7 +40,6 @@ pybind11==2.9.2
 pycairo==1.21.0
 pycountry==22.3.5
 PyGObject==3.42.1
-pyparsing @ file:///private/tmp/sip--pyparsing-20220416-83003-17i9c2w/pyparsing-3.0.8
 PyQt6==6.2.0
 PyQt6-3D==6.2.0
 PyQt6-Charts==6.2.0
