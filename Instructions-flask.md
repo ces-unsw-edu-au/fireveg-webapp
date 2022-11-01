@@ -63,7 +63,6 @@ pip freeze > requirements.txt
 # conda activate flsk ## or
 # source ~/proyectos/flsk/bin/activate
 cd ~/proyectos/fireveg/fireveg-webapp
-export FLASK_APP=webapp
 export FLASK_DEBUG=TRUE
 # initialise sqlite database if doesn't exists
 [ -e instance/webapp.sqlite ] || flask init-db
@@ -71,8 +70,21 @@ export FLASK_DEBUG=TRUE
 flask run
 ```
 
+### Database credentials
 
-## Update the data entry form
+A `database.ini` file must be added to the `instance` folder to be able to connect to the postgresql database with the information for the database host, port, database name, user and password.
+
+```sh
+[aws-lght-sl]
+host=...
+port=...
+database=...
+user=...
+password=...
+```
+
+
+### Update the data entry form
 
 First update the pickle files with content for the data entry form:
 ```sh
