@@ -92,8 +92,12 @@
 
           {% if pair[2] == None and pair[3] == None %}
             <td>Date given as: {{ pair[1] }} </td>
-          {% elif pair[2] == pair[3]  %}
-            <td>{{ pair[2] }} </td>
+            {% elif pair[2] == pair[3]  %}
+              <td>{{ pair[2] }} </td>
+            {% elif pair[2] == None  %}
+                <td>before {{ pair[3] }} </td>
+            {% elif pair[3] == None  %}
+                <td>after {{ pair[2] }} </td>
           {% elif  pair[2].strftime('%Y') != pair[3].strftime('%Y') %}
             <td>{{ pair[2].strftime('%Y') }} / {{ pair[3].strftime('%Y') }}</td>
             {% else %}
