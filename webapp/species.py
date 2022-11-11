@@ -61,7 +61,6 @@ def threat_list():
 @bp.route('/family/<id>', methods=['GET', 'POST'])
 @login_required
 def sp_list(id):
-    print('A')
     if request.method == 'GET':
         pg = get_pg_connection()
         cur = pg.cursor()
@@ -74,7 +73,6 @@ def sp_list(id):
         cur.close()
         return render_template('species/list.html', pairs=spp_qry, the_title=id)
     else:
-        print('B')
         return redirect(url_for('.search_list', id=request.form['speciesname']))
 
 @bp.route('/search/<id>', methods=['GET', 'POST'])
