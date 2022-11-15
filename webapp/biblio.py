@@ -31,18 +31,18 @@ def ref_info(id):
     fname='webapp/static/metadata/trait-description.csv'
     traitdata = pd.read_csv(fname)
 
-    qry1 = "SELECT ref_code, ref_cite, alt_code FROM litrev.ref_list WHERE ref_code='%s'"
-    qry2 = "SELECT species, species_code, \"speciesID\"::int as species_id FROM litrev.{table} LEFT JOIN species.caps ON species_code=\"speciesCode_Synonym\" WHERE main_source='{ref}' OR '{ref}'=ANY(original_sources) GROUP BY species, species_code, species_id ORDER BY random()"
+    qry1 = "SELECT ref_code, ref_cite, alt_code FROM litrev.ref_list WHERE ref_code=%s"
+    qry2 = "SELECT species, species_code, \"speciesID\"::int as species_id FROM litrev.{table} LEFT JOIN species.caps ON species_code=\"speciesCode_Synonym\" WHERE main_source=%s OR %s=ANY(original_sources) GROUP BY species, species_code, species_id ORDER BY random()"
 
     pg = get_pg_connection()
     cur = pg.cursor(cursor_factory=DictCursor)
-    cur.execute(qry1 % id)
+    cur.execute(qry1, (id,))
     ref_info = cur.fetchone()
 
     traits = list()
 
     for target in ('surv1','surv4','surv5','surv6','surv7','grow1','germ1','germ8','repr3','repr3a','repr4','rect2','repr2'):
-        cur.execute(qry2.format(ref=id,table=target))
+        cur.execute(qry2.format(table=target), (id, id,))
         if cur.rowcount>0:
             entry = traitdata.loc[traitdata['Trait code'] == target]
             entry.reset_index(drop=True, inplace=True)

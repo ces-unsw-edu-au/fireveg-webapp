@@ -69,7 +69,7 @@ def sp_list(id):
         try:
             spp_qry = cur.fetchall()
         except:
-            return f"<h1>Invalid family name: {id}</h1>"
+            return render_template('invalid.html', type='family name', id=id)
         cur.close()
         return render_template('species/list.html', pairs=spp_qry, the_title=id)
     else:
@@ -86,7 +86,7 @@ def search_list(id):
         try:
             spp_qry = cur.fetchall()
         except:
-            return f"<h1>Invalid search: {id}</h1>"
+            return render_template('invalid.html', type='search', id=id)
         cur.close()
         return render_template('species/list.html', pairs=spp_qry, the_title=f'Search Results: {id}')
     else:
@@ -103,7 +103,7 @@ def cat_list(id):
         try:
             spp_qry = cur.fetchall()
         except:
-            return f"<h1>Invalid category name: {id}</h1>"
+            return render_template('invalid.html', type='category name', id=id)
         cur.close()
         return render_template('species/list.html', pairs=spp_qry, the_title=id)
     else:
@@ -124,18 +124,19 @@ def sp_info(id):
         traitdata = pd.DataFrame(res,columns=['code','name', 'description', 'value_type', 'life_stage', 'life_history_process', 'category_vocabulary', 'method_vocabulary'])
         #fname='webapp/static/metadata/trait-description.csv'
         #traitdata = pd.read_csv(fname)
-        qryspp="SELECT \"scientificName\", \"speciesID\"::int, family, \"taxonRank\", family, \"speciesCode_Synonym\", \"scientificNameAuthorship\", \"vernacularName\", \"establishmentMeans\", \"primaryGrowthFormGroup\", \"secondaryGrowthFormGroups\", \"stateConservation\", \"protectedInNSW\", \"countryConservation\" from species.caps WHERE \"{column}\"='{value}'"
         synonym = request.args.get('synonym', default = 'valid', type = str)
+        column = None
         if synonym != 'valid':
-            qryspp=qryspp.format(column="speciesCode_Synonym",value=id)
+            column="speciesCode_Synonym"
         else:
-            qryspp=qryspp.format(column="speciesID",value=id)
+            column="speciesID"
+        qryspp=f"SELECT \"scientificName\", \"speciesID\"::int, family, \"taxonRank\", family, \"speciesCode_Synonym\", \"scientificNameAuthorship\", \"vernacularName\", \"establishmentMeans\", \"primaryGrowthFormGroup\", \"secondaryGrowthFormGroups\", \"stateConservation\", \"protectedInNSW\", \"countryConservation\" from species.caps WHERE \"{column}\"=%s"
 
-        cur.execute(qryspp )
+        cur.execute(qryspp, (id,))
         try:
             spp_info = cur.fetchone()
         except:
-            return f"<h1>Invalid species code: {id}</h1>"
+            return render_template('invalid.html', type='species code', id=id)
 
         qrysmp="SELECT visit_id,visit_date,count(distinct sample_nr), species, species_code, seedbank, resprout_organ FROM form.quadrat_samples WHERE species_code=%s GROUP BY visit_id, visit_date, species, species_code, seedbank, resprout_organ ORDER BY visit_id,visit_date;"
         #if synonym == 'valid' and isinstance(spp_info[5],int):
@@ -144,13 +145,13 @@ def sp_info(id):
             samples = cur.fetchall()
         except:
             #samples = None # ? is this an option...
-            return f"<h1>Invalid species code: {spp_info[5]}</h1>"
+            return render_template('invalid.html', type='species code', id=spp_info[5])
         #elif synonym != 'valid':
         #    try:
         #        cur.execute(qrysmp, (id,))
         #        samples = cur.fetchall()
         #        except:
-        #        return f"<h1>Invalid species code: {id}</h1>"
+        #        return render_template('invalid.html', type='species code', id=id)
         #else:
         #    samples = None
 
@@ -158,8 +159,8 @@ def sp_info(id):
         traits = list()
 
         for target in ('germ1','surv1','rect2','repr2','disp1','germ8','surv4'):
-            qryresp="SELECT species, species_code, norm_value, main_source, count(record_id), sum(weight) as weight FROM litrev.{table} WHERE species_code='{code}' GROUP BY species, species_code, norm_value, main_source;"
-            cur.execute(qryresp.format(table=target,code=spp_info[5]))
+            qryresp=f"SELECT species, species_code, norm_value, main_source, count(record_id), sum(weight) as weight FROM litrev.{target} WHERE species_code=%s GROUP BY species, species_code, norm_value, main_source;"
+            cur.execute(qryresp, (spp_info[5],))
             if cur.rowcount>0:
                 entry = traitdata.loc[traitdata['code'] == target]
                 entry.reset_index(drop=True, inplace=True)
@@ -171,8 +172,8 @@ def sp_info(id):
                 })
 
         for target in ('repr3','repr3a','repr4','grow1','surv5','surv6','surv7'):
-            qryresp="SELECT record_id, species, species_code, best, lower, upper, main_source FROM litrev.{table} WHERE species_code='{code}';"
-            cur.execute(qryresp.format(table=target,code=spp_info[5]))
+            qryresp=f"SELECT record_id, species, species_code, best, lower, upper, main_source FROM litrev.{target} WHERE species_code=%s;"
+            cur.execute(qryresp, (spp_info[5],))
             if cur.rowcount>0:
                 entry = traitdata.loc[traitdata['code'] == target]
                 entry.reset_index(drop=True, inplace=True)
@@ -183,15 +184,15 @@ def sp_info(id):
                 "metadata":entry.to_dict()
                 })
 
-        qrylit1 = "SELECT * from litrev.ref_list where ref_code IN (SELECT distinct main_source FROM litrev.surv1 WHERE species_code='{spcode}') OR ref_code IN (SELECT distinct main_source FROM litrev.repr3 WHERE species_code='{spcode}')"
-        qrylit2 = "SELECT * from litrev.ref_list where ref_code IN (SELECT distinct unnest(original_sources) FROM litrev.repr3 WHERE species_code='{spcode}') OR ref_code IN (SELECT DISTINCT unnest(original_sources) FROM litrev.surv1 WHERE species_code='{spcode}');"
-        cur.execute(qrylit1.format(spcode=spp_info[5]))
+        qrylit1 = "SELECT * from litrev.ref_list where ref_code IN (SELECT distinct main_source FROM litrev.surv1 WHERE species_code=%s) OR ref_code IN (SELECT distinct main_source FROM litrev.repr3 WHERE species_code=%s)"
+        qrylit2 = "SELECT * from litrev.ref_list where ref_code IN (SELECT distinct unnest(original_sources) FROM litrev.repr3 WHERE species_code=%s) OR ref_code IN (SELECT DISTINCT unnest(original_sources) FROM litrev.surv1 WHERE species_code=%s);"
+        cur.execute(qrylit1,(spp_info[5],spp_info[5],))
         ref_list = cur.fetchall()
-        cur.execute(qrylit2.format(spcode=spp_info[5]))
+        cur.execute(qrylit2,(spp_info[5],spp_info[5],))
         add_list = cur.fetchall()
 
-        qryvag = "SELECT persistence, rationale_persistence, status_persistence, establishment,status_establishment,date_updated FROM vag.va_groups where species_code={spcode}"
-        cur.execute(qryvag.format(spcode=spp_info[1]))
+        qryvag = "SELECT persistence, rationale_persistence, status_persistence, establishment,status_establishment,date_updated FROM vag.va_groups where species_code=%s"
+        cur.execute(qryvag,(spp_info[1],))
         vag_info = cur.fetchone()
 
         cur.close()
