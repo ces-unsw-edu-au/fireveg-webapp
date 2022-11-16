@@ -20,14 +20,8 @@ bp = Blueprint('dataexport', __name__, url_prefix='/data-xport')
 @bp.route('/download', methods=('GET', 'POST'))
 @login_required
 def download_file():
-    if request.method == 'POST':
-        output_name="DRAFT-fire-ecology-traits-data-export-DRAFT.xlsx"
-        return send_file(current_app.config['DATAXPORT'],
-            mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            as_attachment=True,
-            download_name=output_name
-            #attachment_filename=output_name,
-            #cache_timeout=0
-        )
-    else:
-        return render_template('data-export/download.html')
+    s3list=[
+    'https://fireveg-db.s3.ap-southeast-2.amazonaws.com/output-report/fireveg-trait-records-model.xlsx',
+    'https://fireveg-db.s3.ap-southeast-2.amazonaws.com/output-report/fireveg-field-report-model.xlsx'
+        ]
+    return render_template('data-export/download.html',s3file=s3list)

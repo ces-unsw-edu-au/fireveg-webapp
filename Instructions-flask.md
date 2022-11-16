@@ -61,8 +61,9 @@ pip freeze > requirements.txt
 
 ```sh
 # conda activate flsk ## or
-# source ~/proyectos/flsk/bin/activate
+# source ~/proyectos/venv/flsk/bin/activate
 cd ~/proyectos/fireveg/fireveg-webapp
+export FLASK_APP=webapp
 export FLASK_DEBUG=TRUE
 # initialise sqlite database if doesn't exists
 [ -e instance/webapp.sqlite ] || flask init-db

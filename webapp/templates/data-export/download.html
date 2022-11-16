@@ -7,20 +7,40 @@
 {% block content %}
 <h1>File download</h1>
 
-<p>We have prepared a template workbook to summarise the fire ecology traits for plant species from the information of the database. This is a snapshot of the database in its current state of development, and entries are still subject to data curation and quality assessment, <span style='color:red;'>DATA IS NOT READY FOR FINAL USE OR CRITICAL APPLICATIONS AND YOU SHOULD NOT DISTRIBUTE THIS DATA.</span> </p>
+<p>We have prepared template workbooks to summarise the fire ecology traits for plant species from the information of the database. This is a snapshot of the database in its current state of development, and entries are still subject to data curation and quality assessment, <span style='color:red;'>DATA IS NOT READY FOR FINAL USE OR CRITICAL APPLICATIONS AND YOU SHOULD NOT DISTRIBUTE THIS DATA.</span> </p>
+
+<p>Please cite this work as:
+   <cite>Ferrer-Paris, J. R. and Keith, D. A. (2022) Fire Ecology Traits for Plants: A database for fire research and management. Version 1.00. Centre for Ecosystem Science, University of New South Wales, Sydney, Australia.</cite>
+        </p>
+
+<button class='selecttab' onclick="openTab('Field')">Field forms</button>
+<button class='selecttab' onclick="openTab('Literature')">Literature records</button>
+
+<div class="tabs" id="Field" style="">
+<h2>Data from field forms</h2>
+  <p>The file is a Excel Workbook (XLSX format), output has been tested in <b>Excel desktop app</b> and <b><a href="https://docs.microsoft.com/en-us/office365/servicedescriptions/office-online-service-description/excel-online">Excel for the web</a></b>, but might not work in other office software.</p>
+
+  <p> Field sites information is summarised in the <i>Sites tab (green tab)</i>. Species records in each sample are in the <i>Samples tab (green tab)</i>. There is also a tab with a list of species. </p>
+
+  <p>Click on the button to download the file with all field recrods in <i>xlsx</i> format:</p>
+
+  <a href={{s3file[1]}}>
+    <input type=submit value="Download Field Data">
+  </a>
+</div>
+<div class="tabs" id="Literature" style="">
+  <h2>Fire ecology traits from the literature</h2>
 
 <p>The file is a Excel Workbook (XLSX format), output has been tested in <b>Excel desktop app</b> and <b><a href="https://docs.microsoft.com/en-us/office365/servicedescriptions/office-online-service-description/excel-online">Excel for the web</a></b>, but might not work in other office software.</p>
 
 <p>Once you open the file, please follow instructions (blue tab).</p>
-<p> Fire ecology traits are summarised in the <i>Summary tab (green tab)</i>, there is also a tab with all references and one with trait information (grey tabs). </p>
+<p> Fire ecology trait records extracted from published literature and other sources are summarised in the <i>Summary tab (green tab)</i>, there is also a tab with all references and one with trait information (grey tabs). </p>
 
-<p>Please cite this work as:
-   <cite>Ferrer-Paris, J. R. and Keith, D. A. (2022) Fire Ecology Traits for Plants: A database for fire research and management. Version 1.00. Centre for Ecosystem Science, University of New South Wales, Sydney, Australia.</cite> 
-        </p>
+<p>Click on the button to download the file with all trait recrods in <i>xlsx</i> format:</p>
 
-<p>Click on the button to download the data entry file in <i>xlsx</i> format:</p>
-<form method=post enctype=multipart/form-data>
-<input type=submit value=Download>
-</form>
+<a href={{s3file[0]}}>
+  <input type=submit value="Download Field Data">
+</a>
+</div>
 
 {% endblock %}
