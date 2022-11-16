@@ -65,7 +65,6 @@ def upload_file(destination):
         f.save(upload_path)
         path = current_app.config['UPLOAD_FOLDER']
         return render_template('data-entry/show-dir.html', tree=make_tree(path), uploadedfile=filename)
-        #return "File saved successfully to %s " % filename
         #data_xls = pd.read_excel(f)
         #return data_xls.to_html()
     return render_template('data-entry/upload.html',destination=destination)
