@@ -36,18 +36,25 @@ def make_tree(path):
 @bp.route('/', methods=('GET', 'POST'))
 @login_required
 def howto():
-    if request.method == 'POST':
-        destination=request.form['destination']
+    #if request.method == 'POST':
+    #    destination=request.form['destination']
         # # Quick option, for small instances
-        if destination=='data entry':
-             return send_file(current_app.config['DATAENTRY'],         attachment_filename="fire-ecology-traits-data-entry-form.xlsx",             mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', cache_timeout=0)
+    #    if destination=='data entry':
+    #         return send_file(current_app.config['DATAENTRY'],
+    #         attachment_filename="fire-ecology-traits-data-entry-form.xlsx",
+    #         mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    #         cache_timeout=0)
 
-        elif destination=='field proforma':
-             return send_file(current_app.config['PROFORMA'],         attachment_filename="fire-ecology-fieldwork-proforma.docx", mimetype='application/vnd.openxmlformats-officedocument.wordprocessingml.document', cache_timeout=0)
-        else:
-            return "file not found!"
-    else:
-        return render_template('data-entry.html', the_title="Data Entry")
+    #    elif destination=='field proforma':
+    #         return send_file(current_app.config['PROFORMA'],         attachment_filename="fire-ecology-fieldwork-proforma.docx", mimetype='application/vnd.openxmlformats-officedocument.wordprocessingml.document', cache_timeout=0)
+    #    else:
+    #        return "file not found!"
+    #else:
+    s3list=[
+    'https://fireveg-db.s3.ap-southeast-2.amazonaws.com/output-report/fireveg-trait-records-model.xlsx',
+    'https://fireveg-db.s3.ap-southeast-2.amazonaws.com/output-report/fireveg-field-report-model.xlsx'
+        ]
+    return render_template('data-entry.html', the_title="Data Entry",s3file=s3list)    
 
 
 @bp.route('/upload/<destination>', methods=('GET', 'POST'))
