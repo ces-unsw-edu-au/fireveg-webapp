@@ -35,7 +35,7 @@ def visits_list(survey):
     else:
         return render_template('visits/list.html', visits=visit_list, survey=survinfo)
 
-@bp.route('/<id>/<dt>')
+@bp.route('/<path:id>/<dt>')
 @login_required
 def visit_info(id,dt):
     qry1 = "SELECT site_label,location_description,elevation,st_x(geom),st_y(geom),st_srid(geom) FROM form.field_site WHERE site_label=%s;"

@@ -19,6 +19,8 @@ or with venv... in our local machine
 ```sh
 python3 -m venv ~/proyectos/flsk
 source ~/proyectos/flsk/bin/activate
+## or source ~/proyectos/venv/flsk/bin/activate
+
 ```
 
 or with venv... in the cloud instance within the project/fireveg-webapp folder:

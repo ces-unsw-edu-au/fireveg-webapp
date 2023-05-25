@@ -72,7 +72,7 @@ def sites_map(survey):
     return render_template('sites/map.html', map=folium_map._repr_html_(), survey_name=survey)
 
 
-@bp.route('/info/<id>')
+@bp.route('/info/<path:id>')
 @login_required
 def site_info(id):
     qry1 = "SELECT site_label,location_description,elevation,st_x(geom),st_y(geom),st_srid(geom) FROM form.field_site WHERE site_label=%s;"
