@@ -18,7 +18,7 @@ bp = Blueprint('sites', __name__, url_prefix='/sites')
 def survey_list():
     pg = get_pg_connection()
     cur = pg.cursor()
-    cur.execute('SELECT survey_name,count(distinct visit_id), count(*),min(visit_date),max(visit_date) FROM form.field_visit GROUP BY survey_name;')
+    cur.execute('SELECT survey_name,survey_description,count(distinct visit_id), count(*),min(visit_date),max(visit_date) FROM form.field_visit LEFT JOIN form.surveys USING (survey_name) GROUP BY survey_name, survey_description;')
     survey_list = cur.fetchall()
     cur.close()
     return render_template('sites/survey_list.html', pairs=survey_list, the_title="List of surveys")
