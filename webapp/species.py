@@ -55,8 +55,11 @@ def threat_list():
     cur.execute(create_spp_trait_table)
     cur.execute('SELECT \"stateConservation\" AS fam,count(distinct "speciesID"), count(distinct s.species_code), count(distinct q.species_code) FROM species.caps LEFT JOIN species_traits s ON "speciesCode_Synonym"=s.species_code::text LEFT JOIN form.quadrat_samples q ON "speciesCode_Synonym"=q.species_code::text  GROUP BY fam;')
     fam_list = cur.fetchall()
+    cur.execute('SELECT count(distinct "speciesID"), count(distinct s.species_code), count(distinct q.species_code) FROM species.caps LEFT JOIN species_traits s ON "speciesCode_Synonym"=s.species_code::text LEFT JOIN form.quadrat_samples q ON "speciesCode_Synonym"=q.species_code::text;')
+    fam_total = cur.fetchall()
     cur.close()
-    return render_template('species/threat-list.html', pairs=fam_list, the_title="Species per family")
+
+    return render_template('species/threat-list.html', pairs=fam_list, ttl=fam_total, the_title="Species per family")
 
 @bp.route('/family/<id>', methods=['GET', 'POST'])
 @login_required

@@ -9,6 +9,7 @@
     <table>
         <tr>
           <th>Survey name</th>
+          <th>Survey description</th>
           <th colspan=2>Nr. of distinct sites</th>
           <th colspan=2>Nr. of distinct visits</th>
           <th>Dates</th>
@@ -17,17 +18,18 @@
         <tr>
 
               {% if pair[0] == 'TO BE CLASSIFIED' %}
-                <td class='empty'>Not assigned to survey</td>
+              <td class='empty' colspan="2">Not assigned to survey</td>
               {% else %}
                 <td><a href='{{ url_for( 'sites.sites_list', survey=pair[0] ) }}'>{{ pair[0] }}</a>  </td>
+                <td>{{ pair[1] }}</td>
               {% endif %}
-
-          <td>{{ pair[1] }}</td>
-          <td><a href='{{ url_for( 'sites.sites_map', survey=pair[0] ) }}'>Map</a> </td>
+              
           <td>{{ pair[2] }}</td>
+          <td><a href='{{ url_for( 'sites.sites_map', survey=pair[0] ) }}'>Map</a> </td>
+          <td>{{ pair[3] }}</td>
           <td><a href='{{ url_for( 'visits.visits_list', survey=pair[0] ) }}'>List</a> </td>
 
-          <td>{{ pair[3] }} - {{ pair[4] }}</td>
+          <td>{{ pair[4] }} - {{ pair[5] }}</td>
         </tr>
     {% endfor %}
     </table>
