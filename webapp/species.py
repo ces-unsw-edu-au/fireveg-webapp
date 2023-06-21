@@ -219,3 +219,5 @@ def sp_info(id):
         return render_template('species/info.html', info=spp_info, inat_obs=iNobs, fsamp=samples, traits=traits, mainrefs=ref_list, addrefs=add_list, check=synonym, vag=vag_info)
     else:
         return redirect(url_for('.search_list', id=request.form['speciesname']))
+
+## use TSProfileID to link to https://www.environment.nsw.gov.au/threatenedspeciesapp/profile.aspx?id=<ID>
