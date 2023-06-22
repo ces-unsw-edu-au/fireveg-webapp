@@ -141,7 +141,7 @@ def sp_info(id):
             column="speciesCode_Synonym"
         else:
             column="speciesID"
-        qryspp=f"SELECT \"scientificName\", \"speciesID\"::int, family, \"taxonRank\", family, \"speciesCode_Synonym\", \"scientificNameAuthorship\", \"vernacularName\", \"establishmentMeans\", \"primaryGrowthFormGroup\", \"secondaryGrowthFormGroups\", \"stateConservation\", \"protectedInNSW\", \"countryConservation\" from species.caps WHERE \"{column}\"=%s"
+        qryspp=f"SELECT \"scientificName\", \"speciesID\"::int, family, \"taxonRank\", family, \"speciesCode_Synonym\", \"scientificNameAuthorship\", \"vernacularName\", \"establishmentMeans\", \"primaryGrowthFormGroup\", \"secondaryGrowthFormGroups\", \"stateConservation\", \"protectedInNSW\", \"countryConservation\", \"TSProfileID\" from species.caps WHERE \"{column}\"=%s"
 
         cur.execute(qryspp, (id,))
         try:

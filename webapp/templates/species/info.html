@@ -57,7 +57,14 @@ Check: {{check}}
     {% if info[11] == None %}
     <td class='empty'>No value recorded.</td>
     {% else %}
-    <td>{{ info[11] }}</td>
+    <td>
+      {% if info[14]  %}
+        <a href="https://www.environment.nsw.gov.au/threatenedspeciesapp/profile.aspx?id={{ info[14] | int }}" target="TSprofile">{{ info[11] }}</a>
+      {% else %}
+        {{ info[11] }}
+
+      {% endif %}
+    </td>
     {% endif %}
   </tr>
 
