@@ -11,8 +11,9 @@ from webapp.xlfile import create_input_xl, create_output_xl, create_list_records
 from webapp.pg import get_pg_connection
 from psycopg2.extras import DictCursor
 
-import pickle
-
+# https://stackoverflow.com/questions/63329657/python-3-7-error-unsupported-pickle-protocol-5
+#import pickle
+import pickle5 as pickle
 ## First, load SQL queries
 
 with open('webapp/content/sql_queries.pik', 'rb') as f:

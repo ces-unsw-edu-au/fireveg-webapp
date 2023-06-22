@@ -45,6 +45,9 @@ pip install folium
 pip install pandas
 pip install datetime
 pip install openpyxl
+pip install pillow  ipyplot
+pip install pyinaturalist
+pip install pickle5
 
 ```
 

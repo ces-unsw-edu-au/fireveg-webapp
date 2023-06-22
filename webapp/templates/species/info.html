@@ -23,7 +23,7 @@
 
 {% block content %}
 Check: {{check}}
-<div>
+<div style="position:relative">
   <h2>Species information</h2>
   <h4 class='credits'>(from BioNET export)</h4>
   <table>
@@ -83,7 +83,20 @@ Check: {{check}}
     {% endif %}
       </tr>
 </table>
+
+<div style="position:absolute; right:10%; top:0%">
+{% for obs in inat_obs %}
+
+  <img src="{{ obs.photos[0].small_url }}" alt="{{ obs.place_guess }}">
+  <h4 style="font-size: 10px; word-wrap: break-word;">
+    {{ obs.place_guess }} <br>
+    {{ obs.observed_on }} <br>
+    By: <a href="{{obs.uri}}">{{ obs.user.name }} @ iNaturalist</a>
+    </h4>
+
+{% endfor %}
 </div>
+
 
 <p>Click tab to display information on:</p>
 
@@ -353,5 +366,8 @@ Check: {{check}}
 
 </div>
 {%endif%}
+
+
+</div> 
 
 {% endblock %}
