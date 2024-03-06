@@ -1,24 +1,46 @@
 import os
 import logging
 from flask import Flask, render_template
-
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
+from flask_cors import CORS
+from dotenv import load_dotenv
+load_dotenv()
 
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
-    app.config.from_mapping(
-        SECRET_KEY='dev',
-        # for authentication
-        DATABASE=os.path.join(app.instance_path, 'webapp.sqlite'),
-        # path to files for data entry and export
-        UPLOAD_FOLDER=os.path.join(app.instance_path, 'uploaded_files'),
-        #MAX_CONTENT-PATH=
-        DATAENTRY=os.path.join(app.instance_path, 'data-entry.xlsx'),
-        PROFORMA=os.path.join(app.instance_path, 'field-work-proforma.docx'),
-        DATAXPORT=os.path.join(app.instance_path, 'data-summary-export.xlsx'),
-        RECORDXPORT=os.path.join(app.instance_path, 'data-all-records-export.xlsx'),
-    )
+    # app.config.from_mapping(
+    #     SECRET_KEY='dev',
+    #     # for authentication
+    #     # DATABASE=os.path.join(app.instance_path, 'webapp.sqlite'),
+    #     # path to files for data entry and export
+    #     UPLOAD_FOLDER=os.path.join(app.instance_path, 'uploaded_files'),
+    #     #MAX_CONTENT-PATH=
+    #     DATAENTRY=os.path.join(app.instance_path, 'data-entry.xlsx'),
+    #     PROFORMA=os.path.join(app.instance_path, 'field-work-proforma.docx'),
+    #     DATAXPORT=os.path.join(app.instance_path, 'data-summary-export.xlsx'),
+    #     RECORDXPORT=os.path.join(app.instance_path, 'data-all-records-export.xlsx'),
+    # )
+    app.config['SECRET_KEY'] = 'dev'
 
+    # Comment out or remove the SQLite-specific configuration
+    # app.config['DATABASE'] = os.path.join(app.instance_path, 'webapp.sqlite')
+
+    app.config['UPLOAD_FOLDER'] = os.path.join(app.instance_path, 'uploaded_files')
+    app.config['DATAENTRY'] = os.path.join(app.instance_path, 'data-entry.xlsx')
+    app.config['PROFORMA'] = os.path.join(app.instance_path, 'field-work-proforma.docx')
+    app.config['DATAXPORT'] = os.path.join(app.instance_path, 'data-summary-export.xlsx')
+    app.config['RECORDXPORT'] = os.path.join(app.instance_path, 'data-all-records-export.xlsx')
+
+    # Set the PostgreSQL database URI
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URI')
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    # db = SQLAlchemy(app)
+    print(os.getenv('DATABASE_URI'))
+    print(os.getenv('DATABASE_URI'))
+    print(os.getenv('DATABASE_URI'))
+    print(os.getenv('DATABASE_URI'))
     if test_config is None:
         # load the instance config, if it exists, when not testing
         app.config.from_pyfile('config.py', silent=True)
@@ -31,7 +53,9 @@ def create_app(test_config=None):
         os.makedirs(app.instance_path)
     except OSError:
         pass
-
+    
+     # Enable CORS for API routes and specify allowed origins
+    CORS(app, resources={r"/api/*": {"origins": ["http://localhost:3000"]}})
     # Here are some fixed routes:
     # we can write an 'about' page
     @app.route('/about')
@@ -55,8 +79,13 @@ def create_app(test_config=None):
 
     # Initialise some app functions
     # databases: I use a sqlite solution for user registration and login: this is stored in the local instance folder
-    from . import db
+    from webapp.db import db
+    # print(db)
     db.init_app(app)
+    # print("after")
+    # print(db)
+    from webapp.models import Users, Posts, AdminUsers, RoleUpgradeRequests
+    migrate = Migrate(app, db)
     # databases: content of the database is in a external postgresql database
     from . import pg
     pg.init_app(app)
@@ -84,6 +113,10 @@ def create_app(test_config=None):
     from . import species
     app.register_blueprint(species.bp)
 
+    from webapp.api.admin_user_routes import admin_user_routes 
+
+    app.register_blueprint(admin_user_routes, url_prefix='/api/admin-users')
+
 
     # this blueprint is for the fire ecology trait recorded from literature sources
     # This is the `Blue table/module` from the original diagramm from DK
@@ -106,5 +139,6 @@ def create_app(test_config=None):
     gunicorn_logger = logging.getLogger('gunicorn.error')
     app.logger.handlers = gunicorn_logger.handlers
 
+    
     # This is it!
     return app

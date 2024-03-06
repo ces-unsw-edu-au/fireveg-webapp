@@ -2,6 +2,9 @@ instance/
 __pycache__/
 
 venv/
+.venv/
+
+migrations/
 
 *.pyc
 *.pik

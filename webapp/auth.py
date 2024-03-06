@@ -9,6 +9,8 @@ from webapp.db import get_db
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
+from webapp.models.Users import Users
+# print(Users)
 @bp.route('/register', methods=('GET', 'POST'))
 def register():
     if request.method == 'POST':
@@ -24,11 +26,14 @@ def register():
 
         if error is None:
             try:
-                db.execute(
-                    "INSERT INTO user (username, password) VALUES (?, ?)",
-                    (username, generate_password_hash(password)),
-                )
-                db.commit()
+                new_user = Users(username=username, email=username, password=generate_password_hash(password))
+                db.session.add(new_user)
+                db.session.commit()
+                # db.execute(
+                #     "INSERT INTO user (username, password) VALUES (?, ?)",
+                #     (username, generate_password_hash(password)),
+                # )
+                # db.commit()
             except db.IntegrityError:
                 error = f"User {username} is already registered."
             else:
@@ -45,9 +50,10 @@ def login():
         password = request.form['password']
         db = get_db()
         error = None
-        user = db.execute(
-            'SELECT * FROM user WHERE username = ?', (username,)
-        ).fetchone()
+        # user = db.execute(
+        #     'SELECT * FROM user WHERE username = ?', (username,)
+        # ).fetchone()
+        user = Users.query.filter_by(username=username).first()
 
         if user is None:
             error = 'Incorrect username.'
@@ -70,9 +76,10 @@ def load_logged_in_user():
     if user_id is None:
         g.user = None
     else:
-        g.user = get_db().execute(
-            'SELECT * FROM user WHERE id = ?', (user_id,)
-        ).fetchone()
+        # g.user = get_db().execute(
+        #     'SELECT * FROM user WHERE id = ?', (user_id,)
+        # ).fetchone()
+        g.user = Users.query.get(user_id)
 
 @bp.route('/logout')
 def logout():
