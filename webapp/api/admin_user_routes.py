@@ -121,7 +121,10 @@ def update_user(objAdminUser, user_id):
         else:
             return jsonify({"error": True,'msg': 'Admin User not found'}), 404
     except Exception as e:
-        return jsonify({"error": True,'message': f'Error: {str(e)}'}), 500
+        print(e)
+        print(f'Error updating Admin User: {str(e)}')
+        return jsonify({"error": True, 'msg': f'Error updating Admin User, Please try again.'}), 500
+        # return jsonify({"error": True,'message': f'Error: '}), 500
 
 
 @admin_user_routes.route('/users/<user_id>', methods=['DELETE'])
@@ -129,6 +132,7 @@ def update_user(objAdminUser, user_id):
 def delete_user(objAdminUser, user_id):
     objAdminUser = AdminUsers.query.get(user_id)
     if objAdminUser:
+        AdminUsersJwtTokens.query.filter_by(user_id=user_id).delete()
         db.session.delete(objAdminUser)
         db.session.commit()
         return jsonify({"error": False, 'msg': 'Admin User deleted successfully'})
