@@ -84,7 +84,7 @@ def create_app(test_config=None):
     db.init_app(app)
     # print("after")
     # print(db)
-    from webapp.models import Users, Posts, AdminUsers, RoleUpgradeRequests
+    from webapp.models import Users, Posts, AdminUsers, RoleUpgradeRequests, UserJwtTokens, AdminUsersJwtTokens
     migrate = Migrate(app, db)
     # databases: content of the database is in a external postgresql database
     from . import pg
@@ -114,8 +114,11 @@ def create_app(test_config=None):
     app.register_blueprint(species.bp)
 
     from webapp.api.admin_user_routes import admin_user_routes 
+    from webapp.api.admin_webapp_user_routes import admin_webapp_user_routes 
 
     app.register_blueprint(admin_user_routes, url_prefix='/api/admin-users')
+
+    app.register_blueprint(admin_webapp_user_routes, url_prefix='/api/admin-webapp-users')
 
 
     # this blueprint is for the fire ecology trait recorded from literature sources

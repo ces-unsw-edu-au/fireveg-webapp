@@ -5,6 +5,14 @@ from datetime import datetime
 
 
 # db = SQLAlchemy()
+from enum import Enum
+
+class Role(Enum):
+    viewer = 'viewer'
+    downloader = 'downloader'
+
+    def __str__(self):
+        return self.value
 
 class Users(db.Model):
     __tablename__ = "users"
@@ -12,7 +20,8 @@ class Users(db.Model):
     username = db.Column(db.String(255), unique=True, nullable=False)
     email = db.Column(db.String(255), unique=True, nullable=False)
     password = db.Column(db.String, nullable=False)
-    
+    role = db.Column(db.Enum(Role), default=Role.viewer)
+
     # Define the one-to-many relationship with RoleUpgradeRequest
     # role_upgrade_requests = db.relationship('RoleUpgradeRequests', backref='user', lazy='dynamic')
 
