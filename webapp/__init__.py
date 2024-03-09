@@ -6,7 +6,10 @@ from flask_migrate import Migrate
 from flask_cors import CORS
 from dotenv import load_dotenv
 load_dotenv()
-
+# import sendgrid
+# from sendgrid.helpers.mail import *
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
@@ -37,10 +40,10 @@ def create_app(test_config=None):
     app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URI')
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     # db = SQLAlchemy(app)
-    print(os.getenv('DATABASE_URI'))
-    print(os.getenv('DATABASE_URI'))
-    print(os.getenv('DATABASE_URI'))
-    print(os.getenv('DATABASE_URI'))
+    # print(os.getenv('DATABASE_URI'))
+    # print(os.getenv('DATABASE_URI'))
+    # print(os.getenv('DATABASE_URI'))
+    # print(os.getenv('DATABASE_URI'))
     if test_config is None:
         # load the instance config, if it exists, when not testing
         app.config.from_pyfile('config.py', silent=True)
@@ -55,7 +58,7 @@ def create_app(test_config=None):
         pass
     
      # Enable CORS for API routes and specify allowed origins
-    CORS(app, resources={r"/api/*": {"origins": ["http://localhost:3000"]}})
+    CORS(app, resources={r"/api/*": {"origins": ["http://localhost:3000", "http://fireecologyplants.net", "https://fireecologyplants.net"]}})
     # Here are some fixed routes:
     # we can write an 'about' page
     @app.route('/about')
@@ -137,6 +140,52 @@ def create_app(test_config=None):
     from . import dataxport
     app.register_blueprint(dataxport.bp)
 
+    # print(os.environ.get('SENDGRID_API_KEY'))
+    # print(os.environ.get('SENDGRID_API_KEY'))
+    # print(os.environ.get('SENDGRID_API_KEY'))
+    # message = Mail(
+    # # from_email='j.ferrer@unsw.edu.au',fireecologyplants.net
+    # from_email='j.ferrer@fireecologyplants.net',
+    # to_emails='usamamashkoor@gmail.com',
+    # subject='This is test email',
+    # html_content='<strong>Hi Usama</strong>')
+    # try:
+    #     sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
+    #     response = sg.send(message)
+    #     print("response")
+    #     print("response")
+    #     print(response)
+    #     print("response.status_code")
+    #     print("response.status_code")
+    #     print(response.status_code)
+    #     print("response.body")
+    #     print("response.body")
+    #     print(response.body)
+    #     print("response.headers")
+    #     print("response.headers")
+    #     print(response.headers)
+    # except Exception as e:
+        # print("e")
+        # print("e")
+        # print(e)
+        # print("e.message")
+        # print("e.message")
+        # print(e.message)
+    # sg = sendgrid.SendGridAPIClient(api_key=os.environ.get('SENDGRID_API_KEY'))
+    # from_email = Email("j.ferrer@unsw.edu.au")
+    # to_email = To("usamamashkoor@gmail.com")
+    # subject = "Sending with SendGrid is Fun"
+    # content = Content("text/plain", "Hi Usama")
+    # mail = Mail(from_email, to_email, subject, content)
+    # response = sg.client.mail.send.post(request_body=mail.get())
+    # print('response')
+    # print(response)
+    # print('response.status_code')
+    # print(response.status_code)
+    # print('response.body')
+    # print(response.body)
+    # print('response.headers')
+    # print(response.headers)
     # Added this for handling error messages
     # this is only relevant when using gunicorn
     gunicorn_logger = logging.getLogger('gunicorn.error')
