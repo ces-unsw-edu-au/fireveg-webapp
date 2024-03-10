@@ -26,6 +26,14 @@
   {% endif %}
 
 
+  {% if ttl == None %}
+  <p>
+  No survey has been selected, so this list shows all sites. If you want to narrow down the list, go to the list of <a href="{{ url_for('sites.survey_list') }}">surveys</a>.
+  </p>
+  {% else %}
+  <p> This survey includes {{ttl[0]}} sites, {{ttl[1]}} visits, {{ttl[2]}} subplots, {{ttl[3]}} species and {{ttl[4]}} main observers.</p>
+  {% endif %}
+
 <p>Sites are identified by a site label. One site can be visited multiple times. Click any site's label to see more information about site description and coordinates. Click on the visit's date to see more information regarding the visit event.</p>
 
     <table>

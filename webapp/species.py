@@ -10,6 +10,17 @@ from webapp.pg import get_pg_connection
 from psycopg2.extras import DictCursor
 import pandas as pd
 
+
+from datetime import datetime, timedelta
+import ipyplot
+from dateutil.relativedelta import relativedelta
+from pyinaturalist import (
+    Observation,
+    get_observations,
+    pprint,
+)
+from rich import print
+
 bp = Blueprint('species', __name__, url_prefix='/species')
 create_spp_trait_table="""
 CREATE TEMP TABLE species_traits (species_code,trait_codes) AS (
@@ -55,8 +66,11 @@ def threat_list():
     cur.execute(create_spp_trait_table)
     cur.execute('SELECT \"stateConservation\" AS fam,count(distinct "speciesID"), count(distinct s.species_code), count(distinct q.species_code) FROM species.caps LEFT JOIN species_traits s ON "speciesCode_Synonym"=s.species_code::text LEFT JOIN form.quadrat_samples q ON "speciesCode_Synonym"=q.species_code::text  GROUP BY fam;')
     fam_list = cur.fetchall()
+    cur.execute('SELECT count(distinct "speciesID"), count(distinct s.species_code), count(distinct q.species_code) FROM species.caps LEFT JOIN species_traits s ON "speciesCode_Synonym"=s.species_code::text LEFT JOIN form.quadrat_samples q ON "speciesCode_Synonym"=q.species_code::text;')
+    fam_total = cur.fetchall()
     cur.close()
-    return render_template('species/threat-list.html', pairs=fam_list, the_title="Species per family")
+
+    return render_template('species/threat-list.html', pairs=fam_list, ttl=fam_total, the_title="Species per family")
 
 @bp.route('/family/<id>', methods=['GET', 'POST'])
 @login_required
@@ -130,7 +144,7 @@ def sp_info(id):
             column="speciesCode_Synonym"
         else:
             column="speciesID"
-        qryspp=f"SELECT \"scientificName\", \"speciesID\"::int, family, \"taxonRank\", family, \"speciesCode_Synonym\", \"scientificNameAuthorship\", \"vernacularName\", \"establishmentMeans\", \"primaryGrowthFormGroup\", \"secondaryGrowthFormGroups\", \"stateConservation\", \"protectedInNSW\", \"countryConservation\" from species.caps WHERE \"{column}\"=%s"
+        qryspp=f"SELECT \"scientificName\", \"speciesID\"::int, family, \"taxonRank\", family, \"speciesCode_Synonym\", \"scientificNameAuthorship\", \"vernacularName\", \"establishmentMeans\", \"primaryGrowthFormGroup\", \"secondaryGrowthFormGroups\", \"stateConservation\", \"protectedInNSW\", \"countryConservation\", \"TSProfileID\" from species.caps WHERE \"{column}\"=%s"
 
         cur.execute(qryspp, (id,))
         try:
@@ -196,6 +210,14 @@ def sp_info(id):
         vag_info = cur.fetchone()
 
         cur.close()
-        return render_template('species/info.html', info=spp_info, fsamp=samples, traits=traits, mainrefs=ref_list, addrefs=add_list, check=synonym, vag=vag_info)
+
+        raw_obs = get_observations(taxon_name=spp_info[0], per_page=1)
+        iNobs = Observation.from_json_list(raw_obs)
+        #images = [obs.photos[0].small_url for obs in iNobs[:3]]
+        #labels = [str(obs) for obs in iNobs[:3]]
+
+        return render_template('species/info.html', info=spp_info, inat_obs=iNobs, fsamp=samples, traits=traits, mainrefs=ref_list, addrefs=add_list, check=synonym, vag=vag_info)
     else:
         return redirect(url_for('.search_list', id=request.form['speciesname']))
+
+## use TSProfileID to link to https://www.environment.nsw.gov.au/threatenedspeciesapp/profile.aspx?id=<ID>

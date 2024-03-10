@@ -18,6 +18,7 @@ or with venv... in our local machine
 
 ```sh
 python3 -m venv ~/proyectos/flsk
+# or python3 -m venv ~/venv/flsk
 source ~/proyectos/flsk/bin/activate
 ## or source ~/proyectos/venv/flsk/bin/activate
 
@@ -45,6 +46,9 @@ pip install folium
 pip install pandas
 pip install datetime
 pip install openpyxl
+pip install pillow  ipyplot
+pip install pyinaturalist
+pip install pickle5
 
 ```
 
