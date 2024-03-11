@@ -12,6 +12,9 @@ from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 def create_app(test_config=None):
     # create and configure the app
+    # print("create_app")
+    # print("create_app")
+    # print("create_app")
     app = Flask(__name__, instance_relative_config=True)
     # app.config.from_mapping(
     #     SECRET_KEY='dev',
@@ -193,6 +196,7 @@ def create_app(test_config=None):
     gunicorn_logger = logging.getLogger('gunicorn.error')
     app.logger.handlers = gunicorn_logger.handlers
 
-    
+    from webapp.commands.create_admin_user import create_admin_user
+    app.cli.add_command(create_admin_user)
     # This is it!
     return app

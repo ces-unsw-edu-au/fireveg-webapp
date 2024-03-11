@@ -3,7 +3,8 @@ from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 import os
 # app = Flask(__name__)
-
+from dotenv import load_dotenv
+load_dotenv()
 # Replace 'YOUR_SENDGRID_API_KEY' with your actual SendGrid API key
 # app.config['SENDGRID_API_KEY'] = 'YOUR_SENDGRID_API_KEY'
 # sg = SendGridAPIClient(app.config['SENDGRID_API_KEY'])
@@ -45,7 +46,8 @@ class ForgotPasswordEmail:
         # print("html_content")
         # print(html_content)
         message = Mail(
-            from_email='j.ferrer@fireecologyplants.net',  # Replace with your email address
+            from_email=os.getenv('MAIL_FROM'),  # Replace with your email address
+            # from_email='j.ferrer@fireecologyplants.net',  # Replace with your email address
             to_emails=to,
             subject=subject,
             html_content=html_content

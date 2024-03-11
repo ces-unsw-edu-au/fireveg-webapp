@@ -22,6 +22,14 @@ source ~/proyectos/flsk/bin/activate
 ## or source ~/proyectos/venv/flsk/bin/activate
 
 ```
+or with venv... in our local machine(Windows)
+
+```sh
+cd /path to the root folder of your directory
+python -m venv .venv
+.venv\Scripts\activate
+
+```
 
 or with venv... in the cloud instance within the project/fireveg-webapp folder:
 
@@ -45,7 +53,13 @@ pip install folium
 pip install pandas
 pip install datetime
 pip install openpyxl
-
+pip install SQLAlchemy
+pip install Flask-SQLAlchemy
+pip install Flask-Migrate
+pip install Flask-Cors
+pip install python-dotenv
+pip install sendgrid
+pip install PyJWT
 ```
 
 Create and initialise directory
@@ -59,7 +73,25 @@ git init
 pip freeze > requirements.txt
 ```
 
-### Test the app
+### Setup the env file
+Navigate to your project directory in Command Prompt and create a new file `.env`
+```sh
+DATABASE_URI=<your_database_uri_here>
+JWT_SECRET_KEY=<your_jwt_secret_key_here>
+SENDGRID_API_KEY=<your_sendgrid_api_key_here>
+```
+Replace <your_database_uri_here>, <your_jwt_secret_key_here> and <your_sendgrid_api_key_here> with your actual Database connection, JWT secret key and SendGrid API key, respectively.
+
+### Setup the database migrations
+Initialize the database migration,To create a new migration To apply the migrations and update your database schema, these commands will setup your PostgresQL Database.
+```sh
+flask db init
+flask db migrate -m "fist migration"
+
+flask db upgrade
+```
+
+### Test the app on ubuntu
 
 ```sh
 # conda activate flsk ## or
@@ -67,8 +99,20 @@ pip freeze > requirements.txt
 cd ~/proyectos/fireveg/fireveg-webapp
 export FLASK_APP=webapp
 export FLASK_DEBUG=TRUE
+# initialise test admin user
+flask create_test_admin
+# run the webapp
+flask run
+```
+
+### Test the app on windows
+```sh
+Navigate to your project directory in Command Prompt
+.venv\Scripts\activate
+set FLASK_APP=webapp
+set FLASK_DEBUG=1
 # initialise sqlite database if doesn't exists
-[ -e instance/webapp.sqlite ] || flask init-db
+#[ -e instance/webapp.sqlite ] || flask init-db
 # run the webapp
 flask run
 ```
