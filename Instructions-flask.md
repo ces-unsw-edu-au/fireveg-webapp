@@ -83,6 +83,18 @@ SENDGRID_API_KEY=<your_sendgrid_api_key_here>
 ```
 Replace <your_database_uri_here>, <your_jwt_secret_key_here> and <your_sendgrid_api_key_here> with your actual Database connection, JWT secret key and SendGrid API key, respectively.
 
+### Set the Flask variables 
+For Windows
+```sh
+set FLASK_APP=webapp
+set FLASK_DEBUG=1
+```
+For Ubuntu/Linux
+```sh
+export FLASK_APP=webapp
+export FLASK_DEBUG=TRUE
+```
+
 ### Setup the database migrations
 Initialize the database migration,To create a new migration To apply the migrations and update your database schema, these commands will setup your PostgresQL Database.
 ```sh
@@ -98,8 +110,6 @@ flask db upgrade
 # conda activate flsk ## or
 # source ~/proyectos/venv/flsk/bin/activate
 cd ~/proyectos/fireveg/fireveg-webapp
-export FLASK_APP=webapp
-export FLASK_DEBUG=TRUE
 # initialise test admin user
 flask create_test_admin
 # run the webapp
@@ -110,8 +120,6 @@ flask run
 ```sh
 Navigate to your project directory in Command Prompt
 .venv\Scripts\activate
-set FLASK_APP=webapp
-set FLASK_DEBUG=1
 # initialise test admin user
 flask create_test_admin
 # run the webapp
