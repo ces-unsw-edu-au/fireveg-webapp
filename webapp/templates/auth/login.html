@@ -11,5 +11,7 @@
     <label for="password">Password</label>
     <input type="password" name="password" id="password" required>
     <input type="submit" value="Log In">
+    <br />
+    <a href="{{ url_for('auth.forgot_password') }}">Forgot Password?</a>
   </form>
 {% endblock %}

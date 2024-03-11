@@ -118,11 +118,13 @@ def create_app(test_config=None):
 
     from webapp.api.admin_user_routes import admin_user_routes 
     from webapp.api.admin_webapp_user_routes import admin_webapp_user_routes 
+    from webapp.api.admin.upgrade_roles.admin_role_upgrade_requests_routes import admin_role_upgrade_requests_routes  
 
     app.register_blueprint(admin_user_routes, url_prefix='/api/admin-users')
 
     app.register_blueprint(admin_webapp_user_routes, url_prefix='/api/admin-webapp-users')
 
+    app.register_blueprint(admin_role_upgrade_requests_routes, url_prefix='/api/admin-role-upgrade-requests')
 
     # this blueprint is for the fire ecology trait recorded from literature sources
     # This is the `Blue table/module` from the original diagramm from DK

@@ -3,14 +3,18 @@ import functools
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for
 )
+from datetime import datetime
 from werkzeug.security import check_password_hash, generate_password_hash
 from sqlalchemy.exc import IntegrityError  # Add this import for IntegrityError
 from webapp.db import get_db
 from webapp.emails.Users.SignupEmailVerification import SignupEmailVerification
-from webapp.helpers.String.StringHelpers import generate_random_string_using_time
+from webapp.emails.Users.ForgotPasswordEmail import ForgotPasswordEmail
+from webapp.helpers.String.StringHelpers import generate_random_string_using_time, add_days_to_current_date_time, add_seconds_to_current_date_time
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
 from webapp.models.Users import Users
+from webapp.models.RoleUpgradeRequests import RoleUpgradeRequests
+
 # print(Users)
 @bp.route('/register', methods=('GET', 'POST'))
 def register():
@@ -59,6 +63,7 @@ def register():
                 print(new_user.email)
                 subject = "Please verify your email address"
                 SignupEmailVerification.send_signup_verify_email_letter(username,subject,new_user)
+                flash('Please check your email for email verification.')
                 # db.execute(
                 #     "INSERT INTO user (username, password) VALUES (?, ?)",
                 #     (username, generate_password_hash(password)),
@@ -211,6 +216,100 @@ def resend_verify_email():
         # return redirect(url_for('auth.resend_verify_email'))
         return render_template('auth/resend_verify_email.html')
 
+
+@bp.route('/forgot_password', methods=('GET', 'POST'))
+def forgot_password():
+    print("auth.forgot_password")
+    if request.method == 'POST':
+        username = request.form['username']
+        print("username in forgot_password")
+        print("username in forgot_password")
+        print(username)
+        db = get_db()
+        error = None
+        user = Users.query.filter_by(username=username).first()
+        if user is None:
+            error = 'Incorrect username.'
+        if(error):
+            flash(error)
+            return redirect(url_for('auth.forgot_password'))
+        
+        db = get_db()
+        objUser = Users.query.get(user.id)
+        objUser.password_reset_token = generate_random_string_using_time()
+        objUser.password_reset_token_expiry_time = add_days_to_current_date_time(7)
+        db.session.commit()
+        subject = "Your Password Reset Information on fireveg"
+        ForgotPasswordEmail.send_forgot_password_email_letter(objUser.username,subject,objUser)
+        flash('Forgot Password Email Sent, Successfully! Please check your email.') 
+        # return redirect(url_for('auth.forgot_password'))
+        return render_template('auth/forgot_password.html')
+    else: 
+        # return redirect(url_for('auth.forgot_password'))
+        return render_template('auth/forgot_password.html')
+
+
+@bp.route('/password_reset', methods=('GET', 'POST'))
+def password_reset():
+    id = request.args.get('id', type=int)
+    password_reset_token = request.args.get('password_reset_token')
+    print("id in password_reset")
+    print("id in password_reset")
+    print(id)
+    print("password_reset_token in password_reset")
+    print("password_reset_token in password_reset")
+    print(password_reset_token)
+    if id is None or password_reset_token is None:
+        flash('Invalid url.')
+        return redirect(url_for('auth.login'))
+    # objUser = Users.query.filter_by(email=email).first()
+    objUser = Users.query.get(id)
+    print("objUser in password_reset")
+    print("objUser in password_reset")
+    print(objUser)
+    if not objUser:
+        flash('Invalid url.')
+        return redirect(url_for('auth.login'))
+    if objUser.password_reset_token != password_reset_token:
+        flash('Invalid url forgot password reset url.')
+        return redirect(url_for('auth.login'))
+    now = datetime.utcnow()
+    password_reset_token_expiry_time = objUser.password_reset_token_expiry_time
+    print(now)
+    print("now")
+    print(password_reset_token_expiry_time)
+    print("password_reset_token_expiry_time")
+    if now > password_reset_token_expiry_time:
+        flash('Your link has been expired. Please go to the forgot password form and fill out the form again!')
+        return redirect(url_for('auth.login'))
+    if request.method == 'POST':
+        password = request.form['password']
+        confirm_password = request.form['confirm_password']
+        if(password != confirm_password):
+            flash('Password and confirm password do not match.')
+            return redirect(url_for('auth.password_reset', id=id, password_reset_token=password_reset_token))
+        db = get_db()
+        user = Users.query.get(objUser.id)
+        user.password = generate_password_hash(password)
+        user.password_reset_token = None
+        db.session.commit()
+        flash('Password changed successfully, You can now log in.')
+        return redirect(url_for('auth.login'))
+        # return render_template('auth/login.html')
+    else: 
+        # return redirect(url_for('auth.forgot_password'))
+        return render_template('auth/password_reset_from_email.html')
+
+    # db = get_db()
+    # user = Users.query.get(objUser.id)
+    # user.password = generate_password_hash(password)
+    # user.password_reset_token = None
+    # db.session.commit()
+    # flash('Password changed successfully, You can now log in.')
+    # return redirect(url_for('auth.password_reset_from_email'))
+    # return render_template('auth/password_reset_from_email.html')
+
+
 @bp.before_app_request
 def load_logged_in_user():
     user_id = session.get('user_id')
@@ -228,6 +327,7 @@ def logout():
     session.clear()
     return redirect(url_for('index'))
 
+
 def login_required(view):
     @functools.wraps(view)
     def wrapped_view(**kwargs):
@@ -237,3 +337,80 @@ def login_required(view):
         return view(**kwargs)
 
     return wrapped_view
+
+@bp.route('/change_password', methods=('GET', 'POST'))
+@login_required
+def change_password():
+    
+    print("g.user in change_password")
+    print("g.user in change_password")
+    print(g.user)
+    print("g.user.id in change_password")
+    print("g.user.id in change_password")
+    print(g.user.id)
+    id = g.user.id
+    objUser = Users.query.get(id)
+    print("objUser in change_password")
+    print("objUser in change_password")
+    print(objUser)
+    if not objUser:
+        flash('Invalid url.')
+        return redirect(url_for('auth.login'))
+    if request.method == 'POST':
+        old_password = request.form['old_password']
+        password = request.form['password']
+        confirm_password = request.form['confirm_password']
+        if not check_password_hash(objUser.password, old_password):
+            flash('Password do not match with old password.')
+            return redirect(url_for('auth.change_password'))
+        if(password != confirm_password):
+            flash('Password and confirm password do not match.')
+            return redirect(url_for('auth.change_password'))
+        db = get_db()
+        user = Users.query.get(objUser.id)
+        user.password = generate_password_hash(password)
+        db.session.commit()
+        flash('Password changed successfully')
+        return redirect(url_for('auth.change_password'))
+        # return render_template('auth/login.html')
+    else: 
+        return render_template('auth/change_password.html')
+    
+
+@bp.route('/upgrade_request', methods=('GET', 'POST'))
+@login_required
+def upgrade_request():
+    
+    print("g.user in upgrade_request")
+    print("g.user in upgrade_request")
+    print(g.user)
+    print("g.user.id in upgrade_request")
+    print("g.user.id in upgrade_request")
+    print(g.user.id)
+    id = g.user.id
+    objUser = Users.query.get(id)
+    print("objUser in upgrade_request")
+    print("objUser in upgrade_request")
+    print(objUser)
+    if not objUser:
+        flash('Invalid url.')
+        return redirect(url_for('auth.login'))
+    if request.method == 'POST':
+        existing_request = RoleUpgradeRequests.query.filter_by(user_id=g.user.id).first()
+
+        if existing_request:
+            flash('You have already submitted a role upgrade request.', 'info')
+            return redirect(url_for('dataexport.download_file'))
+        else:
+            # Add a new record to RoleUpgradeRequests for the logged-in user
+            db = get_db()
+            upgrade_request = RoleUpgradeRequests(role_name='downloader', user_id=g.user.id)
+            db.session.add(upgrade_request)
+            db.session.commit()
+            
+            flash('Role upgrade request submitted successfully!')
+            return redirect(url_for('dataexport.download_file'))
+        # return render_template('auth/login.html')
+    else: 
+        return redirect(url_for('dataexport.download_file'))
+        # return render_template('auth/upgrade_request.html')

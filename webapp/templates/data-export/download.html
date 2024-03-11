@@ -23,24 +23,40 @@
   <p> Field sites information is summarised in the <i>Sites tab (green tab)</i>. Species records in each sample are in the <i>Samples tab (green tab)</i>. There is also a tab with a list of species. </p>
 
   <p>Click on the button to download the file with all field recrods in <i>xlsx</i> format:</p>
-
-  <a href={{s3file[1]}}>
-    <input type=submit value="Download Field Data">
-  </a>
+  
+  
+  {% if g.user.role|lower == "viewer" %}
+    <p>You do not have access to download this data, please request access from the database manager.</p>
+    {% include 'common/upgrade_request/role_upgrade_request_template.html' %} 
+  {% elif g.user.role|lower == "downloader" %}
+    <a href={{s3file[1]}}>
+      <input type=submit value="Download Field Data">
+    </a>
+  {% else %}
+    <p>Else</p>
+  {% endif %}
 </div>
 <div class="tabs" id="Literature" style="">
   <h2>Fire ecology traits from the literature</h2>
 
-<p>The file is a Excel Workbook (XLSX format), output has been tested in <b>Excel desktop app</b> and <b><a href="https://docs.microsoft.com/en-us/office365/servicedescriptions/office-online-service-description/excel-online">Excel for the web</a></b>, but might not work in other office software.</p>
+  <p>The file is a Excel Workbook (XLSX format), output has been tested in <b>Excel desktop app</b> and <b><a href="https://docs.microsoft.com/en-us/office365/servicedescriptions/office-online-service-description/excel-online">Excel for the web</a></b>, but might not work in other office software.</p>
 
-<p>Once you open the file, please follow instructions (blue tab).</p>
-<p> Fire ecology trait records extracted from published literature and other sources are summarised in the <i>Summary tab (green tab)</i>, there is also a tab with all references and one with trait information (grey tabs). </p>
+  <p>Once you open the file, please follow instructions (blue tab).</p>
+  <p> Fire ecology trait records extracted from published literature and other sources are summarised in the <i>Summary tab (green tab)</i>, there is also a tab with all references and one with trait information (grey tabs). </p>
 
-<p>Click on the button to download the file with all trait recrods in <i>xlsx</i> format:</p>
+  <p>Click on the button to download the file with all trait recrods in <i>xlsx</i> format:</p>
 
-<a href={{s3file[0]}}>
-  <input type=submit value="Download Field Data">
-</a>
+  
+  {% if g.user.role|lower == 'viewer' %}
+    <p>You do not have access to download this data, please request access from the database manager.</p>
+    {% include 'common/upgrade_request/role_upgrade_request_template.html' %} 
+  {% elif g.user.role|lower == 'downloader' %}
+    <a href={{s3file[0]}}>
+      <input type=submit value="Download Field Data">
+    </a>
+  {% else %}
+    <p>Else</p>
+  {% endif %}
 </div>
 
 {% endblock %}

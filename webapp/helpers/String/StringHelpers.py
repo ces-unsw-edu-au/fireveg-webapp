@@ -11,3 +11,8 @@ def add_seconds_to_current_date_time(seconds):
     current_date_time = datetime.now()
     updated_date_time = current_date_time + timedelta(seconds=seconds)
     return updated_date_time
+
+def add_days_to_current_date_time(days):
+    current_date_time = datetime.now()
+    updated_date_time = current_date_time + timedelta(days=days)
+    return updated_date_time

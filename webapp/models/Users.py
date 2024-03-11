@@ -23,6 +23,8 @@ class Users(db.Model):
     role = db.Column(db.Enum(Role), default=Role.viewer)
     is_email_verified = db.Column(db.Boolean, default=False, index=True)
     email_verification_code = db.Column(db.String(255), index=True)
+    password_reset_token = db.Column(db.String)
+    password_reset_token_expiry_time = db.Column(db.DateTime)
     # Define the one-to-many relationship with RoleUpgradeRequest
     # role_upgrade_requests = db.relationship('RoleUpgradeRequests', backref='user', lazy='dynamic')
 
