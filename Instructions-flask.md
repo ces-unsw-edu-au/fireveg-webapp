@@ -111,7 +111,7 @@ flask db upgrade
 # source ~/proyectos/venv/flsk/bin/activate
 cd ~/proyectos/fireveg/fireveg-webapp
 # initialise test admin user
-flask create_test_admin
+flask create_admin_user
 # run the webapp
 flask run
 ```
@@ -121,7 +121,7 @@ flask run
 Navigate to your project directory in Command Prompt
 .venv\Scripts\activate
 # initialise test admin user
-flask create_test_admin
+flask create_admin_user
 # run the webapp
 flask run
 ```
