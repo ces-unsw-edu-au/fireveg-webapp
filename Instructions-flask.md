@@ -80,8 +80,15 @@ Navigate to your project directory in Command Prompt and create a new file `.env
 DATABASE_URI=<your_database_uri_here>
 JWT_SECRET_KEY=<your_jwt_secret_key_here>
 SENDGRID_API_KEY=<your_sendgrid_api_key_here>
+MAIL_FROM=<your_mail_from_here>
+PYTHON_ENV=<your_python_env_here>
 ```
-Replace <your_database_uri_here>, <your_jwt_secret_key_here> and <your_sendgrid_api_key_here> with your actual Database connection, JWT secret key and SendGrid API key, respectively.
+Replace <your_database_uri_here>, <your_jwt_secret_key_here> and <your_sendgrid_api_key_here> with your actual Database connection, JWT secret key, SendGrid API key and MAIL_FROM respectively.
+
+### `PYTHON_ENV`
+
+- **Description:** Environment mode of the application.
+- **Example:** `development, production`
 
 ### Set the Flask variables 
 For Windows

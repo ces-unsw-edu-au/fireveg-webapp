@@ -59,9 +59,15 @@ def create_app(test_config=None):
         os.makedirs(app.instance_path)
     except OSError:
         pass
-    
-     # Enable CORS for API routes and specify allowed origins
-    CORS(app, resources={r"/api/*": {"origins": ["http://localhost:3000", "http://fireecologyplants.net", "https://fireecologyplants.net"]}})
+    # print("os.environ.get('PYTHON_ENV')")
+    # print("os.environ.get('PYTHON_ENV')")
+    # print(os.environ.get('PYTHON_ENV'))
+    PYTHON_ENV = os.environ.get('PYTHON_ENV')
+    if(PYTHON_ENV == "development" ):
+        # Enable CORS for API routes and specify allowed origins
+        CORS(app, resources={r"/api/*": {"origins": ["http://localhost:3000", "http://fireecologyplants.net", "https://fireecologyplants.net"]}})
+    elif(PYTHON_ENV == "production" ):
+        CORS(app, resources={r"/api/*": {"origins": ["http://fireecologyplants.net", "https://fireecologyplants.net"]}})
     # Here are some fixed routes:
     # we can write an 'about' page
     @app.route('/about')
