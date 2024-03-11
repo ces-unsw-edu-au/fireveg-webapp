@@ -112,8 +112,8 @@ Navigate to your project directory in Command Prompt
 .venv\Scripts\activate
 set FLASK_APP=webapp
 set FLASK_DEBUG=1
-# initialise sqlite database if doesn't exists
-#[ -e instance/webapp.sqlite ] || flask init-db
+# initialise test admin user
+flask create_test_admin
 # run the webapp
 flask run
 ```
