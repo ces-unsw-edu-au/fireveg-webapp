@@ -5,6 +5,7 @@
 This version has been developed following steps in
 https://flask.palletsprojects.com/en/2.0.x/tutorial/
 
+and now we are using flask `3.0.2`
 ### Set up
 
 Create a virtual environment for flask with miniconda:
