@@ -5,6 +5,8 @@
 {% endblock %}
 
 {% block content %}
+<p> By registering to this site, you agree to our <a href="{{ url_for('terms') }}">Terms of use</a>.
+</p>
   <form method="post">
     <label for="username">Email (will be used as username)</label>
     <input name="username" id="username" required>

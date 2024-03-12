@@ -69,10 +69,13 @@ def create_app(test_config=None):
     elif(PYTHON_ENV == "production" ):
         CORS(app, resources={r"/api/*": {"origins": ["http://fireecologyplants.net", "https://fireecologyplants.net"]}})
     # Here are some fixed routes:
-    # we can write an 'about' page
+    # we can write an 'about' page and a terms page
     @app.route('/about')
     def about():
         return render_template('about.html', the_title="Home / About")
+    @app.route('/terms')
+    def terms():
+        return render_template('terms.html', the_title="Home / Terms")
     # place for simple documentation of features for end user
     @app.route('/documentation')
     def documentation():
