@@ -75,6 +75,7 @@ pip freeze > requirements.txt
 ```
 
 ### Setup the env file
+
 Navigate to your project directory in Command Prompt and create a new file `.env`
 ```sh
 DATABASE_URI=<your_database_uri_here>
@@ -83,7 +84,16 @@ SENDGRID_API_KEY=<your_sendgrid_api_key_here>
 MAIL_FROM=<your_mail_from_here>
 PYTHON_ENV=<your_python_env_here>
 ```
+
 Replace <your_database_uri_here>, <your_jwt_secret_key_here> and <your_sendgrid_api_key_here> with your actual Database connection, JWT secret key, SendGrid API key and MAIL_FROM respectively.
+
+`DATABASE_URI` can use the format `postgresql://{user}:{password}@{host}:{port}/{dbname}`
+
+`JWT_SECRET_KEY` we can generate our own
+
+`SENDGRID_API_KEY` use one from the sendgrid account
+
+
 
 ### `PYTHON_ENV`
 
@@ -107,7 +117,6 @@ Initialize the database migration,To create a new migration To apply the migrati
 ```sh
 flask db init
 flask db migrate -m "fist migration"
-
 flask db upgrade
 ```
 
