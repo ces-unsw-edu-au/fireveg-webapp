@@ -5,6 +5,10 @@
 {% endblock %}
 
 {% block content %}
+<div class = 'note'>
+  <p> This databases is still on testing mode, please contact the authors if you experience any problems.
+  </p>
+</div>
 <p> By registering to this site, you agree to our <a href="{{ url_for('terms') }}">Terms of use</a> and <a href="{{ url_for('privacy') }}">Privacy policy</a>.
 </p>
   <form method="post">
@@ -14,4 +18,8 @@
     <input type="password" name="password" id="password" required>
     <input type="submit" value="Register">
   </form>
+ 
+    <div class = 'note'>
+    <p> You will be required to verify your email to complete registration before you can access the content of this site. </p>
+    </div>
 {% endblock %}

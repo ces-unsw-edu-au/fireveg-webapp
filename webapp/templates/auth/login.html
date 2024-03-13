@@ -5,6 +5,11 @@
 {% endblock %}
 
 {% block content %}
+<div class = 'note'>
+  <p> This databases is still on testing mode, please contact the authors if you experience any problems.
+  </p>
+</div>
+
   <form method="post">
     <label for="username">Username (use your email address)</label>
     <input name="username" id="username" required>
@@ -15,5 +20,9 @@
     <a href="{{ url_for('auth.forgot_password') }}">Forgot Password?</a>
   </form>
   <p> By entering this site, you agree to our <a href="{{ url_for('terms') }}">Terms of use</a> and <a href="{{ url_for('privacy') }}">Privacy policy</a>.
-
+<div class = 'note'>
+  <p> Unverified usernames and old passwords have been deactivated, please 
+  <a href="{{ url_for( 'auth.register') }}">register</a> again and verify your mail
+  to access the content of this site. </p>
+  </div>
 {% endblock %}
