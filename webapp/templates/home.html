@@ -8,9 +8,17 @@ Home
 
 {% block content %}
 
+<div class = 'note'>
+<p> 
+The database is currently available at 
+<a href='https://fireecologyplants.net'>fireecologyplants.net</a>
+but still on testing mode, please contact the authors if you experience any problems.
+</p>
 
-<p>You are required to register to access the content of this site.</p>
-
+<p>You are required to 
+<a href="{{ url_for( 'auth.register') }}">register</a>
+to access the content of this site.</p>
+</div>
 <div>
 <p>Developers: Jose Ferrer-Paris and David Keith <br>
 Centre for Ecosystem Science, University of New South Wales
