@@ -76,6 +76,9 @@ def create_app(test_config=None):
     @app.route('/terms')
     def terms():
         return render_template('terms.html', the_title="Home / Terms")
+    @app.route('/privacy')
+    def privacy():
+        return render_template('privacy.html', the_title="Home / Privacy")
     # place for simple documentation of features for end user
     @app.route('/documentation')
     def documentation():

@@ -30,7 +30,8 @@
     <li><span><a href='{{ url_for('traits.trait_sum') }}'>All traits</a></span>
     <li><span><a href='{{ url_for('documentation') }}'> Documentation</a></span>
       <li><span><a href='{{ url_for('biblio.ref_list') }}'> References</a></span>
-    <li><span><a href='{{ url_for('about') }}'>About</a></span>
+        <li><span><a href='{{ url_for('about') }}'>About</a></span>
+      
   </ul>
 </nav>
 <section class="content">
@@ -55,5 +56,9 @@ NSW Bushfire Research Hub <br>
 NESP Threatened Species Recovery Hub <br>
 NSW Department of Planning & Environment</h4>
 
+  <h4 class='credits'>
+    <a href='{{ url_for('terms') }}'>Terms of use</a><br/>
+    <a href='{{ url_for('privacy') }}'>Privacy Policy</a>
+  </h4>
 </nav>
 </body>
