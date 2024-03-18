@@ -49,7 +49,9 @@ pip install openpyxl
 pip install pillow  ipyplot
 pip install pyinaturalist
 pip install pickle5
-
+pip install flask_migrate flask_cors flask_sqlalchemy
+pip3 install python-dotenv
+pip3 install sendgrid
 ```
 
 Create and initialise directory
@@ -71,8 +73,10 @@ pip freeze > requirements.txt
 cd ~/proyectos/fireveg/fireveg-webapp
 export FLASK_APP=webapp
 export FLASK_DEBUG=TRUE
-# initialise sqlite database if doesn't exists
-[ -e instance/webapp.sqlite ] || flask init-db
+# initialise sqlite database if doesn't exists / old version with sqlite
+# [ -e instance/webapp.sqlite ] || flask init-db
+# For new authentication system
+# Either 'SQLALCHEMY_DATABASE_URI' or 'SQLALCHEMY_BINDS' must be set
 # run the webapp
 flask run
 ```
