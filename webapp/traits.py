@@ -76,7 +76,7 @@ def trait_qa(trait):
     cur.execute(qry)
     res = cur.fetchall()
     cur.close()
-    return render_template('traits/QA.html', result=res, trait=trait)
+    return render_template('traits/QA.html', result=res, trait=trait, valuetype=valuetype)
 
 
 @bp.route('/QA/<trait>/<kwd>')
