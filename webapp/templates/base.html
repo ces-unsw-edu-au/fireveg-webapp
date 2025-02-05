@@ -1,14 +1,14 @@
 <!doctype html>
 <head>
-  <title>{% block title %}{% endblock %} - Fire Ecology database / Plants NSW</title>
+  <title>{% block title %}{% endblock %} - {{ FEDB_NAME }} / Plants NSW</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
   <script rel="text/javascript" src="{{ url_for('static', filename='js/target.js') }}"> </script>
 </head>
 <body>
 
 <nav>
-  <h1 class='title'>Fire Ecology database / Plants NSW</h1>
-  <h5>Version 1.1 / {{  FEDB_VERSION }} </h5>
+  <h1 class='title'>{{ FEDB_NAME }} / Plants NSW</h1>
+  <h5>{{  FEDB_VERSION }} </h5>
   <ul>
     {% if g.user %}
       <li><span>{{ g.user['username'] }}</span>

@@ -6,7 +6,6 @@ from flask_migrate import Migrate
 from flask_cors import CORS
 from dotenv import load_dotenv
 load_dotenv()
-load_dotenv("fireveg-version.env")
 
 # import sendgrid
 # from sendgrid.helpers.mail import *
@@ -120,8 +119,12 @@ def create_app(test_config=None):
     ## Context processor
     @app.context_processor
     def version_information():
+        version_information =  os.path.join(app.root_path, "fireveg-version.env")
+        load_dotenv(dotenv_path=version_information)
         # Version information
-        return dict(FEDB_VERSION = os.getenv('FIREVEG_VERSION'))
+        return dict(FEDB_VERSION = os.getenv('FIREVEG_VERSION'),
+                    FEDB_NAME = os.getenv('FIREVEG_NAME'),
+                    )
 
     ## Blueprints
 
