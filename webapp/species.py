@@ -205,9 +205,9 @@ def sp_info(id):
         cur.execute(qrylit2,(spp_info[5],spp_info[5],))
         add_list = cur.fetchall()
 
-        qryvag = "SELECT persistence, rationale_persistence, status_persistence, establishment,status_establishment,date_updated FROM vag.va_groups where species_code=%s"
-        cur.execute(qryvag,(spp_info[1],))
-        vag_info = cur.fetchone()
+        #qryvag = "SELECT persistence, rationale_persistence, status_persistence, establishment,status_establishment,date_updated FROM vag.va_groups where species_code=%s"
+        #cur.execute(qryvag,(spp_info[1],))
+        #vag_info = cur.fetchone()
 
         cur.close()
 
