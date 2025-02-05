@@ -1,11 +1,14 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
 cff-version: 1.2.0
 title: >-
   "Fire Ecology Traits for Plants: A database for fire
   research and management"
 type: software
 authors:
-  - family-names: Ferrer-Paris
-    given-names: José R.
+  - given-names: José R.
+    family-names: Ferrer-Paris
     orcid: 'https://orcid.org/0000-0002-9554-3395'
     affiliation: UNSW
   - family-names: Keith

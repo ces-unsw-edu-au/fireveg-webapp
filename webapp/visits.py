@@ -24,16 +24,21 @@ def visits_list(survey):
         qry="SELECT * FROM form.surveys where survey_name=%s"
         cur.execute(qry,(survey,))
         survinfo=cur.fetchone()
-
+        
+        qry='SELECT count(distinct visit_id) as nlocs, count(distinct concat(visit_id,visit_date)) as nvisits, count(distinct CONCAT(visit_date, sample_nr)) as nsamples, count(distinct species_code) as nspp, count(distinct CONCAT(givennames,\' \',surname)) as main_observers FROM form.field_visit v LEFT JOIN form.field_samples s USING(visit_id,visit_date) LEFT JOIN form.quadrat_samples q USING (visit_id,visit_date,sample_nr) LEFT JOIN form.observerid ON mainobserver=userkey WHERE survey_name=%s ;'
+        cur.execute(qry, (survey,))
+        visit_total=cur.fetchone()
+        
         qry='SELECT visit_id,visit_date,count(distinct sample_nr),count(distinct species_code),survey_name,CONCAT(givennames,\' \',surname) as main_observer, vegetation_formation, vegetation_class  FROM form.field_visit v LEFT JOIN form.field_samples s USING(visit_id,visit_date) LEFT JOIN form.quadrat_samples q USING (visit_id,visit_date,sample_nr) LEFT JOIN form.observerid ON mainobserver=userkey LEFT JOIN form.field_visit_veg_description USING(visit_id,visit_date)  WHERE survey_name=%s GROUP BY survey_name,visit_id,visit_date, givennames, surname, vegetation_formation, vegetation_class ORDER BY survey_name,visit_id;'
         cur.execute(qry, (survey,))
+
     visit_list = cur.fetchall()
     cur.close()
 
     if survey == None:
         return render_template('visits/list.html', visits=visit_list, survey=survey)
     else:
-        return render_template('visits/list.html', visits=visit_list, survey=survinfo)
+        return render_template('visits/list.html', visits=visit_list, survey=survinfo, ttl=visit_total)
 
 @bp.route('/<path:id>/<dt>')
 @login_required
