@@ -41,6 +41,9 @@ def create_app(test_config=None):
     app.config['DATAXPORT'] = os.path.join(app.instance_path, 'data-summary-export.xlsx')
     app.config['RECORDXPORT'] = os.path.join(app.instance_path, 'data-all-records-export.xlsx')
 
+    # Version information
+    current_app.config['FEDB_VERSION'] = os.getenv('FIREVEG_VERSION')
+
     # Set the PostgreSQL database URI
     app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URI')
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -70,9 +73,7 @@ def create_app(test_config=None):
         CORS(app, resources={r"/api/*": {"origins": ["http://localhost:3000", "http://fireecologyplants.net", "https://fireecologyplants.net"]}})
     elif(PYTHON_ENV == "production" ):
         CORS(app, resources={r"/api/*": {"origins": ["http://fireecologyplants.net", "https://fireecologyplants.net"]}})
-
-    FEDB_VERSION = os.environ.get('FIREVEG_VERSION')
-
+    
     # Here are some fixed routes:
     # we can write an 'about' page and a terms page
     @app.route('/about')

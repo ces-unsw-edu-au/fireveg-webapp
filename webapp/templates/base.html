@@ -8,7 +8,7 @@
 
 <nav>
   <h1 class='title'>Fire Ecology database / Plants NSW</h1>
-  <h5>Version 1.1 / {{ FEDB_VERSION }} </h5>
+  <h5>Version 1.1 / {{  current_app.config['FEDB_VERSION'] }} </h5>
   <ul>
     {% if g.user %}
       <li><span>{{ g.user['username'] }}</span>
