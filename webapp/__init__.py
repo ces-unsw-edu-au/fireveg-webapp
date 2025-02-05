@@ -42,7 +42,7 @@ def create_app(test_config=None):
     app.config['RECORDXPORT'] = os.path.join(app.instance_path, 'data-all-records-export.xlsx')
 
     # Version information
-    current_app.config['FEDB_VERSION'] = os.getenv('FIREVEG_VERSION')
+    app.config['FEDB_VERSION'] = os.getenv('FIREVEG_VERSION')
 
     # Set the PostgreSQL database URI
     app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URI')
