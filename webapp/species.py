@@ -216,7 +216,7 @@ def sp_info(id):
         #images = [obs.photos[0].small_url for obs in iNobs[:3]]
         #labels = [str(obs) for obs in iNobs[:3]]
 
-        return render_template('species/info.html', info=spp_info, inat_obs=iNobs, fsamp=samples, traits=traits, mainrefs=ref_list, addrefs=add_list, check=synonym, vag=vag_info)
+        return render_template('species/info.html', info=spp_info, inat_obs=iNobs, fsamp=samples, traits=traits, mainrefs=ref_list, addrefs=add_list, check=synonym)
     else:
         return redirect(url_for('.search_list', id=request.form['speciesname']))
 
