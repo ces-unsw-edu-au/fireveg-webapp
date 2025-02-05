@@ -41,8 +41,7 @@ def create_app(test_config=None):
     app.config['DATAXPORT'] = os.path.join(app.instance_path, 'data-summary-export.xlsx')
     app.config['RECORDXPORT'] = os.path.join(app.instance_path, 'data-all-records-export.xlsx')
 
-    # Version information
-    FEDB_VERSION = os.getenv('FIREVEG_VERSION')
+    
 
     # Set the PostgreSQL database URI
     app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URI')
@@ -117,6 +116,12 @@ def create_app(test_config=None):
     # do we need to call this here? probably not
     from . import xlinit
     xlinit.init_app(app)
+
+    ## Context processor
+    @app.context_processor
+    def version_information():
+        # Version information
+        return dict(FEDB_VERSION = os.getenv('FIREVEG_VERSION'))
 
     ## Blueprints
 
