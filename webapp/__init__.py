@@ -124,6 +124,7 @@ def create_app(test_config=None):
         # Version information
         return dict(FEDB_VERSION = os.getenv('FIREVEG_VERSION'),
                     FEDB_NAME = os.getenv('FIREVEG_NAME'),
+                    FEDB_CITATION = os.getenv('FIREVEG_CITATION'),
                     )
 
     ## Blueprints

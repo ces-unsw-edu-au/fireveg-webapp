@@ -7,17 +7,75 @@
 {% block content %}
 
 
-<p>The <b>Fire Ecology Traits for Plants</b> project is being developed by J.R. Ferrer-Paris and David Keith</p>
+<p>The <b>{{ FEDB_NAME }}</b> project is being developed by J.R. Ferrer-Paris and David Keith</p>
 <p>Centre for Ecosystem Science, University of New South Wales</p>
 
-<p>Source code for this project is available in the following repositories:
+<p>Please cite this work as:
 
-<ul>
-  <li><a href="https://github.com/jrfep/fireveg-db">https://github.com/jrfep/fireveg-db</a></li>
-  <li><a href="https://github.com/jrfep/fireveg-webapp">https://github.com/jrfep/fireveg-webapp</a></li>
-  <li><a href="https://github.com/jrfep/fire-veg-aust">https://github.com/jrfep/fire-veg-aust</a></li>
-</ul>
+  <blockquote>
+    {{ FEDB_CITATION }} 
+</blockquote>
 </p>
 
+<h3>Project overview</h3>
+
+<ul>
+<li>
+  <b>🔥 Fire Ecology database for research and management</b> <br/>OSF project <a href='https://osf.io/hu96w/'>osf.io/hu96w</a> with following components:
+</li>
+<ul>
+  <li> <b>SQL structure of the database</b>
+    / OSF project component
+    <a href='https://osf.io/4csyz/'>osf.io/4csyz</a>
+  </li>
+  <ul>
+    <li> Source code in <a href='https://github.com/ces-unsw-edu-au/fireveg-db'>GitHub repository</a></li>
+  </ul>
+  <li> <b>Code for database imports and data curation</b> 
+    / OSF project component
+    <a href='https://osf.io/znuge/'>osf.io/znuge</a>
+  <ul>
+    <li> Source code in 
+      <a href='https://github.com/ces-unsw-edu-au/fireveg-db-imports'>GitHub repository</a></li>
+  </ul> 
+  <li> <b>Webapp for browsing the Fire Ecology database</b>
+    / OSF project component
+    <a href='https://osf.io/rj68t/'>osf.io/rj68t</a>
+    </li>
+    <ul><li> Source code in <a href='https://github.com/ces-unsw-edu-au/fireveg-webapp'>GitHub repository</a></li>
+    <li> Acess to the <a href='http://fireecologyplants.net'>Webapp</a> (Register with a verified email address)</li>
+   </ul>
+  <li> 
+    <b>Export data records from Fire Ecology  database</b>
+    / OSF project component
+    <a href='https://osf.io/h96q2/'>osf.io/h96q2</a>
+  </li>
+    <ul>
+      <li> Source code in 
+        <a href='https://github.com/ces-unsw-edu-au/fireveg-db-exports/'>GitHub repository</a> </li>
+        <li> Data in Figshare DOI:<a href='https://doi.org/10.6084/m9.figshare.23361002'>10.6084/m9.figshare.23361002</a></li>
+        <li> Data in Figshare DOI:<a href='https://doi.org/10.6084/m9.figshare.24125088'>10.6084/m9.figshare.24125088</a></li>
+  </ul>
+  <li> <b>Data analysis and visualisation</b>
+    / OSF project component
+    <a href='https://osf.io/kjevh/'>osf.io/kjevh</a></li>
+    <ul>
+      <li>Source code in <a href='https://github.com/ces-unsw-edu-au/fireveg-analysis/'>GitHub repository</a></li>
+    <li> Source code in <a href='https://bitbucket.org/fireveg/fireveg-presentations'>BitBucket repository</a></li>
+    <li> <a href='https://rpubs.com/jrfep/firevegdb-ESA2023'>Presentation slides</a> </li>
+  </ul>
+</ul>
+
+</ul>
+
+<p>
+  Please refer to the embedded diagram for a visual overview of the relationships between project components and levels of access for different users.
+</p>
+
+<div style="width: 640px; height: 500px; margin: 10px; position: relative;"><iframe allowfullscreen frameborder="0" style="width:640px; height:480px" src="https://lucid.app/documents/embedded/61d9bcce-07fd-464f-84c0-378bdf2b8bd6" id="g.dQniVb6vxw"></iframe>
+  <caption>
+    Fire Ecology database project components, their relationships and user interfaces.
+  </caption>
+</div>
 
 {% endblock %}
