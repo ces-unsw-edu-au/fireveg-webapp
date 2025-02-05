@@ -51,7 +51,7 @@ def fam_list():
         cur = pg.cursor()
         cur.execute(create_spp_trait_table)
 
-        cur.execute('SELECT family AS fam,count(distinct "speciesID"), count(distinct s.species_code), count(distinct q.species_code) FROM species.caps LEFT JOIN species_traits s ON "speciesCode_Synonym"=s.species_code::text LEFT JOIN form.quadrat_samples q ON "speciesCode_Synonym"=q.species_code::text  GROUP BY fam;')
+        cur.execute('SELECT family AS fam,count(distinct "speciesID"), count(distinct s.species_code), count(distinct q.species_code) FROM species.bionet LEFT JOIN species_traits s ON "speciesCode_Synonym"=s.species_code::text LEFT JOIN form.quadrat_samples q ON "speciesCode_Synonym"=q.species_code::text  GROUP BY fam;')
         fam_list = cur.fetchall()
         cur.close()
         return render_template('species/fam-list.html', pairs=fam_list, the_title="Species per family")
@@ -64,9 +64,9 @@ def threat_list():
     pg = get_pg_connection()
     cur = pg.cursor()
     cur.execute(create_spp_trait_table)
-    cur.execute('SELECT \"stateConservation\" AS fam,count(distinct "speciesID"), count(distinct s.species_code), count(distinct q.species_code) FROM species.caps LEFT JOIN species_traits s ON "speciesCode_Synonym"=s.species_code::text LEFT JOIN form.quadrat_samples q ON "speciesCode_Synonym"=q.species_code::text  GROUP BY fam;')
+    cur.execute('SELECT \"stateConservation\" AS fam,count(distinct "speciesID"), count(distinct s.species_code), count(distinct q.species_code) FROM species.bionet LEFT JOIN species_traits s ON "speciesCode_Synonym"=s.species_code::text LEFT JOIN form.quadrat_samples q ON "speciesCode_Synonym"=q.species_code::text  GROUP BY fam;')
     fam_list = cur.fetchall()
-    cur.execute('SELECT count(distinct "speciesID"), count(distinct s.species_code), count(distinct q.species_code) FROM species.caps LEFT JOIN species_traits s ON "speciesCode_Synonym"=s.species_code::text LEFT JOIN form.quadrat_samples q ON "speciesCode_Synonym"=q.species_code::text;')
+    cur.execute('SELECT count(distinct "speciesID"), count(distinct s.species_code), count(distinct q.species_code) FROM species.bionet LEFT JOIN species_traits s ON "speciesCode_Synonym"=s.species_code::text LEFT JOIN form.quadrat_samples q ON "speciesCode_Synonym"=q.species_code::text;')
     fam_total = cur.fetchall()
     cur.close()
 
@@ -79,7 +79,7 @@ def sp_list(id):
         pg = get_pg_connection()
         cur = pg.cursor()
         cur.execute(create_spp_trait_table)
-        cur.execute('SELECT "speciesID"::int AS id, "scientificName" AS name, "vernacularName" as vname,count(distinct s.species_code), count(distinct q.species_code), count(distinct q.visit_id),trait_codes FROM species.caps LEFT JOIN species_traits s ON "speciesCode_Synonym"=s.species_code::text LEFT JOIN form.quadrat_samples q ON "speciesCode_Synonym"=q.species_code::text WHERE "family"=%s GROUP BY id,name,vname,"sortOrder",trait_codes ORDER BY "sortOrder"', (id,))
+        cur.execute('SELECT "speciesID"::int AS id, "scientificName" AS name, "vernacularName" as vname,count(distinct s.species_code), count(distinct q.species_code), count(distinct q.visit_id),trait_codes FROM species.bionet LEFT JOIN species_traits s ON "speciesCode_Synonym"=s.species_code::text LEFT JOIN form.quadrat_samples q ON "speciesCode_Synonym"=q.species_code::text WHERE "family"=%s GROUP BY id,name,vname,"sortOrder",trait_codes ORDER BY "sortOrder"', (id,))
         try:
             spp_qry = cur.fetchall()
         except:
@@ -96,7 +96,7 @@ def search_list(id):
         pg = get_pg_connection()
         cur = pg.cursor()
         cur.execute(create_spp_trait_table)
-        cur.execute('SELECT "speciesID"::int AS id, "scientificName" AS name, "vernacularName" as vname,count(distinct s.species_code), count(distinct q.species_code), count(distinct q.visit_id),trait_codes FROM species.caps LEFT JOIN species_traits s ON "speciesCode_Synonym"=s.species_code::text LEFT JOIN form.quadrat_samples q ON "speciesCode_Synonym"=q.species_code::text WHERE ("scientificName" ILIKE %s OR "vernacularName" ILIKE %s) GROUP BY id,name,vname,"sortOrder",trait_codes ORDER BY "sortOrder"', (f'%%{id}%%', f'%%{id}%%'))
+        cur.execute('SELECT "speciesID"::int AS id, "scientificName" AS name, "vernacularName" as vname,count(distinct s.species_code), count(distinct q.species_code), count(distinct q.visit_id),trait_codes FROM species.bionet LEFT JOIN species_traits s ON "speciesCode_Synonym"=s.species_code::text LEFT JOIN form.quadrat_samples q ON "speciesCode_Synonym"=q.species_code::text WHERE ("scientificName" ILIKE %s OR "vernacularName" ILIKE %s) GROUP BY id,name,vname,"sortOrder",trait_codes ORDER BY "sortOrder"', (f'%%{id}%%', f'%%{id}%%'))
         try:
             spp_qry = cur.fetchall()
         except:
@@ -113,7 +113,7 @@ def cat_list(id):
         pg = get_pg_connection()
         cur = pg.cursor()
         cur.execute(create_spp_trait_table)
-        cur.execute('SELECT "speciesID"::int AS id, "scientificName" AS name, "vernacularName" as vname,count(distinct s.species_code), count(distinct q.species_code), count(distinct q.visit_id),trait_codes FROM species.caps LEFT JOIN species_traits s ON "speciesCode_Synonym"=s.species_code::text LEFT JOIN form.quadrat_samples q ON "speciesCode_Synonym"=q.species_code::text WHERE "stateConservation"=%s GROUP BY id,name,vname,"sortOrder",trait_codes ORDER BY "sortOrder"', (id,))
+        cur.execute('SELECT "speciesID"::int AS id, "scientificName" AS name, "vernacularName" as vname,count(distinct s.species_code), count(distinct q.species_code), count(distinct q.visit_id),trait_codes FROM species.bionet LEFT JOIN species_traits s ON "speciesCode_Synonym"=s.species_code::text LEFT JOIN form.quadrat_samples q ON "speciesCode_Synonym"=q.species_code::text WHERE "stateConservation"=%s GROUP BY id,name,vname,"sortOrder",trait_codes ORDER BY "sortOrder"', (id,))
         try:
             spp_qry = cur.fetchall()
         except:
@@ -144,7 +144,7 @@ def sp_info(id):
             column="speciesCode_Synonym"
         else:
             column="speciesID"
-        qryspp=f"SELECT \"scientificName\", \"speciesID\"::int, family, \"taxonRank\", family, \"speciesCode_Synonym\", \"scientificNameAuthorship\", \"vernacularName\", \"establishmentMeans\", \"primaryGrowthFormGroup\", \"secondaryGrowthFormGroups\", \"stateConservation\", \"protectedInNSW\", \"countryConservation\", \"TSProfileID\" from species.caps WHERE \"{column}\"=%s"
+        qryspp=f"SELECT \"scientificName\", \"speciesID\"::int, family, \"taxonRank\", family, \"speciesCode_Synonym\", \"scientificNameAuthorship\", \"vernacularName\", \"establishmentMeans\", \"primaryGrowthFormGroup\", \"secondaryGrowthFormGroups\", \"stateConservation\", \"protectedInNSW\", \"countryConservation\", \"TSProfileID\" from species.bionet WHERE \"{column}\"=%s"
 
         cur.execute(qryspp, (id,))
         try:

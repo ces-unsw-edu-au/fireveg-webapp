@@ -184,7 +184,7 @@ SELECT "currentScientificName" as spp, "currentScientificNameCode" as sppcode,
     array_accum(original_sources) as orefs
 
 FROM litrev.{}
-LEFT JOIN species.caps
+LEFT JOIN species.bionet
 ON species_code="speciesCode_Synonym"
 WHERE  "currentScientificName" is not NULL AND weight>0 AND main_source is not NULL
 GROUP BY spp,sppcode;
@@ -198,7 +198,7 @@ array_agg(best) as best,array_agg(lower) as lower,array_agg(upper) as upper,arra
 array_agg(main_source) as refs,
 array_accum(original_sources) as orefs
 FROM litrev.{}
-LEFT JOIN species.caps
+LEFT JOIN species.bionet
 ON species_code="speciesCode_Synonym"
 WHERE "currentScientificName" is not NULL AND weight>0
 GROUP BY spp,sppcode;
@@ -218,7 +218,7 @@ SELECT "currentScientificName" as spp, "currentScientificNameCode" as sppcode,
     original_sources as orefs,
     record_id
 FROM litrev.{trait}
-LEFT JOIN species.caps
+LEFT JOIN species.bionet
 ON species_code="speciesCode_Synonym"
 WHERE "currentScientificName" is not NULL AND weight>0
 ORDER BY spp;
@@ -263,7 +263,7 @@ ORDER BY code;
 
 qrySpps="""
 SELECT "scientificName", "speciesCode_Synonym", family, genus, "scientificNameID", "currentScientificNameCode", "currentScientificName", "currentVernacularName", "isCurrent"
-FROM species.caps order by "sortOrder";
+FROM species.bionet order by "sortOrder";
 """
 
 qryVocabs="""

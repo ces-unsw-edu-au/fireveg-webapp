@@ -53,7 +53,7 @@ def trait_list(group,var):
         return render_template('invalid.html', type='user input', id=var)
     pg = get_pg_connection()
     cur = pg.cursor()
-    qry = f'SELECT species_code,species,\"speciesID\",{var} FROM {group} LEFT JOIN species.caps ON species_code::text="speciesCode_Synonym" WHERE {var} IS NOT NULL'
+    qry = f'SELECT species_code,species,\"speciesID\",{var} FROM {group} LEFT JOIN species.bionet ON species_code::text="speciesCode_Synonym" WHERE {var} IS NOT NULL'
     cur.execute(qry)
     spp_list = cur.fetchall()
     cur.close()
@@ -106,9 +106,9 @@ def trait_info(group,var):
     cur = pg.cursor(cursor_factory=DictCursor)
 
     if var in ('best','numerical'):
-        qry = f'SELECT (best is not NULL OR lower IS NOT NULL OR upper IS NOT NULL) as var,count(DISTINCT species) as nspp, count(DISTINCT \"speciesID\") as ncode FROM litrev.{group} LEFT JOIN species.caps ON species_code::text="speciesCode_Synonym"  GROUP BY var '
+        qry = f'SELECT (best is not NULL OR lower IS NOT NULL OR upper IS NOT NULL) as var,count(DISTINCT species) as nspp, count(DISTINCT \"speciesID\") as ncode FROM litrev.{group} LEFT JOIN species.bionet ON species_code::text="speciesCode_Synonym"  GROUP BY var '
     else:
-        qry = f'SELECT norm_value as var,count(DISTINCT species) as nspp, count(DISTINCT \"speciesID\") as ncode FROM litrev.{group} LEFT JOIN species.caps ON species_code::text="speciesCode_Synonym" GROUP BY norm_value'
+        qry = f'SELECT norm_value as var,count(DISTINCT species) as nspp, count(DISTINCT \"speciesID\") as ncode FROM litrev.{group} LEFT JOIN species.bionet ON species_code::text="speciesCode_Synonym" GROUP BY norm_value'
 
     cur.execute(qry)
     spp_list = cur.fetchall()

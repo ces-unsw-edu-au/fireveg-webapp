@@ -32,7 +32,7 @@ def ref_info(id):
     traitdata = pd.read_csv(fname)
 
     qry1 = "SELECT ref_code, ref_cite, alt_code FROM litrev.ref_list WHERE ref_code=%s"
-    qry2 = "SELECT species, species_code, \"speciesID\"::int as species_id FROM litrev.{table} LEFT JOIN species.caps ON species_code=\"speciesCode_Synonym\" WHERE main_source=%s OR %s=ANY(original_sources) GROUP BY species, species_code, species_id ORDER BY random()"
+    qry2 = "SELECT species, species_code, \"speciesID\"::int as species_id FROM litrev.{table} LEFT JOIN species.bionet ON species_code=\"speciesCode_Synonym\" WHERE main_source=%s OR %s=ANY(original_sources) GROUP BY species, species_code, species_id ORDER BY random()"
 
     pg = get_pg_connection()
     cur = pg.cursor(cursor_factory=DictCursor)

@@ -53,7 +53,7 @@ def visit_info(id,dt):
 
     qry5 = "select sample_method,count(DISTINCT sample_nr) FROM form.field_samples WHERE visit_id=%s AND visit_date=%s GROUP BY sample_method;"
 
-    qry6 = "SELECT DISTINCT family, species_code, species, \"scientificName\", \"speciesID\"::int, \"sortOrder\" FROM form.quadrat_samples LEFT JOIN species.caps ON \"speciesCode_Synonym\" = species_code::text WHERE visit_id=%s AND visit_date=%s ORDER BY \"sortOrder\";"
+    qry6 = "SELECT DISTINCT family, species_code, species, \"scientificName\", \"speciesID\"::int, \"sortOrder\" FROM form.quadrat_samples LEFT JOIN species.bionet ON \"speciesCode_Synonym\" = species_code::text WHERE visit_id=%s AND visit_date=%s ORDER BY \"sortOrder\";"
 
     pg = get_pg_connection()
     cur = pg.cursor()
