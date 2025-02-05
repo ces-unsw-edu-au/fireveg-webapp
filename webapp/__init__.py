@@ -6,6 +6,8 @@ from flask_migrate import Migrate
 from flask_cors import CORS
 from dotenv import load_dotenv
 load_dotenv()
+load_dotenv("fireveg-version.env")
+
 # import sendgrid
 # from sendgrid.helpers.mail import *
 from sendgrid import SendGridAPIClient
@@ -68,6 +70,9 @@ def create_app(test_config=None):
         CORS(app, resources={r"/api/*": {"origins": ["http://localhost:3000", "http://fireecologyplants.net", "https://fireecologyplants.net"]}})
     elif(PYTHON_ENV == "production" ):
         CORS(app, resources={r"/api/*": {"origins": ["http://fireecologyplants.net", "https://fireecologyplants.net"]}})
+
+    FEDB_VERSION = os.environ.get('FIREVEG_VERSION')
+
     # Here are some fixed routes:
     # we can write an 'about' page and a terms page
     @app.route('/about')

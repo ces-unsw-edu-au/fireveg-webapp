@@ -8,7 +8,7 @@ from flask.cli import with_appcontext
 def get_pg_connection():
     if 'pg' not in g:
         filename = os.path.join(current_app.instance_path, 'database.ini')
-        section = 'aws-lght-sl'
+        section = 'fireveg-db-v1.1'
         parser = ConfigParser()
         parser.read(filename)
         db = {}
