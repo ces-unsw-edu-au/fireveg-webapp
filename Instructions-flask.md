@@ -5,6 +5,7 @@
 This version has been developed following steps in
 https://flask.palletsprojects.com/en/2.0.x/tutorial/
 
+and now we are using flask `3.0.2`
 ### Set up
 
 Create a virtual environment for flask with miniconda:
@@ -21,6 +22,14 @@ python3 -m venv ~/proyectos/flsk
 # or python3 -m venv ~/venv/flsk
 source ~/proyectos/flsk/bin/activate
 ## or source ~/proyectos/venv/flsk/bin/activate
+
+```
+or with venv... in our local machine(Windows)
+
+```sh
+cd /path to the root folder of your directory
+python -m venv .venv
+.venv\Scripts\activate
 
 ```
 
@@ -46,12 +55,13 @@ pip install folium
 pip install pandas
 pip install datetime
 pip install openpyxl
-pip install pillow  ipyplot
-pip install pyinaturalist
-pip install pickle5
-pip install flask_migrate flask_cors flask_sqlalchemy
-pip3 install python-dotenv
-pip3 install sendgrid
+pip install SQLAlchemy
+pip install Flask-SQLAlchemy
+pip install Flask-Migrate
+pip install Flask-Cors
+pip install python-dotenv
+pip install sendgrid
+pip install PyJWT
 ```
 
 Create and initialise directory
@@ -65,18 +75,61 @@ git init
 pip freeze > requirements.txt
 ```
 
-### Test the app
+### Setup the env file
+Navigate to your project directory in Command Prompt and create a new file `.env`
+```sh
+DATABASE_URI=<your_database_uri_here>
+JWT_SECRET_KEY=<your_jwt_secret_key_here>
+SENDGRID_API_KEY=<your_sendgrid_api_key_here>
+MAIL_FROM=<your_mail_from_here>
+PYTHON_ENV=<your_python_env_here>
+```
+Replace <your_database_uri_here>, <your_jwt_secret_key_here> and <your_sendgrid_api_key_here> with your actual Database connection, JWT secret key, SendGrid API key and MAIL_FROM respectively.
+
+### `PYTHON_ENV`
+
+- **Description:** Environment mode of the application.
+- **Example:** `development, production`
+
+### Set the Flask variables 
+For Windows
+```sh
+set FLASK_APP=webapp
+set FLASK_DEBUG=1
+```
+For Ubuntu/Linux
+```sh
+export FLASK_APP=webapp
+export FLASK_DEBUG=TRUE
+```
+
+### Setup the database migrations
+Initialize the database migration,To create a new migration To apply the migrations and update your database schema, these commands will setup your PostgresQL Database.
+```sh
+flask db init
+flask db migrate -m "fist migration"
+
+flask db upgrade
+```
+
+### Test the app on ubuntu
 
 ```sh
 # conda activate flsk ## or
 # source ~/proyectos/venv/flsk/bin/activate
 cd ~/proyectos/fireveg/fireveg-webapp
-export FLASK_APP=webapp
-export FLASK_DEBUG=TRUE
-# initialise sqlite database if doesn't exists / old version with sqlite
-# [ -e instance/webapp.sqlite ] || flask init-db
-# For new authentication system
-# Either 'SQLALCHEMY_DATABASE_URI' or 'SQLALCHEMY_BINDS' must be set
+# initialise test admin user
+flask create_admin_user
+# run the webapp
+flask run
+```
+
+### Test the app on windows
+```sh
+Navigate to your project directory in Command Prompt
+.venv\Scripts\activate
+# initialise test admin user
+flask create_admin_user
 # run the webapp
 flask run
 ```
@@ -86,7 +139,7 @@ flask run
 A `database.ini` file must be added to the `instance` folder to be able to connect to the postgresql database with the information for the database host, port, database name, user and password.
 
 ```sh
-[aws-lght-sl]
+[fireveg-db-v1.1]
 host=...
 port=...
 database=...

@@ -1,7 +1,16 @@
 instance/
 __pycache__/
 
+# local env files
+.env
+.env*.local
+
 venv/
+.venv/
+/.venv
+
+migrations/
+/migrations
 
 *.pyc
 *.pik

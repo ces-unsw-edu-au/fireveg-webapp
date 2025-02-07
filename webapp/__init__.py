@@ -1,24 +1,55 @@
 import os
 import logging
 from flask import Flask, render_template
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
+from flask_cors import CORS
+from dotenv import load_dotenv
+load_dotenv()
 
-
+# import sendgrid
+# from sendgrid.helpers.mail import *
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail
 def create_app(test_config=None):
     # create and configure the app
+    # print("create_app")
+    # print("create_app")
+    # print("create_app")
     app = Flask(__name__, instance_relative_config=True)
-    app.config.from_mapping(
-        SECRET_KEY='dev',
-        # for authentication
-        DATABASE=os.path.join(app.instance_path, 'webapp.sqlite'),
-        # path to files for data entry and export
-        UPLOAD_FOLDER=os.path.join(app.instance_path, 'uploaded_files'),
-        #MAX_CONTENT-PATH=
-        DATAENTRY=os.path.join(app.instance_path, 'data-entry.xlsx'),
-        PROFORMA=os.path.join(app.instance_path, 'field-work-proforma.docx'),
-        DATAXPORT=os.path.join(app.instance_path, 'data-summary-export.xlsx'),
-        RECORDXPORT=os.path.join(app.instance_path, 'data-all-records-export.xlsx'),
-    )
+    # app.config.from_mapping(
+    #     SECRET_KEY='dev',
+    #     # for authentication
+    #     # DATABASE=os.path.join(app.instance_path, 'webapp.sqlite'),
+    #     # path to files for data entry and export
+    #     UPLOAD_FOLDER=os.path.join(app.instance_path, 'uploaded_files'),
+    #     #MAX_CONTENT-PATH=
+    #     DATAENTRY=os.path.join(app.instance_path, 'data-entry.xlsx'),
+    #     PROFORMA=os.path.join(app.instance_path, 'field-work-proforma.docx'),
+    #     DATAXPORT=os.path.join(app.instance_path, 'data-summary-export.xlsx'),
+    #     RECORDXPORT=os.path.join(app.instance_path, 'data-all-records-export.xlsx'),
+    # )
+    app.config['SECRET_KEY'] = 'dev'
 
+    # Comment out or remove the SQLite-specific configuration
+    # app.config['DATABASE'] = os.path.join(app.instance_path, 'webapp.sqlite')
+
+    app.config['UPLOAD_FOLDER'] = os.path.join(app.instance_path, 'uploaded_files')
+    app.config['DATAENTRY'] = os.path.join(app.instance_path, 'data-entry.xlsx')
+    app.config['PROFORMA'] = os.path.join(app.instance_path, 'field-work-proforma.docx')
+    app.config['DATAXPORT'] = os.path.join(app.instance_path, 'data-summary-export.xlsx')
+    app.config['RECORDXPORT'] = os.path.join(app.instance_path, 'data-all-records-export.xlsx')
+
+    
+
+    # Set the PostgreSQL database URI
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URI')
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    # db = SQLAlchemy(app)
+    # print(os.getenv('DATABASE_URI'))
+    # print(os.getenv('DATABASE_URI'))
+    # print(os.getenv('DATABASE_URI'))
+    # print(os.getenv('DATABASE_URI'))
     if test_config is None:
         # load the instance config, if it exists, when not testing
         app.config.from_pyfile('config.py', silent=True)
@@ -31,12 +62,27 @@ def create_app(test_config=None):
         os.makedirs(app.instance_path)
     except OSError:
         pass
-
+    # print("os.environ.get('PYTHON_ENV')")
+    # print("os.environ.get('PYTHON_ENV')")
+    # print(os.environ.get('PYTHON_ENV'))
+    PYTHON_ENV = os.environ.get('PYTHON_ENV')
+    if(PYTHON_ENV == "development" ):
+        # Enable CORS for API routes and specify allowed origins
+        CORS(app, resources={r"/api/*": {"origins": ["http://localhost:3000", "http://fireecologyplants.net", "https://fireecologyplants.net"]}})
+    elif(PYTHON_ENV == "production" ):
+        CORS(app, resources={r"/api/*": {"origins": ["http://fireecologyplants.net", "https://fireecologyplants.net"]}})
+    
     # Here are some fixed routes:
-    # we can write an 'about' page
+    # we can write an 'about' page and a terms page
     @app.route('/about')
     def about():
         return render_template('about.html', the_title="Home / About")
+    @app.route('/terms')
+    def terms():
+        return render_template('terms.html', the_title="Home / Terms")
+    @app.route('/privacy')
+    def privacy():
+        return render_template('privacy.html', the_title="Home / Privacy")
     # place for simple documentation of features for end user
     @app.route('/documentation')
     def documentation():
@@ -55,8 +101,13 @@ def create_app(test_config=None):
 
     # Initialise some app functions
     # databases: I use a sqlite solution for user registration and login: this is stored in the local instance folder
-    from . import db
+    from webapp.db import db
+    # print(db)
     db.init_app(app)
+    # print("after")
+    # print(db)
+    from webapp.models import Users, Posts, AdminUsers, RoleUpgradeRequests, UserJwtTokens, AdminUsersJwtTokens
+    migrate = Migrate(app, db)
     # databases: content of the database is in a external postgresql database
     from . import pg
     pg.init_app(app)
@@ -64,6 +115,17 @@ def create_app(test_config=None):
     # do we need to call this here? probably not
     from . import xlinit
     xlinit.init_app(app)
+
+    ## Context processor
+    @app.context_processor
+    def version_information():
+        version_information =  os.path.join(app.root_path, "fireveg-version.env")
+        load_dotenv(dotenv_path=version_information)
+        # Version information
+        return dict(FEDB_VERSION = os.getenv('FIREVEG_VERSION'),
+                    FEDB_NAME = os.getenv('FIREVEG_NAME'),
+                    FEDB_CITATION = os.getenv('FIREVEG_CITATION'),
+                    )
 
     ## Blueprints
 
@@ -84,6 +146,15 @@ def create_app(test_config=None):
     from . import species
     app.register_blueprint(species.bp)
 
+    from webapp.api.admin_user_routes import admin_user_routes 
+    from webapp.api.admin_webapp_user_routes import admin_webapp_user_routes 
+    from webapp.api.admin.upgrade_roles.admin_role_upgrade_requests_routes import admin_role_upgrade_requests_routes  
+
+    app.register_blueprint(admin_user_routes, url_prefix='/api/admin-users')
+
+    app.register_blueprint(admin_webapp_user_routes, url_prefix='/api/admin-webapp-users')
+
+    app.register_blueprint(admin_role_upgrade_requests_routes, url_prefix='/api/admin-role-upgrade-requests')
 
     # this blueprint is for the fire ecology trait recorded from literature sources
     # This is the `Blue table/module` from the original diagramm from DK
@@ -101,10 +172,58 @@ def create_app(test_config=None):
     from . import dataxport
     app.register_blueprint(dataxport.bp)
 
+    # print(os.environ.get('SENDGRID_API_KEY'))
+    # print(os.environ.get('SENDGRID_API_KEY'))
+    # print(os.environ.get('SENDGRID_API_KEY'))
+    # message = Mail(
+    # # from_email='j.ferrer@unsw.edu.au',fireecologyplants.net
+    # from_email='j.ferrer@fireecologyplants.net',
+    # to_emails='usamamashkoor@gmail.com',
+    # subject='This is test email',
+    # html_content='<strong>Hi Usama</strong>')
+    # try:
+    #     sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
+    #     response = sg.send(message)
+    #     print("response")
+    #     print("response")
+    #     print(response)
+    #     print("response.status_code")
+    #     print("response.status_code")
+    #     print(response.status_code)
+    #     print("response.body")
+    #     print("response.body")
+    #     print(response.body)
+    #     print("response.headers")
+    #     print("response.headers")
+    #     print(response.headers)
+    # except Exception as e:
+        # print("e")
+        # print("e")
+        # print(e)
+        # print("e.message")
+        # print("e.message")
+        # print(e.message)
+    # sg = sendgrid.SendGridAPIClient(api_key=os.environ.get('SENDGRID_API_KEY'))
+    # from_email = Email("j.ferrer@unsw.edu.au")
+    # to_email = To("usamamashkoor@gmail.com")
+    # subject = "Sending with SendGrid is Fun"
+    # content = Content("text/plain", "Hi Usama")
+    # mail = Mail(from_email, to_email, subject, content)
+    # response = sg.client.mail.send.post(request_body=mail.get())
+    # print('response')
+    # print(response)
+    # print('response.status_code')
+    # print(response.status_code)
+    # print('response.body')
+    # print(response.body)
+    # print('response.headers')
+    # print(response.headers)
     # Added this for handling error messages
     # this is only relevant when using gunicorn
     gunicorn_logger = logging.getLogger('gunicorn.error')
     app.logger.handlers = gunicorn_logger.handlers
 
+    from webapp.commands.create_admin_user import create_admin_user
+    app.cli.add_command(create_admin_user)
     # This is it!
     return app

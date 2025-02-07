@@ -53,7 +53,7 @@ def trait_list(group,var):
         return render_template('invalid.html', type='user input', id=var)
     pg = get_pg_connection()
     cur = pg.cursor()
-    qry = f'SELECT species_code,species,\"speciesID\",{var} FROM {group} LEFT JOIN species.caps ON species_code::text="speciesCode_Synonym" WHERE {var} IS NOT NULL'
+    qry = f'SELECT species_code,species,\"speciesID\",{var} FROM {group} LEFT JOIN species.bionet ON species_code::text="speciesCode_Synonym" WHERE {var} IS NOT NULL'
     cur.execute(qry)
     spp_list = cur.fetchall()
     cur.close()
@@ -76,7 +76,7 @@ def trait_qa(trait):
     cur.execute(qry)
     res = cur.fetchall()
     cur.close()
-    return render_template('traits/QA.html', result=res, trait=trait)
+    return render_template('traits/QA.html', result=res, trait=trait, valuetype=valuetype)
 
 
 @bp.route('/QA/<trait>/<kwd>')
@@ -106,9 +106,9 @@ def trait_info(group,var):
     cur = pg.cursor(cursor_factory=DictCursor)
 
     if var in ('best','numerical'):
-        qry = f'SELECT (best is not NULL OR lower IS NOT NULL OR upper IS NOT NULL) as var,count(DISTINCT species) as nspp, count(DISTINCT \"speciesID\") as ncode FROM litrev.{group} LEFT JOIN species.caps ON species_code::text="speciesCode_Synonym"  GROUP BY var '
+        qry = f'SELECT (best is not NULL OR lower IS NOT NULL OR upper IS NOT NULL) as var,count(DISTINCT species) as nspp, count(DISTINCT \"speciesID\") as ncode FROM litrev.{group} LEFT JOIN species.bionet ON species_code::text="speciesCode_Synonym"  GROUP BY var '
     else:
-        qry = f'SELECT norm_value as var,count(DISTINCT species) as nspp, count(DISTINCT \"speciesID\") as ncode FROM litrev.{group} LEFT JOIN species.caps ON species_code::text="speciesCode_Synonym" GROUP BY norm_value'
+        qry = f'SELECT norm_value as var,count(DISTINCT species) as nspp, count(DISTINCT \"speciesID\") as ncode FROM litrev.{group} LEFT JOIN species.bionet ON species_code::text="speciesCode_Synonym" GROUP BY norm_value'
 
     cur.execute(qry)
     spp_list = cur.fetchall()
@@ -133,6 +133,8 @@ def trait_info(group,var):
         qry="SELECT (SELECT pg_catalog.col_description(c.oid, cols.ordinal_position::int) FROM pg_catalog.pg_class c WHERE c.oid     = (SELECT CONCAT(cols.table_schema,'.',cols.table_name)::regclass::oid) AND c.relname = cols.table_name)::json  as column_comment FROM information_schema.columns cols WHERE cols.table_catalog = 'dbfireveg' AND cols.table_schema  = 'litrev' AND cols.table_name    = %s AND cols.column_name    = 'best';  "
         cur.execute(qry, (group,))
     slcdata = cur.fetchone()
+    if slcdata is not None:
+        slcdata = slcdata[0]
 
     if traitdata['method_vocabulary'] is not None:
         qry="SELECT pg_catalog.obj_description(t.oid, 'pg_type')::json from pg_type t where typname = %s;"
@@ -142,7 +144,7 @@ def trait_info(group,var):
         mtds = None
     cur.close()
 
-    return render_template('traits/trait-info.html', spps=spp_list, mainrefs=ref_list, addrefs=add_list, group=group, var=var, trait=traitdata, desc=slcdata[0], methods=mtds)
+    return render_template('traits/trait-info.html', spps=spp_list, mainrefs=ref_list, addrefs=add_list, group=group, var=var, trait=traitdata, desc=slcdata, methods=mtds)
 
 @bp.route('/<trait>/<code>')
 @login_required
@@ -158,26 +160,3 @@ def spp(trait,code):
     cur.close()
     return render_template('traits/spp.html', records=rs, species=code, trait=trait)
 
-
-@bp.route('/VA')
-@login_required
-def va_groups():
-    pg = get_pg_connection()
-    cur = pg.cursor(cursor_factory=DictCursor)
-    qry = "SELECT rationale_persistence, persistence, count(*) FROM vag.va_groups GROUP BY rationale_persistence, persistence ORDER BY cardinality(rationale_persistence);"
-    cur.execute(qry)
-    dectree = cur.fetchall()
-
-
-    qry = "select unnest(persistence) p, unnest(establishment) as e, count(distinct species_code) from vag.va_groups group by p, e ORDER BY p,e"
-    cur.execute(qry)
-    res = cur.fetchall()
-    df = pd.DataFrame(res)
-    df=df.rename(columns={0:"Persistence",1:"Establishment",2:"Records"})
-    df['Records'] = df['Records'].astype(int)
-    tbl=df.pivot(index='Persistence', columns='Establishment', values='Records')
-    tbl.fillna(0,inplace=True)
-
-    cur.close()
-
-    return render_template('traits/VA.html', persistence=dectree,rows=tbl.index.values, cols=tbl.columns.values, cats=tbl.astype(int).values.tolist())

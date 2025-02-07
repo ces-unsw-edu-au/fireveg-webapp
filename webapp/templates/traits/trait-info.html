@@ -65,7 +65,7 @@
       {%endif%}
     {% else %}
       {% if spps | selectattr('var','equalto', None) | map(attribute='nspp') | join(' ') |length %}
-        <dd>There are {{ spps | selectattr('var','equalto', None) | map(attribute='nspp') | join(' ')}} taxa with data entry error that need review. <a href="{{ url_for( 'traits.trait_qa', trait=trait['code']) }}">Review missing values</a></dd>
+        <dd>There are {{ spps | selectattr('var','equalto', None) | map(attribute='nspp') | join(' ')}} taxa with data entry error that need review. <a href="{{ url_for( 'traits.trait_qa', trait=trait['code'], valuetype='categorical') }}">Review missing values</a></dd>
         {% else %}
           <dd>No errors in data entry detected.</dd>
         {%endif%}

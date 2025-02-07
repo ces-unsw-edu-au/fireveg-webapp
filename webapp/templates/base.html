@@ -1,17 +1,18 @@
 <!doctype html>
 <head>
-  <title>{% block title %}{% endblock %} - Fire Ecology Traits for Plants</title>
+  <title>{% block title %}{% endblock %} - {{ FEDB_NAME }} / Plants NSW</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
   <script rel="text/javascript" src="{{ url_for('static', filename='js/target.js') }}"> </script>
 </head>
 <body>
 
 <nav>
-  <h1 class='title'>Fire Ecology Traits for Plants</h1>
-  <h5>Version 1.0</h5>
+  <h1 class='title'>{{ FEDB_NAME }} / Plants NSW</h1>
+  <h5>{{  FEDB_VERSION }} </h5>
   <ul>
     {% if g.user %}
       <li><span>{{ g.user['username'] }}</span>
+        <li><a href="{{ url_for('auth.change_password') }}">Change Password</a>
       <li><a href="{{ url_for('auth.logout') }}">Log Out</a>
     {% else %}
       <li><a href="{{ url_for('auth.register') }}">Register</a>
@@ -29,7 +30,8 @@
     <li><span><a href='{{ url_for('traits.trait_sum') }}'>All traits</a></span>
     <li><span><a href='{{ url_for('documentation') }}'> Documentation</a></span>
       <li><span><a href='{{ url_for('biblio.ref_list') }}'> References</a></span>
-    <li><span><a href='{{ url_for('about') }}'>About</a></span>
+        <li><span><a href='{{ url_for('about') }}'>About</a></span>
+      
   </ul>
 </nav>
 <section class="content">
@@ -54,5 +56,9 @@ NSW Bushfire Research Hub <br>
 NESP Threatened Species Recovery Hub <br>
 NSW Department of Planning & Environment</h4>
 
+  <h4 class='credits'>
+    <a href='{{ url_for('terms') }}'>Terms of use</a><br/>
+    <a href='{{ url_for('privacy') }}'>Privacy Policy</a>
+  </h4>
 </nav>
 </body>
