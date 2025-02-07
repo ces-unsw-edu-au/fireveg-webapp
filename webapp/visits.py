@@ -36,7 +36,7 @@ def visits_list(survey):
     cur.close()
 
     if survey == None:
-        return render_template('visits/list.html', visits=visit_list, survey=survey)
+        return render_template('visits/list.html', visits=visit_list, survey=survey, ttl=None)
     else:
         return render_template('visits/list.html', visits=visit_list, survey=survinfo, ttl=visit_total)
 
