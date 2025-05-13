@@ -68,7 +68,7 @@ def create_app(test_config=None):
     PYTHON_ENV = os.environ.get('PYTHON_ENV')
     if(PYTHON_ENV == "development" ):
         # Enable CORS for API routes and specify allowed origins
-        CORS(app, resources={r"/api/*": {"origins": ["http://localhost:3000", "http://fireecologyplants.net", "https://fireecologyplants.net"]}})
+        CORS(app, resources={r"/api/*": {"origins": ["http://localhost:5000", "http://fireecologyplants.net", "https://fireecologyplants.net"]}})
     elif(PYTHON_ENV == "production" ):
         CORS(app, resources={r"/api/*": {"origins": ["http://fireecologyplants.net", "https://fireecologyplants.net"]}})
     
